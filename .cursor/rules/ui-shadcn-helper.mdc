@@ -21,7 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 ```
 
-Przykładowe wykorzsytanie komponnetów:
+Przykładowe wykorzystanie komponentów:
 
 ```tsx
 <Button variant="outline">Click me</Button>

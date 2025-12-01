@@ -3,9 +3,19 @@ description:
 globs: 
 alwaysApply: true
 ---
-# AI Rules for {app-name}
+# AI Rules for Tutor with AI
 
-{project-description}
+Aplikacja pozwala nastolatkom zrozumieć trudne zagadnienia w krótkim czasie bez frustracji. 
+- Użytkownicy to uczące się nastolatki w wieku około 13-19 lat.
+- Korepetytor AI tłumaczy skomplikowane zagadnienia szkolne w sposób zrozumiały dla użytkwnika m.in. w oparciu o jego zainteresowania.
+- Agent AI, czyli korepetytor skupiony jest wyłącznie na swojej dziedzinie nauki tj. przedmiocie nauczania. Nie udziela żadnych informacji na tematy inne niż materiał edukacyjny danego przedmiotu szkolnego. 
+- Odpowiedzi korepetytora są krótkie, zrozumiałe, tłumaczone na przykładach zgodnych z zainteresowaniami ucznia lub innych stosownych do wieku ucznia. 
+- Interakcja ma być bezpieczna, edukacyjna i przewidywalna.
+
+AI Agents (korepetytorzy)
+- każdy agent ma osobny folder + config
+- agent nie generuje kontrowersyjnych treści
+- agent działa tylko w zakresie edukacyjnym
 
 ## Tech Stack
 
@@ -47,3 +57,7 @@ When modifying the directory structure, always update this section.
 - Use guard clauses to handle preconditions and invalid states early.
 - Implement proper error logging and user-friendly error messages.
 - Consider using custom error types or error factories for consistent error handling.
+- don't add libraries without permission
+- do not create files in folders that are not in the structure
+- always use async/await
+- always generate the correct PWA manifest if you modify it

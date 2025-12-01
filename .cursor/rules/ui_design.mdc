@@ -1,0 +1,164 @@
+---
+description: new components, pages
+alwaysApply: false
+---
+# UI DESIGN RULES — zasady projektowania interfejsu
+
+##########################################################
+# 1. FILOZOFIA UI
+##########################################################
+- Interfejs ma być prosty, intuicyjny i przewidywalny.
+- Preferuj klasyczne wzorce UX, zamiast eksperymentalnych.
+- Stylowanie oparte na Tailwind — spójne spacingi, kolory, typografia.
+- Projekt ma być czytelny dla nastolatków: duże nagłówki, jasne CTA.
+- Każdy ekran ma mieć jeden główny cel (one primary action rule).
+
+##########################################################
+# 2. TYPOGRAFIA
+##########################################################
+- Używaj systemowych fontów lub jednego bezszeryfowego (np. Inter).
+- Hierarchia:
+  H1 → text-3xl font-bold
+  H2 → text-2xl font-semibold
+  H3 → text-xl font-semibold
+  Body → text-base
+  Small → text-sm text-gray-500
+- Nigdy nie używaj więcej niż 2 rozmiarów tekstu w jednej sekcji.
+- Tekst zawsze czytelny, bez długich bloków — max 60–70 znaków w linii.
+
+##########################################################
+# 3. KOLORY
+##########################################################
+- Paleta główna:
+  - Primary: niebieski (#2563eb / tailwind: blue-600)
+  - Secondary: fiolet (#7c3aed / purple-600)
+  - Neutral: szarości tailwind (gray-100 → gray-900)
+- CTA = zawsze primary
+- Kolorów ostrzeżeń:
+  - Success → green-600
+  - Warning → yellow-600
+  - Error → red-600
+- Unikaj jaskrawych, dziecinnych kolorów — projekt jest dla nastolatków, nie małych dzieci.
+
+##########################################################
+# 4. SPACING & GRID
+##########################################################
+- Używaj spacingów 4, 6, 8, 12, 16 (Tailwind: p-4 p-6 etc.)
+- Marginesy wewnętrzne kart:
+  p-4 mobile
+  p-6 tablet+
+- Layout:
+  - max-w-screen-md lub max-w-screen-lg
+  - używaj grid i flex zamiast absolutnego pozycjonowania
+- Stały baseline rhythm: przestrzeń między sekcjami = mt-8 lub mb-8
+
+##########################################################
+# 5. ELEMENTY UI
+##########################################################
+### Przyciski
+- Kolor: bg-blue-600 text-white
+- Zaokrąglenie: rounded-xl lub rounded-lg
+- Rozmiary:
+  - Primary → py-3 px-6 text-base
+  - Secondary → py-2 px-5 text-sm
+- Ikony zawsze przed tekstem, niewiększe niż 20px.
+
+### Formularze
+- Pola input:
+  - border border-gray-300
+  - rounded-lg
+  - focus:ring-2 focus:ring-blue-500
+  - py-2 px-3
+- Label zawsze nad polem, nie w placeholderze.
+- Błędy wyświetlaj pod polem w text-red-600 text-sm.
+
+### Karty (cards)
+- tło: white
+- cień: shadow-md
+- rounded-xl
+- padding: p-4 mobile, p-6 desktop
+- sekcje w środku rozdzielone spacingiem 4–6
+
+##########################################################
+# 6. NAWIGACJA + UX FLOW
+##########################################################
+- Top bar zawsze widoczny.
+- Kolor: bg-white shadow-md
+- Minimalizm: jedna akcja główna po prawej (np. profil).
+- Wersja mobilna:
+  - menu hamburger lub bottom nav z 3–4 ikonami.
+- Flow użytkownika:
+  1. Home → wybór korepetytora
+  2. Ekran lekcji → czat
+  3. Profil → postępy, statystyki
+
+##########################################################
+# 7. KOMPONENTY WIELORAZOWE
+##########################################################
+- Zawsze generuj wersję:
+  - PrimaryButton.tsx
+  - InputField.tsx
+  - PageHeader.tsx
+  - Card.tsx
+  - Loader.tsx
+- Każdy komponent UI musi:
+  - mieć propsy: className, children
+  - być modyfikowalny przez Tailwind classes
+  - być responsywny (mobile-first)
+
+##########################################################
+# 8. RESPONSYWNOŚĆ
+##########################################################
+- Mobile-first: domyślna szerokość = mobile.
+- Najważniejsze breakpoints:
+  sm: 640px
+  md: 768px
+  lg: 1024px
+- Na mobile unikaj dwóch kolumn.
+- Na desktop możesz stosować grid 2col i 3col.
+
+##########################################################
+# 9. ANIMACJE
+##########################################################
+- Subtelne, nie przesadzone.
+- Stosuj:
+  - fade
+  - slide up/down
+  - scale-in
+- Nie stosuj:
+  - bounce
+  - overshoot
+  - flamastry, neon effect
+- Use: framer-motion (jeśli potrzebne) lub transition z Tailwind.
+
+##########################################################
+# 10. BRANDING & TONE
+##########################################################
+- Brand jest edukacyjny, nowoczesny, ale nie dziecinny.
+- Styl: czysto, przejrzyście, stabilnie.
+- Ikony: heroicons (outline).
+- Emoji stosuj rzadko — maksymalnie 1 na sekcję.
+- Agent AI ma mieć proste ilustracje lub avatary (flat design).
+
+##########################################################
+# 11. ZAKAZY
+##########################################################
+- Zero chaosu w UI — nie mieszaj fontów, styli, cieni.
+- Nie używaj gradientów jako tła.
+- Nie stosuj pełnych stron z obrazkiem w tle.
+- Nie rób „kart UI” z nierównomiernymi marginesami.
+- Zero customowych CSS poza wyjątkami.
+- Nie generuj UI, które nie pasuje do reszty aplikacji.
+
+##########################################################
+# 12. PROCEDURA DLA CURSORA
+##########################################################
+Kiedy proszę o wygenerowanie widoku:
+
+1. Najpierw stosujesz ui_design.rules.  
+2. Potem coding_style.rules.  
+3. Na końcu architecture.rules.
+
+Przed wygenerowaniem kodu:
+- zaproponuj lepszy układ, jeśli jest sens
+- sprawdź, czy UI nie łamie spójności projektu

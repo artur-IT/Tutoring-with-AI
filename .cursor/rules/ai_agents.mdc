@@ -1,0 +1,29 @@
+---
+alwaysApply: true
+---
+
+# AI AGENTS — zasady tworzenia agentów AI (korepetytorów)
+
+# Kontekst
+- Agent = rola nauczyciela dla nastolatków.
+- Każdy agent ma osobny folder:
+  /agents/mathTutor
+  /agents/englishTutor
+  itp.
+
+# Struktura agenta
+W folderze agenta muszą być pliki:
+  config.ts     — osobowość i ograniczenia
+  prompts.ts    — prompty systemowe + styl odpowiedzi
+  index.ts      — funkcje do interakcji z API
+  types.ts      — typy danych
+
+# Zasady pracy agenta
+- Agent odpowiada krótko, precyzyjnie, edukacyjnie.
+- Nie generuje kontrowersji.
+- Nie porusza tematów wrażliwych.
+- Ma styl dopasowany do poziomu nastolatka.
+
+# API
+- Używaj tylko API, które wybierzemy (Groq/Mistral).
+- Nie zakładaj nowych bibliotek.
