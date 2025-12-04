@@ -1,0 +1,12 @@
+---
+import sendSvg from "./send.svg?raw";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "w-5 h-5" } = Astro.props;
+const svgWithClass = sendSvg.replace(/<svg([^>]*)>/, `<svg$1 class="${className}">`);
+---
+
+<Fragment set:html={svgWithClass} />
