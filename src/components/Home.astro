@@ -1,0 +1,49 @@
+---
+import { Button } from "./ui/button";
+import NameInput from "./NameInput";
+---
+
+<div class='min-h-screen bg-white flex flex-col items-center justify-center p-4 relative'>
+  <!-- Orange button at the top -->
+  <div>
+    <NameInput client:load />
+  </div>
+
+  <!-- Welcome text centered -->
+  <div class='text-center my-20'>
+    <h1 class='text-2xl text-black mb-2'>Witaj</h1>
+    <p id='name-display' class='text-4xl'>[imię]</p>
+  </div>
+
+  <!-- Main blue button -->
+  <div class='mb-6'>
+    <a href='/tutors' class='inline-block w-[150px] max-w-xs'>
+      <Button variant='ok'> Pouczmy się </Button>
+    </a>
+  </div>
+
+  <!-- Outlined button at the bottom -->
+  <div>
+    <a href='/history' class='inline-block w-[150px] max-w-xs'>
+      <Button variant='back'> Historia rozmów </Button>
+    </a>
+  </div>
+</div>
+
+<script>
+  // Get name from localStorage or prompt
+  const nameDisplay = document.getElementById("name-display");
+  const storedName = localStorage.getItem("userName");
+
+  if (storedName && nameDisplay) {
+    nameDisplay.textContent = `${storedName}`;
+  }
+
+  // Listen for name updates from NameInput component
+  window.addEventListener("nameUpdated", ((event: CustomEvent) => {
+    const display = document.getElementById("name-display");
+    if (display) {
+      display.textContent = `${event.detail.name}`;
+    }
+  }) as EventListener);
+</script>
