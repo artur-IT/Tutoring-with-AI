@@ -1,122 +1,72 @@
 ---
 import { Button } from "./ui/button";
+import UserIcon from "../assets/icons/UserIcon.astro";
+import ChevronRightIcon from "../assets/icons/ChevronRightIcon.astro";
+import ArrowLeftIcon from "../assets/icons/ArrowLeftIcon.astro";
 ---
 
-<div class='min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-screen-md mx-auto'>
+<div class="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-screen-md mx-auto">
   <!-- Header -->
-  <h1 class='text-3xl font-bold text-gray-900 text-center mb-8 mt-8'>Historia rozmów</h1>
+  <h1 class="text-3xl font-bold text-gray-900 text-center mb-8 mt-8">Historia rozmów</h1>
 
   <!-- Conversation list -->
-  <div class='flex-1 space-y-4 mb-8'>
+  <div class="flex-1 space-y-4 mb-8">
     <!-- Conversation item 1 -->
     <div
-      class='bg-white shadow-md rounded-xl p-4 md:p-6 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-shadow'
+      class="bg-white shadow-md rounded-xl p-4 md:p-6 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-shadow"
     >
       <!-- User icon -->
-      <div class='flex-shrink-0'>
-        <div class='w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke-width='1.5'
-            stroke='currentColor'
-            class='w-6 h-6 text-blue-600'
-          >
-            <path
-              stroke-linecap='round'
-              stroke-linejoin='round'
-              d='M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z'
-            ></path>
-          </svg>
+      <div class="flex-shrink-0">
+        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+          <UserIcon class="w-6 h-6 text-blue-600" />
         </div>
       </div>
 
       <!-- Title and description -->
-      <div class='flex-1 min-w-0'>
-        <h2 class='text-base font-semibold text-gray-900 mb-1'>Title</h2>
-        <p class='text-sm text-gray-500 line-clamp-2'>
+      <div class="flex-1 min-w-0">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Title</h2>
+        <p class="text-sm text-gray-500 line-clamp-2">
           Description. Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do
         </p>
       </div>
 
       <!-- Chevron icon -->
-      <div class='flex-shrink-0'>
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke-width='1.5'
-          stroke='currentColor'
-          class='w-5 h-5 text-gray-600'
-        >
-          <path stroke-linecap='round' stroke-linejoin='round' d='m8.25 4.5 7.5 7.5-7.5 7.5'></path>
-        </svg>
+      <div class="flex-shrink-0">
+        <ChevronRightIcon class="w-5 h-5 text-gray-600" />
       </div>
     </div>
 
     <!-- Conversation item 2 -->
     <div
-      class='bg-white shadow-md rounded-xl p-4 md:p-6 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-shadow'
+      class="bg-white shadow-md rounded-xl p-4 md:p-6 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-shadow"
     >
       <!-- User icon -->
-      <div class='flex-shrink-0'>
-        <div class='w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke-width='1.5'
-            stroke='currentColor'
-            class='w-6 h-6 text-blue-600'
-          >
-            <path
-              stroke-linecap='round'
-              stroke-linejoin='round'
-              d='M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z'
-            ></path>
-          </svg>
+      <div class="flex-shrink-0">
+        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+          <UserIcon class="w-6 h-6 text-blue-600" />
         </div>
       </div>
 
       <!-- Title and description -->
-      <div class='flex-1 min-w-0'>
-        <h2 class='text-base font-semibold text-gray-900 mb-1'>Title</h2>
-        <p class='text-sm text-gray-500 line-clamp-2'>
+      <div class="flex-1 min-w-0">
+        <h2 class="text-base font-semibold text-gray-900 mb-1">Title</h2>
+        <p class="text-sm text-gray-500 line-clamp-2">
           Description. Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do
         </p>
       </div>
 
       <!-- Chevron icon -->
-      <div class='flex-shrink-0'>
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke-width='1.5'
-          stroke='currentColor'
-          class='w-5 h-5 text-gray-600'
-        >
-          <path stroke-linecap='round' stroke-linejoin='round' d='m8.25 4.5 7.5 7.5-7.5 7.5'></path>
-        </svg>
+      <div class="flex-shrink-0">
+        <ChevronRightIcon class="w-5 h-5 text-gray-600" />
       </div>
     </div>
   </div>
 
   <!-- Back button -->
-  <div class='flex justify-center mb-6'>
-    <a href='/' class='inline-block'>
-      <Button variant='back'>
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke-width='1.5'
-          stroke='currentColor'
-          class='w-5 h-5'
-        >
-          <path stroke-linecap='round' stroke-linejoin='round' d='M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18'></path>
-        </svg>
+  <div class="flex justify-center mb-6">
+    <a href="/" class="inline-block">
+      <Button variant="back">
+        <ArrowLeftIcon class="w-5 h-5" />
         wróć
       </Button>
     </a>

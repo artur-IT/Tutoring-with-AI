@@ -1,3 +1,10 @@
+MOJE RULES
+Zrefaktoryzuj kod stosując głównie te zalecenia:
+
+- Javascript zgodny z ES6
+
+---
+
 #### Czy asChild jest potrzebne?
 
 Tak, jeśli chcesz:

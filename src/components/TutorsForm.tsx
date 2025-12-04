@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import ArrowLeftSimpleIcon from "../assets/icons/ArrowLeftSimpleIcon";
 
 type Subject = "matematyka" | "chemia" | null;
 
@@ -8,32 +9,29 @@ export default function TutorsForm() {
   const [selectedSubject, setSelectedSubject] = useState<Subject>(null);
   const [problemDescription, setProblemDescription] = useState("");
   const [interests, setInterests] = useState("");
+  const [studentData, setStudentData] = useState({
+    subject: selectedSubject,
+    problem: problemDescription,
+    interests: interests,
+  });
 
   const handleSubjectSelect = (subject: Subject) => {
     setSelectedSubject(subject);
+    setStudentData({ ...studentData, subject: subject });
   };
-
   const handleProblemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProblemDescription(e.target.value);
+    setStudentData({ ...studentData, problem: e.target.value });
   };
-
   const handleInterestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInterests(e.target.value);
+    setStudentData({ ...studentData, interests: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedSubject) return;
-
-    // Save form data to localStorage (optional)
-    const formData = {
-      subject: selectedSubject,
-      problem: problemDescription,
-      interests: interests,
-    };
-    localStorage.setItem("tutorFormData", JSON.stringify(formData));
-
-    // Redirect to chat page
+    // console.log(studentData);
     window.location.href = "/chat";
   };
 
@@ -44,20 +42,22 @@ export default function TutorsForm() {
         <Button
           type="button"
           onClick={() => handleSubjectSelect("matematyka")}
-          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${selectedSubject === "matematyka"
-            ? "bg-green-600 text-white shadow-md"
-            : "bg-green-100 text-green-700 hover:bg-green-200"
-            }`}
+          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${
+            selectedSubject === "matematyka"
+              ? "bg-green-600 text-white shadow-md"
+              : "bg-green-100 text-green-700 hover:bg-green-200"
+          }`}
         >
           Matematyka
         </Button>
         <Button
           type="button"
           onClick={() => handleSubjectSelect("chemia")}
-          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${selectedSubject === "chemia"
-            ? "bg-blue-600 text-white shadow-md"
-            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-            }`}
+          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${
+            selectedSubject === "chemia"
+              ? "bg-blue-600 text-white shadow-md"
+              : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+          }`}
         >
           Chemia
         </Button>
@@ -74,8 +74,9 @@ export default function TutorsForm() {
           value={problemDescription}
           onChange={handleProblemChange}
           placeholder="np. równania, geometria itp."
-          className="w-[300px]"
+          className="w-[350px]"
           aria-label="Opisz problem"
+          required
         />
       </div>
 
@@ -90,8 +91,9 @@ export default function TutorsForm() {
           value={interests}
           onChange={handleInterestsChange}
           placeholder="krótko np. piłka nożna, książki, filmy itp."
-          className="w-[300px]"
+          className="w-[350px]"
           aria-label="Podaj swoje zainteresowania"
+          required
         />
       </div>
 
@@ -102,30 +104,14 @@ export default function TutorsForm() {
       </div>
 
       {/* Submit Button */}
-      <Button
-        type="submit"
-        disabled={!selectedSubject}
-        variant="ok"
-      >
+      <Button type="submit" disabled={!selectedSubject} variant="ok">
         Zaczynamy
       </Button>
 
       {/* Back Button */}
       <a href="/">
-        <Button
-          type="button"
-          variant="back"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-          </svg>
+        <Button type="button" variant="back">
+          <ArrowLeftSimpleIcon className="w-5 h-5" />
           wróć
         </Button>
       </a>
