@@ -3,62 +3,65 @@ import { Button } from "./ui/button";
 import NameInput from "./NameInput";
 ---
 
-<div class='min-h-screen bg-white flex flex-col items-center justify-center p-4 relative'>
+<div class="min-h-screen bg-white flex flex-col items-center justify-center p-4 relative">
   <!-- Orange button at the top -->
-  <div class='absolute top-40'>
+  <div class="absolute top-40">
     <NameInput client:load />
   </div>
 
   <!-- Content that should be inert when modal is open -->
-  <div id='home-content' class='flex flex-col items-center justify-center'>
+  <div id="home-content" class="flex flex-col items-center justify-center">
     <!-- Welcome text centered -->
-    <div class='text-center my-20'>
-      <h1 class='text-2xl text-black mb-2'>Witaj</h1>
-      <p id='name-display' class='text-4xl'>[imię]</p>
+    <div class="text-center my-20">
+      <h1 class="text-2xl text-black mb-2">Witaj</h1>
+      <p id="name-display" class="text-4xl">[imię]</p>
     </div>
 
     <!-- Main blue button -->
-    <div class='mb-6'>
-      <a href='/tutors' class='inline-block'>
-        <Button variant='ok'> Pouczmy się </Button>
+    <div class="mb-6">
+      <a href="/tutors" class="inline-block">
+        <Button variant="ok"> Pouczmy się </Button>
       </a>
     </div>
 
     <!-- Outlined button at the bottom -->
     <div>
-      <a href='/history' class='inline-block'>
-        <Button variant='back'> Historia rozmów </Button>
+      <a href="/history" class="inline-block">
+        <Button variant="back"> Historia rozmów </Button>
       </a>
     </div>
   </div>
 </div>
 
 <script>
+  /* eslint-disable prettier/prettier */
   // Get name from localStorage or prompt
   const nameDisplay = document.getElementById("name-display");
   const storedName = localStorage.getItem("userName");
 
   if (storedName && nameDisplay) {
-    nameDisplay.textContent = `${storedName}`;
+    nameDisplay.textContent = storedName;
   }
 
   // Listen for name updates from NameInput component
-  window.addEventListener("nameUpdated", ((event: CustomEvent) => {
+  window.addEventListener("nameUpdated", (event) => {
+    const customEvent = event as CustomEvent;
     const display = document.getElementById("name-display");
-    if (display) {
-      display.textContent = `${event.detail.name}`;
+    if (display && customEvent.detail) {
+      display.textContent = customEvent.detail.name;
     }
-  }) as EventListener);
+  });
 
   // Listen for modal state changes to set inert attribute
   const homeContent = document.getElementById("home-content");
-  window.addEventListener("nameInputModalState", ((event: CustomEvent) => {
-    if (homeContent) {
-      if (event.detail.isOpen) {
+  window.addEventListener("nameInputModalState", (event) => {
+    const customEvent = event as CustomEvent;
+    if (homeContent && customEvent.detail) {
+      if (customEvent.detail.isOpen) {
         homeContent.setAttribute("inert", "");
       } else {
         homeContent.removeAttribute("inert");
       }
     }
-  }) as EventListener);
+  });
 </script>
