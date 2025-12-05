@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import ArrowLeftSimpleIcon from "../assets/icons/ArrowLeftSimpleIcon";
+import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
 
 type Subject = "matematyka" | "chemia" | null;
 
@@ -9,29 +9,29 @@ export default function TutorsForm() {
   const [selectedSubject, setSelectedSubject] = useState<Subject>(null);
   const [problemDescription, setProblemDescription] = useState("");
   const [interests, setInterests] = useState("");
-  const [studentData, setStudentData] = useState({
-    subject: selectedSubject,
-    problem: problemDescription,
-    interests: interests,
-  });
 
   const handleSubjectSelect = (subject: Subject) => {
     setSelectedSubject(subject);
-    setStudentData({ ...studentData, subject: subject });
   };
   const handleProblemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProblemDescription(e.target.value);
-    setStudentData({ ...studentData, problem: e.target.value });
   };
   const handleInterestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInterests(e.target.value);
-    setStudentData({ ...studentData, interests: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedSubject) return;
-    // console.log(studentData);
+
+    // Save studentData to localStorage before redirecting
+    const studentData = {
+      subject: selectedSubject,
+      problem: problemDescription,
+      interests: interests,
+    };
+    localStorage.setItem("studentData", JSON.stringify(studentData));
+
     window.location.href = "/chat";
   };
 
@@ -42,22 +42,20 @@ export default function TutorsForm() {
         <Button
           type="button"
           onClick={() => handleSubjectSelect("matematyka")}
-          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${
-            selectedSubject === "matematyka"
-              ? "bg-green-600 text-white shadow-md"
-              : "bg-green-100 text-green-700 hover:bg-green-200"
-          }`}
+          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${selectedSubject === "matematyka"
+            ? "bg-green-600 text-white shadow-md"
+            : "bg-green-100 text-green-700 hover:bg-green-200"
+            }`}
         >
           Matematyka
         </Button>
         <Button
           type="button"
           onClick={() => handleSubjectSelect("chemia")}
-          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${
-            selectedSubject === "chemia"
-              ? "bg-blue-600 text-white shadow-md"
-              : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-          }`}
+          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${selectedSubject === "chemia"
+            ? "bg-blue-600 text-white shadow-md"
+            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+            }`}
         >
           Chemia
         </Button>
@@ -109,12 +107,10 @@ export default function TutorsForm() {
       </Button>
 
       {/* Back Button */}
-      <a href="/">
-        <Button type="button" variant="back">
-          <ArrowLeftSimpleIcon className="w-5 h-5" />
-          wróć
-        </Button>
-      </a>
+      <Button onClick={() => window.location.href = "/"} variant="back">
+        <img src={ArrowLeftSimpleIcon} alt="" className="w-5 h-5" />
+        wróć
+      </Button>
     </form>
   );
 }

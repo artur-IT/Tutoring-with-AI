@@ -6,7 +6,7 @@ const baseStyles =
 const variantStyles = {
   ok: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm",
   cancel: "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300",
-  back: " bg-white text-blue-600 hover:bg-blue-50 border border-blue-600",
+  back: "h-[40px] bg-white text-blue-600 hover:bg-blue-50 border border-blue-600",
 } as const;
 
 type ButtonVariant = keyof typeof variantStyles;
