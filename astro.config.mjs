@@ -8,8 +8,9 @@ import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
-  // Use static output for dev mode (faster), server for production
-  output: import.meta.env.PROD ? "server" : "static",
+  // Output mode: undefined in dev (faster), "server" in production
+  // In dev mode, Astro ignores this setting and always uses dev server
+  ...(import.meta.env.PROD && { output: "server" }),
   integrations: [
     react(),
     // Only enable sitemap in production builds
@@ -17,22 +18,29 @@ export default defineConfig({
   ],
   server: {
     port: 3000,
-    // Faster startup by reducing file watching
-    fs: {
-      strict: false,
-    },
   },
   vite: {
     plugins: [tailwindcss()],
     // Optimize Vite for faster dev startup
     optimizeDeps: {
       include: ["react", "react-dom"],
+      force: false, // Don't force re-optimization on every start
     },
     // Exclude dist folder from watching
     server: {
       watch: {
-        ignored: ["**/dist/**", "**/node_modules/**"],
+        ignored: ["**/dist/**", "**/node_modules/**", "**/.astro/**", "**/.git/**"],
       },
+      fs: {
+        // Restrict file system access for better performance
+        strict: false,
+      },
+    },
+    // Cache configuration for faster rebuilds
+    cacheDir: "node_modules/.vite",
+    build: {
+      // Don't minify in dev mode
+      minify: false,
     },
   },
   // Only use adapter in production

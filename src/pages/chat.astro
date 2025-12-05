@@ -1,8 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import ChatPage from "../components/Chat.astro";
+import ChatPage from "../components/Chat";
 ---
 
-<Layout title="Rozmowa">
-  <ChatPage />
+<Layout title='Rozmowa'>
+  <ChatPage client:only />
 </Layout>

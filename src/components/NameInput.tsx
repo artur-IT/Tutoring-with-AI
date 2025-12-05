@@ -1,12 +1,21 @@
-import { useState, useId } from "react";
+import { useState, useId, useEffect } from "react";
 import { Button } from "./ui/button";
 import { useUserName } from "./hooks/useUserName";
+
+const MODAL_STATE_EVENT = "nameInputModalState";
 
 export default function NameInput() {
   const [isOpen, setIsOpen] = useState(false);
   const { name, setName, saveName } = useUserName();
   const inputId = useId();
   const formId = useId();
+
+  // Dispatch event when modal state changes
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(MODAL_STATE_EVENT, { detail: { isOpen } })
+    );
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,12 +52,13 @@ export default function NameInput() {
           placeholder="Wpisz imię"
           className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           aria-label="Wprowadź swoje imię"
+          autoFocus={true}
         />
         <div className="flex gap-2 justify-end">
           <Button type="button" variant="cancel" onClick={handleClose}>
             Anuluj
           </Button>
-          <Button type="submit" variant="ok">
+          <Button type="submit" variant="ok" disabled={!name.trim()}>
             Zapisz
           </Button>
         </div>
