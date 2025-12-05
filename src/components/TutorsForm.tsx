@@ -42,20 +42,22 @@ export default function TutorsForm() {
         <Button
           type="button"
           onClick={() => handleSubjectSelect("matematyka")}
-          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${selectedSubject === "matematyka"
-            ? "bg-green-600 text-white shadow-md"
-            : "bg-green-100 text-green-700 hover:bg-green-200"
-            }`}
+          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${
+            selectedSubject === "matematyka"
+              ? "bg-green-600 text-white shadow-md"
+              : "bg-green-100 text-green-700 hover:bg-green-200"
+          }`}
         >
           Matematyka
         </Button>
         <Button
           type="button"
           onClick={() => handleSubjectSelect("chemia")}
-          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${selectedSubject === "chemia"
-            ? "bg-blue-600 text-white shadow-md"
-            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-            }`}
+          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${
+            selectedSubject === "chemia"
+              ? "bg-blue-600 text-white shadow-md"
+              : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+          }`}
         >
           Chemia
         </Button>
@@ -107,7 +109,7 @@ export default function TutorsForm() {
       </Button>
 
       {/* Back Button */}
-      <Button onClick={() => window.location.href = "/"} variant="back">
+      <Button onClick={() => (window.location.href = "/")} variant="back">
         <img src={ArrowLeftSimpleIcon} alt="" className="w-5 h-5" />
         wróć
       </Button>

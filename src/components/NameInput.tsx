@@ -12,9 +12,7 @@ export default function NameInput() {
 
   // Dispatch event when modal state changes
   useEffect(() => {
-    window.dispatchEvent(
-      new CustomEvent(MODAL_STATE_EVENT, { detail: { isOpen } })
-    );
+    window.dispatchEvent(new CustomEvent(MODAL_STATE_EVENT, { detail: { isOpen } }));
   }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -52,7 +50,6 @@ export default function NameInput() {
           placeholder="Wpisz imię"
           className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           aria-label="Wprowadź swoje imię"
-          autoFocus={true}
         />
         <div className="flex gap-2 justify-end">
           <Button type="button" variant="cancel" onClick={handleClose}>
@@ -67,11 +64,7 @@ export default function NameInput() {
   }
 
   return (
-    <Button
-      onClick={handleOpen}
-      variant="ok"
-      aria-label="Otwórz formularz wprowadzania imienia"
-    >
+    <Button onClick={handleOpen} variant="ok" aria-label="Otwórz formularz wprowadzania imienia">
       Podaj imię
     </Button>
   );
