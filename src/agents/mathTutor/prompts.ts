@@ -64,7 +64,7 @@ Jestem Twoim korepetytorem matematyki. Pomogę Ci zrozumieć trudne zagadnienia 
 
 // Message when user asks about non-math topics
 export const getOffTopicResponse = (): string => {
-  return `Przepraszam, ale jestem korepetytorem matematyki i mogę odpowiadać tylko na pytania związane z matemat yką. 📐
+  return `Przepraszam, ale jestem korepetytorem matematyki i mogę odpowiadać tylko na pytania związane z matematyką. 📐
 
 Czy masz jakieś pytanie z matematyki, w którym mogę Ci pomóc?`;
 };
