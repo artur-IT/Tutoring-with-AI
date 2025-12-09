@@ -1,0 +1,342 @@
+# Plan integracji z Mistral AI 🎯
+
+Data utworzenia: 8 grudnia 2025  
+Projekt: Chat-with-Hero (Tutor with AI)
+
+---
+
+## Cel projektu
+
+Połączenie aplikacji edukacyjnej z AI Mistral w celu stworzenia interaktywnego korepetytora, który pomoże nastolatkom w nauce poprzez personalizowane rozmowy dostosowane do ich zainteresowań i poziomu wiedzy.
+
+---
+
+## ETAP 1: Przygotowanie i konfiguracja
+
+### Krok 1.1 - Załóż konto i zdobądź API key
+
+- Załóż konto na platformie Mistral AI (mistral.ai)
+- Wygeneruj klucz API w panelu deweloperskim
+- Zapisz klucz w bezpiecznym miejscu
+
+### Krok 1.2 - Zainstaluj niezbędną bibliotekę
+
+- Dodaj oficjalną bibliotekę klienta Mistral do projektu
+- Możesz użyć `@mistralai/mistralai` lub po prostu `fetch` API
+- Dodaj paczkę do `package.json`
+
+### Krok 1.3 - Zabezpiecz klucz API
+
+- Stwórz plik `.env` w głównym katalogu projektu
+- Dodaj klucz API do zmiennych środowiskowych
+- Upewnij się, że `.env` jest w `.gitignore`
+- Format: `MISTRAL_API_KEY=your_api_key_here`
+
+---
+
+## ETAP 2: Struktura agentów (zgodnie z zasadami projektu)
+
+### Krok 2.1 - Stwórz folder dla agentów
+
+- Utwórz folder `src/agents/` (zgodnie z zasadami projektu)
+- To będzie miejsce na wszystkich korepetytorów
+- Struktura: `src/agents/[przedmiot]Tutor/`
+
+### Krok 2.2 - Przygotuj strukturę pierwszego agenta (np. matematyka)
+
+- Stwórz folder `src/agents/mathTutor/`
+- W środku będą pliki:
+  - `config.ts` - konfiguracja agenta
+  - `prompts.ts` - prompty systemowe
+  - `index.ts` - główna logika
+  - `types.ts` - typy TypeScript
+
+### Krok 2.3 - Zaprojektuj konfigurację agenta
+
+#### `config.ts`
+
+- Osobowość agenta (przyjazny, cierpliwy nauczyciel)
+- Ograniczenia (tylko matematyka, bezpieczne treści)
+- Model AI (np. `mistral-small`, `mistral-medium`)
+- Parametry (temperatura, max tokens)
+
+#### `prompts.ts`
+
+- Prompt systemowy (instrukcje dla AI)
+- Styl odpowiedzi (krótki, zrozumiały, z przykładami)
+- Szablony wiadomości powitalnych
+- Kontekst edukacyjny
+
+#### `types.ts`
+
+- Interfejs wiadomości (Message)
+- Interfejs odpowiedzi AI (AIResponse)
+- Typ danych studenta (StudentData)
+- Typ historii konwersacji (ChatHistory)
+
+#### `index.ts`
+
+- Funkcja wysyłania wiadomości do Mistral
+- Funkcja formatowania historii
+- Funkcja personalizacji na podstawie danych studenta
+- Obsługa błędów
+
+---
+
+## ETAP 3: Backend - API endpoint
+
+### Krok 3.1 - Stwórz folder dla API
+
+- W `src/pages/api/` dodaj nowy plik dla chatu
+- Nazwa: `src/pages/api/chat.ts` lub `chat.json.ts`
+- Format: Astro API endpoint
+
+### Krok 3.2 - Zaprojektuj endpoint do rozmowy
+
+#### Request (co przyjmuje):
+
+- Wiadomość użytkownika (message: string)
+- Historia czatu (history: Message[])
+- Dane studenta (studentData: StudentData)
+- ID agenta/przedmiotu (subject: string)
+
+#### Response (co zwraca):
+
+- Odpowiedź AI (response: string)
+- Status (success: boolean)
+- Błąd (error?: string)
+- Metadata (tokeny, czas odpowiedzi)
+
+### Krok 3.3 - Zaimplementuj logikę wywołania Mistral
+
+1. Walidacja danych wejściowych
+2. Pobranie odpowiedniego agenta (np. mathTutor)
+3. Przygotowanie kontekstu:
+   - Prompt systemowy z `prompts.ts`
+   - Dane studenta (zainteresowania, poziom)
+   - Historia konwersacji (ostatnie N wiadomości)
+4. Wywołanie Mistral API
+5. Przetworzenie odpowiedzi
+6. Zwrócenie wyniku do frontendu
+
+**Bezpieczeństwo:**
+
+- Sprawdzenie czy pytanie jest związane z przedmiotem
+- Filtrowanie niewłaściwych treści
+- Rate limiting (ograniczenie liczby zapytań)
+
+---
+
+## ETAP 4: Frontend - Interaktywny chat
+
+### Krok 4.1 - Dodaj stan w komponencie Chat.tsx
+
+```typescript
+// Stan do dodania:
+const [messages, setMessages] = useState<Message[]>([]);
+const [inputValue, setInputValue] = useState("");
+const [isLoading, setIsLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
+```
+
+### Krok 4.2 - Stwórz funkcję wysyłania wiadomości
+
+1. Pobierz dane studenta z localStorage
+2. Dodaj wiadomość użytkownika do listy
+3. Wyślij request do `/api/chat`
+4. Pokaż loading state
+5. Odbierz odpowiedź AI
+6. Dodaj odpowiedź do listy wiadomości
+7. Obsłuż błędy
+
+### Krok 4.3 - Zaktualizuj UI do wyświetlania prawdziwej konwersacji
+
+- Zastąp statyczne przykłady dynamiczną listą `messages.map()`
+- Rozróżnij wizualnie: wiadomości użytkownika vs AI
+- Dodaj auto-scroll do ostatniej wiadomości
+- Pokaż timestamp dla każdej wiadomości (opcjonalnie)
+
+### Krok 4.4 - Dodaj obsługę stanów ładowania
+
+**Loading state:**
+
+- Pokaż "AI pisze..." lub animację kropek
+- Zablokuj przycisk "Send" podczas ładowania
+- Zablokuj input podczas ładowania
+
+**Error state:**
+
+- Wyświetl przyjazny komunikat błędu
+- Pozwól na ponowienie próby
+- Loguj błędy do console
+
+**Empty state:**
+
+- Powitalna wiadomość od AI
+- Sugestie pierwszych pytań
+- Krótki opis jak działa korepetytor
+
+---
+
+## ETAP 5: Personalizacja i bezpieczeństwo
+
+### Krok 5.1 - Wykorzystaj dane studenta
+
+Dane z localStorage (z poprzedniego kroku):
+
+- `studentData.subject` - wybrany przedmiot
+- `studentData.problem` - konkretne problemy
+- `studentData.interests` - zainteresowania
+
+**Wykorzystanie:**
+
+- Dostosuj prompt systemowy do przedmiotu
+- Użyj zainteresowań w przykładach
+- Personalizuj poziom trudności
+
+### Krok 5.2 - Dodaj ograniczenia bezpieczeństwa
+
+**W prompcie systemowym:**
+
+- Tylko odpowiedzi związane z przedmiotem
+- Bezpieczne treści dla nastolatków (13-19 lat)
+- Brak kontrowersyjnych tematów
+- Edukacyjny, wspierający ton
+
+**W kodzie:**
+
+- Filtrowanie niewłaściwych słów kluczowych
+- Walidacja długości wiadomości
+- Limit historii (np. ostatnie 20 wiadomości)
+- Timeout dla zapytań (np. 30 sekund)
+
+### Krok 5.3 - Implementuj timer sesji
+
+- Wykorzystaj istniejący pasek postępu w `Chat.tsx`
+- Ustaw limit czasu sesji (np. 30 minut)
+- Lub limit wiadomości (np. 50 pytań)
+- Po przekroczeniu: komunikat + przekierowanie do głównej strony
+- Zapisz historię do localStorage przed zakończeniem
+
+---
+
+## ETAP 6: Testowanie i optymalizacja
+
+### Krok 6.1 - Przetestuj podstawowy flow
+
+**Scenariusze testowe:**
+
+1. Użytkownik zadaje proste pytanie → otrzymuje odpowiedź
+2. Kontynuacja rozmowy → AI pamięta kontekst
+3. Pytanie z użyciem zainteresowań → spersonalizowana odpowiedź
+4. Długa konwersacja → historia działa poprawnie
+
+### Krok 6.2 - Przetestuj edge cases
+
+**Problemy do sprawdzenia:**
+
+- Pytanie spoza przedmiotu → AI uprzejmie odmawia
+- Błąd API → przyjazny komunikat dla użytkownika
+- Brak internetu → obsługa offline
+- Bardzo długie pytanie → obcięcie lub walidacja
+- Pusta wiadomość → blokada wysyłki
+- Szybkie klikanie "Send" → debouncing
+
+### Krok 6.3 - Optymalizuj koszty
+
+**Strategie oszczędzania:**
+
+- Ogranicz historię do ostatnich 10-15 wiadomości
+- Użyj `mistral-small` dla prostych pytań
+- `mistral-medium` tylko dla złożonych obliczeń
+- Skróć prompt systemowy (mniej tokenów)
+- Cache dla identycznych pytań (opcjonalnie)
+- Monitoruj użycie API w dashboard Mistral
+
+---
+
+## Kolejność wykonania (krok po kroku)
+
+### Faza przygotowawcza
+
+- [x] 1. Załóż konto Mistral i zdobądź API key
+- [x] 2. Zainstaluj bibliotekę + dodaj `.env`
+- [x] 3. Dodaj `.env` do `.gitignore`
+
+### Faza struktury
+
+- [x] 4. Stwórz folder `src/agents/`
+- [x] 5. Stwórz `src/agents/mathTutor/` z plikami
+- [x] 6. Napisz `config.ts` i `prompts.ts`
+- [x] 7. Napisz `types.ts` i `index.ts`
+
+### Faza backend
+
+- [ ] 8. Stwórz `src/pages/api/chat.ts`
+- [ ] 9. Zaimplementuj wywołanie Mistral API
+- [ ] 10. Dodaj walidację i bezpieczeństwo
+
+### Faza frontend
+
+- [ ] 11. Zaktualizuj `Chat.tsx` (dodaj stan)
+- [ ] 12. Zaimplementuj funkcję wysyłania wiadomości
+- [ ] 13. Zaktualizuj UI do dynamicznych wiadomości
+- [ ] 14. Dodaj loading/error states
+
+### Faza personalizacji
+
+- [ ] 15. Dołącz dane studenta do zapytań
+- [ ] 16. Zaimplementuj timer sesji
+- [ ] 17. Dodaj zapisywanie historii
+
+### Faza testów
+
+- [ ] 18. Testuj podstawowy flow
+- [ ] 19. Testuj edge cases
+- [ ] 20. Optymalizuj koszty i wydajność
+
+---
+
+## Najważniejsze zasady
+
+- **Małe kroki** - każdy krok to osobna, mała zmiana
+- **Testowanie** - testuj po każdym kroku
+- **Jeden agent** - zacznij od matematyki, później powiel strukturę
+- **Bezpieczeństwo** - zawsze waliduj dane wejściowe
+- **Koszty** - monitoruj użycie API
+- **UX** - wszystkie stany muszą być obsłużone (loading, error, empty)
+
+---
+
+## Przydatne linki
+
+- [Mistral AI Documentation](https://docs.mistral.ai/)
+- [Mistral API Reference](https://docs.mistral.ai/api/)
+- [Astro API Endpoints](https://docs.astro.build/en/core-concepts/endpoints/)
+- [React useState](https://react.dev/reference/react/useState)
+
+---
+
+## Notatki
+
+- Model: Zacznij od `mistral-small` (tańszy, szybszy)
+- Temperatura: 0.7 (dobra równowaga kreatywność/precyzja)
+- Max tokens: 500-1000 (krótkie, zwięzłe odpowiedzi)
+- Język: Polski (dla nastolatków w Polsce)
+
+---
+
+## Następne kroki po MVP
+
+1. Dodaj więcej agentów (chemTutor, physicsTutor, etc.)
+2. Zapisywanie historii w bazie danych (Supabase?)
+3. System nagród/gamifikacja
+4. Analityka postępów ucznia
+5. Panel rodzica/nauczyciela
+6. Tryb offline z podstawowymi odpowiedziami
+7. Integracja z materiałami nauczania
+
+---
+
+**Status:** 🚀 W trakcie implementacji (7/20 kroków wykonane)  
+**Następny krok:** Krok 8 - Stwórz `src/pages/api/chat.ts`
