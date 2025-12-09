@@ -79,7 +79,7 @@ export default function History() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-screen-md mx-auto">
+    <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
       {/* Header */}
       <h1 className="text-3xl font-bold text-gray-900 text-center mb-8 mt-8">Historia rozmów</h1>
 
@@ -92,7 +92,7 @@ export default function History() {
           </div>
         ) : (
           sessions.map((session) => (
-            <button
+            <div
               key={session.id}
               onClick={() => handleSessionClick(session.id)}
               onKeyDown={(e) => {
@@ -101,10 +101,12 @@ export default function History() {
                   handleSessionClick(session.id);
                 }
               }}
+              role="button"
+              tabIndex={0}
               className="bg-white shadow-md rounded-xl p-4 md:p-6 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-shadow w-full text-left"
             >
               {/* User icon */}
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
                   <img src={UserIcon} alt="" className="w-6 h-6 text-blue-600" />
                 </div>
@@ -121,7 +123,7 @@ export default function History() {
               </div>
 
               {/* Actions */}
-              <div className="flex-shrink-0 flex items-center gap-2">
+              <div className="shrink-0 flex items-center gap-2">
                 <button
                   onClick={(e) => handleDeleteSession(session.id, e)}
                   className="text-red-500 hover:text-red-700 p-2"
@@ -131,7 +133,7 @@ export default function History() {
                 </button>
                 <img src={ChevronRightIcon} alt="" className="w-5 h-5 text-gray-600" />
               </div>
-            </button>
+            </div>
           ))
         )}
       </div>
