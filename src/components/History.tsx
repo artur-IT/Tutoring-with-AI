@@ -1,28 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import UserIcon from "../assets/icons/user.svg?url";
 import ChevronRightIcon from "../assets/icons/chevron-right.svg?url";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
 import type { ChatHistory, ChatSession } from "../agents/mathTutor/types";
 
-export default function History() {
-  const [sessions, setSessions] = useState<ChatSession[]>([]);
-
-  useEffect(() => {
-    // Load all sessions from localStorage
-    const historyJson = localStorage.getItem("chatHistory");
-    if (historyJson) {
-      try {
-        const history: ChatHistory = JSON.parse(historyJson);
-        // Sort by last message time (newest first)
-        const sortedSessions = [...history.sessions].sort((a, b) => b.lastMessageAt - a.lastMessageAt);
-        setSessions(sortedSessions);
-        console.log("📚 [History.tsx] Załadowano", sortedSessions.length, "sesji");
-      } catch (e) {
-        console.error("Error loading history:", e);
-      }
+// Load sessions helper function
+const loadSessionsFromStorage = (): ChatSession[] => {
+  const historyJson = localStorage.getItem("chatHistory");
+  if (historyJson) {
+    try {
+      const history: ChatHistory = JSON.parse(historyJson);
+      // Sort by last message time (newest first)
+      return [...history.sessions].sort((a, b) => b.lastMessageAt - a.lastMessageAt);
+    } catch (e) {
+      console.error("Error loading history:", e);
+      return [];
     }
-  }, []);
+  }
+  return [];
+};
+
+export default function History() {
+  const [sessions, setSessions] = useState<ChatSession[]>(() => {
+    const loaded = loadSessionsFromStorage();
+    if (loaded.length > 0) {
+      console.log("📚 [History.tsx] Załadowano", loaded.length, "sesji");
+    }
+    return loaded;
+  });
 
   const handleSessionClick = (sessionId: string) => {
     // Set this session as current and redirect to chat
@@ -32,7 +38,10 @@ export default function History() {
         const history: ChatHistory = JSON.parse(historyJson);
         history.currentSessionId = sessionId;
         localStorage.setItem("chatHistory", JSON.stringify(history));
-        window.location.href = "/chat";
+        // Use location.assign instead of direct assignment
+        setTimeout(() => {
+          location.assign("/chat");
+        }, 0);
       } catch (e) {
         console.error("Error setting current session:", e);
       }
@@ -83,10 +92,16 @@ export default function History() {
           </div>
         ) : (
           sessions.map((session) => (
-            <div
+            <button
               key={session.id}
               onClick={() => handleSessionClick(session.id)}
-              className="bg-white shadow-md rounded-xl p-4 md:p-6 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-shadow"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleSessionClick(session.id);
+                }
+              }}
+              className="bg-white shadow-md rounded-xl p-4 md:p-6 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-shadow w-full text-left"
             >
               {/* User icon */}
               <div className="flex-shrink-0">
@@ -116,7 +131,7 @@ export default function History() {
                 </button>
                 <img src={ChevronRightIcon} alt="" className="w-5 h-5 text-gray-600" />
               </div>
-            </div>
+            </button>
           ))
         )}
       </div>
@@ -133,4 +148,3 @@ export default function History() {
     </div>
   );
 }
-
