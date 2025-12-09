@@ -1,7 +1,7 @@
 import { Mistral } from "@mistralai/mistralai";
 import { mathTutorConfig, contentRestrictions } from "./config";
 import { getSystemPrompt, getOffTopicResponse } from "./prompts";
-import type { Message, ChatHistory, AIResponse, StudentData } from "./types";
+import type { Message, AIResponse, StudentData } from "./types";
 
 // Initialize Mistral client
 // API key should be in environment variable MISTRAL_API_KEY
