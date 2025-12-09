@@ -46,7 +46,9 @@ export default function Chat() {
   const saveCurrentSession = () => {
     if (!currentSessionId || messages.length === 0) return;
 
-    const history: ChatHistory = JSON.parse(localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}');
+    const history: ChatHistory = JSON.parse(
+      localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}'
+    );
 
     const sessionIndex = history.sessions.findIndex((s) => s.id === currentSessionId);
     const session: ChatSession = {
@@ -67,20 +69,6 @@ export default function Chat() {
     history.currentSessionId = currentSessionId;
     localStorage.setItem("chatHistory", JSON.stringify(history));
     console.log("💾 [Chat.tsx] Sesja zapisana:", sessionName);
-  };
-
-  // Load session from history
-  const loadSession = (sessionId: string) => {
-    const history: ChatHistory = JSON.parse(localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}');
-    const session = history.sessions.find((s) => s.id === sessionId);
-
-    if (session) {
-      setCurrentSessionId(session.id);
-      setSessionName(session.name);
-      setMessages(session.messages);
-      setTokensUsed(session.tokensUsed);
-      console.log("📂 [Chat.tsx] Sesja załadowana:", session.name);
-    }
   };
 
   // Load student data and current session on mount
@@ -133,8 +121,7 @@ export default function Chat() {
     if (currentSessionId && messages.length > 0) {
       saveCurrentSession();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages, tokensUsed, currentSessionId]);
+  }, [messages, tokensUsed, currentSessionId, sessionName]);
 
   // Send message to API
   const handleSend = async () => {
@@ -363,12 +350,13 @@ export default function Chat() {
         </div>
         <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-300 ${tokensUsed / TOKEN_LIMIT < 0.7
-              ? "bg-blue-600"
-              : tokensUsed / TOKEN_LIMIT < 0.9
-                ? "bg-yellow-500"
-                : "bg-red-500"
-              }`}
+            className={`h-full rounded-full transition-all duration-300 ${
+              tokensUsed / TOKEN_LIMIT < 0.7
+                ? "bg-blue-600"
+                : tokensUsed / TOKEN_LIMIT < 0.9
+                  ? "bg-yellow-500"
+                  : "bg-red-500"
+            }`}
             style={{ width: `${Math.min((tokensUsed / TOKEN_LIMIT) * 100, 100)}%` }}
           ></div>
         </div>
