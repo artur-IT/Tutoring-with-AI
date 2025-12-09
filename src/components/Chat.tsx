@@ -236,9 +236,29 @@ export default function Chat() {
           <a href="/history" className="text-sm text-gray-600 hover:text-gray-800">
             📋 Historia
           </a>
-          <a href="/">
-            <Button variant="back">Koniec</Button>
-          </a>
+          <Button
+            variant="back"
+            onClick={() => {
+              // Save current session if there are messages
+              if (messages.length > 0) {
+                saveCurrentSession();
+              }
+
+              // Clear current session ID so next chat starts fresh
+              const history: ChatHistory = JSON.parse(
+                localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}'
+              );
+              history.currentSessionId = null;
+              localStorage.setItem("chatHistory", JSON.stringify(history));
+
+              console.log("✅ [Chat.tsx] Sesja zakończona, następny chat będzie czysty");
+
+              // Redirect to home page
+              window.location.href = "/";
+            }}
+          >
+            Koniec
+          </Button>
         </div>
       </div>
 
