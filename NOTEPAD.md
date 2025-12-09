@@ -1,3 +1,8 @@
+Mistral API Key:
+aiD9kZNHp11JSM1VaAR3EofNn2MNITFH
+
+---
+
 MOJE RULES
 Zrefaktoryzuj kod stosując głównie te zalecenia:
 
