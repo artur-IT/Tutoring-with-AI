@@ -272,16 +272,16 @@ Dane z localStorage (z poprzedniego kroku):
 
 ### Faza backend
 
-- [ ] 8. Stwórz `src/pages/api/chat.ts`
-- [ ] 9. Zaimplementuj wywołanie Mistral API
-- [ ] 10. Dodaj walidację i bezpieczeństwo
+- [x] 8. Stwórz `src/pages/api/chat.ts`
+- [x] 9. Zaimplementuj wywołanie Mistral API
+- [x] 10. Dodaj walidację i bezpieczeństwo
 
 ### Faza frontend
 
-- [ ] 11. Zaktualizuj `Chat.tsx` (dodaj stan)
-- [ ] 12. Zaimplementuj funkcję wysyłania wiadomości
-- [ ] 13. Zaktualizuj UI do dynamicznych wiadomości
-- [ ] 14. Dodaj loading/error states
+- [x] 11. Zaktualizuj `Chat.tsx` (dodaj stan)
+- [x] 12. Zaimplementuj funkcję wysyłania wiadomości
+- [x] 13. Zaktualizuj UI do dynamicznych wiadomości
+- [x] 14. Dodaj loading/error states
 
 ### Faza personalizacji
 
@@ -338,5 +338,5 @@ Dane z localStorage (z poprzedniego kroku):
 
 ---
 
-**Status:** 🚀 W trakcie implementacji (7/20 kroków wykonane)  
-**Następny krok:** Krok 8 - Stwórz `src/pages/api/chat.ts`
+**Status:** ✅ MVP ukończone! (14/20 kroków wykonane - wszystkie kluczowe funkcje działają)  
+**Następny krok:** Opcjonalnie: Usuń console.logi lub dostosuj je do produkcji

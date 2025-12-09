@@ -14,10 +14,20 @@ export interface Message {
   timestamp?: number;
 }
 
-// Chat history structure
-export interface ChatHistory {
+// Chat session (single conversation)
+export interface ChatSession {
+  id: string;
+  name: string; // e.g., "2025-12-09 17:45"
   messages: Message[];
-  studentData?: StudentData;
+  tokensUsed: number;
+  createdAt: number;
+  lastMessageAt: number;
+}
+
+// All chat sessions
+export interface ChatHistory {
+  sessions: ChatSession[];
+  currentSessionId: string | null;
 }
 
 // Response from Mistral API
