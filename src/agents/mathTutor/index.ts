@@ -1,6 +1,6 @@
 import { Mistral } from "@mistralai/mistralai";
 import { mathTutorConfig, contentRestrictions } from "./config";
-import { getSystemPrompt, getOffTopicResponse } from "./prompts";
+import { getSystemPrompt } from "./prompts";
 import type { Message, AIResponse, StudentData } from "./types";
 
 // Initialize Mistral client
@@ -30,21 +30,6 @@ const validateMessage = (message: string): { valid: boolean; error?: string } =>
   }
 
   return { valid: true };
-};
-
-// Check if question is related to mathematics
-// Uses keywords and symbols from config.ts
-const isMathRelated = (message: string): boolean => {
-  const lowerMessage = message.toLowerCase();
-
-  // Check if message contains math keywords (Polish words like "równanie", "oblicz", etc.)
-  const containsKeyword = contentRestrictions.mathKeywords.some((keyword) => lowerMessage.includes(keyword));
-
-  // Check if message contains math symbols (numbers, operators, etc.)
-  const containsMathSymbols = contentRestrictions.mathSymbolsPattern.test(message);
-
-  // Return true if either keywords or symbols are found
-  return containsKeyword || containsMathSymbols;
 };
 
 // Format conversation history for Mistral API
@@ -89,18 +74,9 @@ export const sendMessage = async (
     }
     console.log("✅ [MathTutor] Walidacja OK");
 
-    // Check if question is math-related
-    console.log("🔍 [MathTutor] Sprawdzanie czy pytanie dotyczy matematyki...");
-    const isMath = isMathRelated(userMessage);
-    console.log(`${isMath ? "✅" : "❌"} [MathTutor] Pytanie ${isMath ? "dotyczy" : "NIE dotyczy"} matematyki`);
-
-    if (!isMath) {
-      console.log("↩️ [MathTutor] Zwracam odpowiedź off-topic");
-      return {
-        success: true,
-        response: getOffTopicResponse(),
-      };
-    }
+    // Note: Math-related check disabled to allow more natural learning conversation
+    // System prompt will guide the AI to stay on topic
+    console.log("ℹ️ [MathTutor] Sprawdzanie słów kluczowych wyłączone - system prompt trzyma temat");
 
     // Add user message to history
     const userMsg: Message = {

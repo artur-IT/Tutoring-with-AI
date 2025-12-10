@@ -30,7 +30,7 @@ STYL ODPOWIEDZI:
 
     if (studentData.problem) {
       personalizedSection += `\n- Uczeń ma problem z: ${studentData.problem}`;
-      personalizedSection += "\n- Dostosuj wyjaśnienia do tego obszaru, gdy to możliwe";
+      personalizedSection += "\n- Dostosuj wyjaśnienia tylko do tego obszaru, gdy to możliwe";
     }
 
     if (studentData.interests) {
@@ -46,7 +46,7 @@ STYL ODPOWIEDZI:
 
 // Welcome message for the tutor
 export const getWelcomeMessage = (studentData?: StudentData): string => {
-  const studentName = studentData ? "uczniu" : "użytkowniku";
+  const studentName = localStorage.getItem("userName");
 
   let welcomeMsg = `Cześć ${studentName}! 👋
 

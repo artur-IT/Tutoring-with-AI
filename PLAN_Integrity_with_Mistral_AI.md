@@ -287,7 +287,7 @@ Dane z localStorage (z poprzedniego kroku):
 
 - [ ] 15. Dołącz dane studenta do zapytań
 - [ ] 16. Zaimplementuj timer sesji
-- [ ] 17. Dodaj zapisywanie historii
+- [x] 17. Dodaj zapisywanie historii
 
 ### Faza testów
 
