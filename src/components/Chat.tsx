@@ -18,7 +18,7 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Token limit per session (can be adjusted)
-  const TOKEN_LIMIT = 10000;
+  const TOKEN_LIMIT = 128_000;
 
   // Create session name from date
   const createSessionName = () => {
@@ -123,6 +123,82 @@ export default function Chat() {
     }
   }, [messages, tokensUsed, currentSessionId, sessionName]);
 
+  // Send initial greeting from AI after 2 seconds
+  useEffect(() => {
+    // Only trigger if: no messages yet, we have student data, not loading, and we have a session
+    if (messages.length === 0 && studentData && !isLoading && currentSessionId) {
+      console.log("⏳ [Chat.tsx] Planowanie automatycznej wiadomości powitalnej za 2 sekundy...");
+
+      const timer = setTimeout(() => {
+        console.log("🤖 [Chat.tsx] Wysyłanie automatycznej wiadomości powitalnej...");
+        sendInitialGreeting();
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [messages.length, studentData, isLoading, currentSessionId]);
+
+  // Send initial greeting message
+  const sendInitialGreeting = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Create a special initial message that asks AI to start the conversation
+      // Include the student's problem to pass the math topic check in the agent
+      const initialPrompt = studentData?.problem
+        ? `Przywitaj się i ogólnie wprowadź temat: ${studentData.problem}. Nie odpowiadaj na konkretne pytanie, tylko nawiąż do tematu.`
+        : `Przywitaj się i powiedz ogólnie coś o matematyce.`;
+
+      const requestBody = {
+        message: initialPrompt,
+        history: [],
+        studentData,
+        subject: studentData?.subject || "matematyka",
+      };
+
+      console.log("🔄 [Chat.tsx] Initial greeting request:", {
+        studentData: requestBody.studentData,
+        subject: requestBody.subject,
+      });
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log("📡 [Chat.tsx] Initial greeting response status:", response.status);
+      const data: AIResponse = await response.json();
+      console.log("📦 [Chat.tsx] Initial greeting response data:", data);
+
+      if (data.success && data.response) {
+        const aiMessage: Message = {
+          role: "assistant",
+          content: data.response,
+          timestamp: Date.now(),
+        };
+        console.log("✅ [Chat.tsx] AI rozpoczęło rozmowę:", aiMessage.content.substring(0, 100) + "...");
+        setMessages([aiMessage]);
+
+        // Update tokens count
+        if (data.metadata?.tokens) {
+          setTokensUsed(data.metadata.tokens);
+          console.log("🎫 [Chat.tsx] Tokeny użyte w powitaniu:", data.metadata.tokens);
+        }
+      } else {
+        console.error("❌ [Chat.tsx] Błąd w automatycznym powitaniu:", data.error);
+        setError(data.error || "Wystąpił błąd podczas rozpoczynania rozmowy");
+      }
+    } catch (err) {
+      console.error("❌ [Chat.tsx] Initial greeting error:", err);
+      setError("Nie można połączyć się z serwerem");
+    } finally {
+      setIsLoading(false);
+      console.log("✅ [Chat.tsx] Zakończono wysyłanie automatycznego powitania");
+    }
+  };
+
   // Send message to API
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -217,25 +293,11 @@ export default function Chat() {
     <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto relative">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <button
-          onClick={() => {
-            if (confirm("Czy chcesz rozpocząć nową sesję czatu?")) {
-              saveCurrentSession(); // Save current before creating new
-              createNewSession();
-            }
-          }}
-          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-        >
-          ➕ Nowa sesja
-        </button>
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">Chat</h1>
           {sessionName && <p className="text-xs text-gray-500 mt-1">{sessionName}</p>}
         </div>
         <div className="flex gap-2">
-          <a href="/history" className="text-sm text-gray-600 hover:text-gray-800">
-            📋 Historia
-          </a>
           <Button
             variant="back"
             onClick={() => {
@@ -266,9 +328,11 @@ export default function Chat() {
       <div className="flex-1 space-y-4 mb-4 overflow-y-auto">
         {messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
-            <p className="text-lg mb-2">👋 Cześć!</p>
-            <p className="text-sm">Jestem Twoim korepetytorem matematyki.</p>
-            <p className="text-sm">Zadaj mi dowolne pytanie!</p>
+            <p className="text-lg mb-2">👋 Cześć {localStorage.getItem("userName")}</p>
+            <p className="text-sm">
+              Twój problem to <span className="font-bold">{studentData?.problem}</span>
+            </p>
+            <p className="text-sm">Postaram się to wytłumaczyć w sposób, który będzie dla Ciebie zrozumiały</p>
           </div>
         )}
 
@@ -292,8 +356,8 @@ export default function Chat() {
                 <p className="text-sm text-white whitespace-pre-wrap">{msg.content}</p>
               </div>
               <div className="shrink-0">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <img src={UserIcon} alt="" className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-2xl">
+                  {studentData?.avatar || "😊"}
                 </div>
               </div>
             </div>
@@ -344,7 +408,7 @@ export default function Chat() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               disabled={isLoading}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+              className="w-full rounded-lg border text-sm border-gray-300 px-3 py-2 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
             />
           </div>
           {/* Send button */}

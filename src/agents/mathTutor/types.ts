@@ -5,6 +5,7 @@ export interface StudentData {
   subject: string;
   problem: string;
   interests: string;
+  avatar?: string; // User's chosen emoji avatar
 }
 
 // Single message in conversation
