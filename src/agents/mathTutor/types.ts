@@ -3,7 +3,8 @@
 // Student data structure from localStorage
 export interface StudentData {
   subject: string;
-  problem: string;
+  topic: string; // Selected topic from predefined list (e.g., "Równania i nierówności")
+  problem: string; // Detailed problem description (required)
   interests: string;
   avatar?: string; // User's chosen emoji avatar
 }
@@ -36,6 +37,7 @@ export interface AIResponse {
   success: boolean;
   response?: string;
   error?: string;
+  shouldRedirect?: boolean; // If true, redirect user to topic selection
   metadata?: {
     tokens?: number;
     model?: string;

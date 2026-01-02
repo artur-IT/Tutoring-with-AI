@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "./ui/button";
 import UserIcon from "../assets/icons/user.svg?url";
 import PlusIcon from "../assets/icons/plus.svg?url";
@@ -6,7 +6,6 @@ import SendIcon from "../assets/icons/send.svg?url";
 import type { Message, StudentData, AIResponse, ChatSession, ChatHistory } from "../agents/mathTutor/types";
 
 export default function Chat() {
-  // State
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +14,7 @@ export default function Chat() {
   const [tokensUsed, setTokensUsed] = useState(0);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [sessionName, setSessionName] = useState<string>("");
+  const [shouldSaveSession, setShouldSaveSession] = useState(true); // Flag to prevent saving sessions ended due to topic mismatch
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Token limit per session (can be adjusted)
@@ -29,7 +29,7 @@ export default function Chat() {
   };
 
   // Create new session
-  const createNewSession = () => {
+  const createNewSession = useCallback(() => {
     const newSessionId = Date.now().toString();
     const newSessionName = createSessionName();
 
@@ -37,14 +37,21 @@ export default function Chat() {
     setSessionName(newSessionName);
     setMessages([]);
     setTokensUsed(0);
+    setShouldSaveSession(true); // Reset flag for new session
 
     console.log("🆕 [Chat.tsx] Nowa sesja utworzona:", newSessionName);
     return { id: newSessionId, name: newSessionName };
-  };
+  }, []);
 
   // Save current session to history
-  const saveCurrentSession = () => {
+  const saveCurrentSession = useCallback(() => {
     if (!currentSessionId || messages.length === 0) return;
+
+    // Don't save session if it was ended due to topic mismatch
+    if (!shouldSaveSession) {
+      console.log("🚫 [Chat.tsx] Pomijam zapis sesji - zakończona z powodu niezgodności tematu");
+      return;
+    }
 
     const history: ChatHistory = JSON.parse(
       localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}'
@@ -69,7 +76,25 @@ export default function Chat() {
     history.currentSessionId = currentSessionId;
     localStorage.setItem("chatHistory", JSON.stringify(history));
     console.log("💾 [Chat.tsx] Sesja zapisana:", sessionName);
-  };
+  }, [currentSessionId, sessionName, messages, tokensUsed, shouldSaveSession]);
+
+  // Remove current session from history (used when topic mismatch is detected)
+  const removeCurrentSessionFromHistory = useCallback(() => {
+    if (!currentSessionId) return;
+
+    const history: ChatHistory = JSON.parse(
+      localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}'
+    );
+
+    // Remove session from history
+    history.sessions = history.sessions.filter((s) => s.id !== currentSessionId);
+
+    // Clear current session ID
+    history.currentSessionId = null;
+
+    localStorage.setItem("chatHistory", JSON.stringify(history));
+    console.log("🗑️ [Chat.tsx] Sesja usunięta z historii z powodu niezgodności tematu");
+  }, [currentSessionId]);
 
   // Load student data and current session on mount
   useEffect(() => {
@@ -109,7 +134,7 @@ export default function Chat() {
     } else {
       createNewSession();
     }
-  }, []);
+  }, [createNewSession]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -118,28 +143,13 @@ export default function Chat() {
 
   // Save session when messages or tokens change
   useEffect(() => {
-    if (currentSessionId && messages.length > 0) {
+    if (currentSessionId && messages.length > 0 && shouldSaveSession) {
       saveCurrentSession();
     }
-  }, [messages, tokensUsed, currentSessionId, sessionName]);
-
-  // Send initial greeting from AI after 2 seconds
-  useEffect(() => {
-    // Only trigger if: no messages yet, we have student data, not loading, and we have a session
-    if (messages.length === 0 && studentData && !isLoading && currentSessionId) {
-      console.log("⏳ [Chat.tsx] Planowanie automatycznej wiadomości powitalnej za 2 sekundy...");
-
-      const timer = setTimeout(() => {
-        console.log("🤖 [Chat.tsx] Wysyłanie automatycznej wiadomości powitalnej...");
-        sendInitialGreeting();
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [messages.length, studentData, isLoading, currentSessionId]);
+  }, [messages, tokensUsed, currentSessionId, sessionName, shouldSaveSession, saveCurrentSession]);
 
   // Send initial greeting message
-  const sendInitialGreeting = async () => {
+  const sendInitialGreeting = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -186,6 +196,23 @@ export default function Chat() {
           setTokensUsed(data.metadata.tokens);
           console.log("🎫 [Chat.tsx] Tokeny użyte w powitaniu:", data.metadata.tokens);
         }
+
+        // Check if we should redirect to topic selection (topic mismatch detected)
+        if (data.shouldRedirect) {
+          console.log("🔄 [Chat.tsx] Wykryto niezgodność tematu w powitaniu - przekierowanie");
+          console.log("🔄 [Chat.tsx] Treść odpowiedzi AI:", data.response);
+          // Prevent saving this session to history
+          setShouldSaveSession(false);
+          // Remove session from history if it was already saved
+          removeCurrentSessionFromHistory();
+          // Clear student data to force new selection
+          localStorage.removeItem("studentData");
+          setTimeout(() => {
+            console.log("🔄 [Chat.tsx] Wykonuję przekierowanie do /tutors");
+            // Redirect to topic selection page using replace to avoid back button issues
+            window.location.replace("/tutors");
+          }, 8000); // 8 seconds delay to let user read the message
+        }
       } else {
         console.error("❌ [Chat.tsx] Błąd w automatycznym powitaniu:", data.error);
         setError(data.error || "Wystąpił błąd podczas rozpoczynania rozmowy");
@@ -197,7 +224,22 @@ export default function Chat() {
       setIsLoading(false);
       console.log("✅ [Chat.tsx] Zakończono wysyłanie automatycznego powitania");
     }
-  };
+  }, [studentData, removeCurrentSessionFromHistory]);
+
+  // Send initial greeting from AI after 2 seconds
+  useEffect(() => {
+    // Only trigger if: no messages yet, we have student data, not loading, and we have a session
+    if (messages.length === 0 && studentData && !isLoading && currentSessionId) {
+      console.log("⏳ [Chat.tsx] Planowanie automatycznej wiadomości powitalnej za 2 sekundy...");
+
+      const timer = setTimeout(() => {
+        console.log("🤖 [Chat.tsx] Wysyłanie automatycznej wiadomości powitalnej...");
+        sendInitialGreeting();
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [messages.length, studentData, isLoading, currentSessionId, sendInitialGreeting]);
 
   // Send message to API
   const handleSend = async () => {
@@ -239,6 +281,7 @@ export default function Chat() {
       console.log("📡 [Chat.tsx] Response status:", response.status);
       const data: AIResponse = await response.json();
       console.log("📦 [Chat.tsx] Response data:", data);
+      console.log("🔄 [Chat.tsx] shouldRedirect:", data.shouldRedirect);
 
       if (data.success && data.response) {
         const aiMessage: Message = {
@@ -255,6 +298,25 @@ export default function Chat() {
           setTokensUsed(newTokensUsed);
           console.log("🎫 [Chat.tsx] Tokeny użyte w tej odpowiedzi:", data.metadata.tokens);
           console.log("📊 [Chat.tsx] Suma tokenów w sesji:", newTokensUsed);
+        }
+
+        // Check if we should redirect to topic selection
+        if (data.shouldRedirect) {
+          console.log("🔄 [Chat.tsx] Wykryto niezgodność tematu - przekierowanie");
+          console.log("🔄 [Chat.tsx] Treść odpowiedzi AI:", data.response);
+          // Prevent saving this session to history
+          setShouldSaveSession(false);
+          // Remove session from history if it was already saved
+          removeCurrentSessionFromHistory();
+          // Clear student data to force new selection
+          localStorage.removeItem("studentData");
+          setTimeout(() => {
+            console.log("🔄 [Chat.tsx] Wykonuję przekierowanie do /tutors");
+            // Redirect to topic selection page using replace to avoid back button issues
+            window.location.replace("/tutors");
+          }, 8000); // 8 seconds delay to let user read the message
+        } else {
+          console.log("ℹ️ [Chat.tsx] shouldRedirect jest false, brak przekierowania");
         }
       } else {
         console.error("❌ [Chat.tsx] Błąd w odpowiedzi:", data.error);
@@ -312,7 +374,6 @@ export default function Chat() {
               );
               history.currentSessionId = null;
               localStorage.setItem("chatHistory", JSON.stringify(history));
-
               console.log("✅ [Chat.tsx] Sesja zakończona, następny chat będzie czysty");
 
               // Redirect to home page
@@ -340,9 +401,7 @@ export default function Chat() {
           msg.role === "assistant" ? (
             <div key={idx} className="flex items-start gap-3">
               <div className="shrink-0">
-                <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
-                  <img src={UserIcon} alt="" className="w-5 h-5" />
-                </div>
+                <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-2xl">👨‍🏫</div>
               </div>
               <div className="bg-yellow-200 rounded-2xl px-4 py-3 max-w-[80%]">
                 <p className="text-sm font-semibold text-gray-900 mb-1">Korepetytor</p>
@@ -357,7 +416,7 @@ export default function Chat() {
               </div>
               <div className="shrink-0">
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-2xl">
-                  {studentData?.avatar || "😊"}
+                  {studentData?.avatar || "🦊"}
                 </div>
               </div>
             </div>
@@ -434,13 +493,7 @@ export default function Chat() {
         </div>
         <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-300 ${
-              tokensUsed / TOKEN_LIMIT < 0.7
-                ? "bg-blue-600"
-                : tokensUsed / TOKEN_LIMIT < 0.9
-                  ? "bg-yellow-500"
-                  : "bg-red-500"
-            }`}
+            className={`h-full rounded-full transition-all duration-300 ${tokensUsed / TOKEN_LIMIT < 0.7 ? "bg-blue-600" : tokensUsed / TOKEN_LIMIT < 0.9 ? "bg-yellow-500" : "bg-red-500"}`}
             style={{ width: `${Math.min((tokensUsed / TOKEN_LIMIT) * 100, 100)}%` }}
           ></div>
         </div>
