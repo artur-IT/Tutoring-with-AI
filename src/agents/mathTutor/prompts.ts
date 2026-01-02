@@ -28,9 +28,24 @@ STYL ODPOWIEDZI:
   if (studentData) {
     let personalizedSection = "\n\nINFORMACJE O UCZNIU:";
 
+    if (studentData.topic) {
+      personalizedSection += `\n- Uczeń wybrał temat: ${studentData.topic}`;
+      personalizedSection += "\n\nWAŻNE - WERYFIKACJA TEMATU:";
+      personalizedSection += "\n- PRZED ODPOWIEDZIĄ ZAWSZE SPRAWDŹ czy problem ucznia pasuje do wybranego tematu";
+      personalizedSection += "\n- Jeśli problem NIE pasuje do tematu, ZAKOŃCZ rozmowę następującą wiadomością:";
+      personalizedSection +=
+        '\n  "Przepraszam, ale Twój problem nie pasuje do wybranego tematu. Musisz wrócić do formularza i wybrać właściwy temat. Rozmowa zostaje zakończona."';
+      personalizedSection +=
+        "\n- Po wysłaniu tej wiadomości NIE odpowiadaj na dalsze pytania - rozmowa jest zakończona";
+      personalizedSection += "\n- Jeśli problem pasuje do tematu, kontynuuj normalną odpowiedź";
+      personalizedSection +=
+        "\n- Przykład: Uczeń wybrał 'Równania i nierówności', ale problem dotyczy 'kwasy' → zakończ rozmowę";
+    }
+
     if (studentData.problem) {
-      personalizedSection += `\n- Uczeń ma problem z: ${studentData.problem}`;
-      personalizedSection += "\n- Dostosuj wyjaśnienia tylko do tego obszaru, gdy to możliwe";
+      personalizedSection += `\n- Problem ucznia: ${studentData.problem}`;
+      personalizedSection += "\n- Użyj tego problemu do weryfikacji zgodności z wybranym tematem";
+      personalizedSection += "\n- Dostosuj wyjaśnienia do tego obszaru, gdy to możliwe";
     }
 
     if (studentData.interests) {
@@ -52,12 +67,16 @@ export const getWelcomeMessage = (studentData?: StudentData): string => {
 
 Jestem Twoim korepetytorem matematyki. Pomogę Ci zrozumieć trudne zagadnienia w prosty sposób.`;
 
+  if (studentData?.topic) {
+    welcomeMsg += `\n\nWidzę, że wybrałeś temat: **${studentData.topic}**.`;
+  }
+
   if (studentData?.problem) {
-    welcomeMsg += `\n\nWidzę, że masz problem z: **${studentData.problem}**. Chętnie Ci to wytłumaczę!`;
+    welcomeMsg += `\n\nTwój problem: **${studentData.problem}**. Chętnie Ci to wytłumaczę!`;
   }
 
   welcomeMsg +=
-    "\n\nZadaj mi dowolne pytanie z matematyki, a postaram się wytłumaczyć to w sposób, który będzie dla Ciebie zrozumiały. 🎯";
+    "\n\nZadaj mi dowolne pytanie z matematyki związane z wybranym tematem, a postaram się wytłumaczyć to w sposób, który będzie dla Ciebie zrozumiały. 🎯";
 
   return welcomeMsg;
 };
@@ -67,6 +86,23 @@ export const getOffTopicResponse = (): string => {
   return `Przepraszam, ale jestem korepetytorem matematyki i mogę odpowiadać tylko na pytania związane z matematyką. 📐
 
 Czy masz jakieś pytanie z matematyki, w którym mogę Ci pomóc?`;
+};
+
+// Message when user's problem doesn't match selected topic
+export const getTopicMismatchResponse = (selectedTopic: string, suggestedTopic?: string): string => {
+  let response = `Widzę, że wybrałeś temat: **${selectedTopic}**, ale Twój problem nie pasuje do tego tematu. 📝\n\n`;
+
+  if (suggestedTopic) {
+    response += `Wygląda na to, że Twój problem bardziej pasuje do tematu: **${suggestedTopic}**. `;
+    response += "Czy chcesz zmienić temat, czy może masz pytanie związane z wybranym tematem?\n\n";
+  } else {
+    response += "Czy możesz sprecyzować swój problem, żeby pasował do wybranego tematu, lub wybrać inny temat?\n\n";
+  }
+
+  response +=
+    "Mogę Ci pomóc tylko w zakresie wybranego tematu. Jeśli chcesz zmienić temat, wróć do formularza i wybierz właściwy temat.";
+
+  return response;
 };
 
 // Message when user tries to get complete homework solutions

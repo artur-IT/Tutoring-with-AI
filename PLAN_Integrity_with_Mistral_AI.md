@@ -310,10 +310,7 @@ Dane z localStorage (z poprzedniego kroku):
 
 ## Przydatne linki
 
-- [Mistral AI Documentation](https://docs.mistral.ai/)
-- [Mistral API Reference](https://docs.mistral.ai/api/)
 - [Astro API Endpoints](https://docs.astro.build/en/core-concepts/endpoints/)
-- [React useState](https://react.dev/reference/react/useState)
 
 ---
 

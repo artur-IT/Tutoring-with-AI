@@ -51,7 +51,3 @@ This project is configured with AI development tools to enhance the development 
 ### Cursor IDE
 
 The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
-
-### GitHub Copilot
-
-AI instructions for GitHub Copilot are available in `.github/copilot-instructions.md`

@@ -80,6 +80,7 @@ export const POST: APIRoute = async ({ request }) => {
       success: response.success,
       hasResponse: !!response.response,
       error: response.error,
+      shouldRedirect: response.shouldRedirect,
       metadata: response.metadata,
     });
 

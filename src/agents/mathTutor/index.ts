@@ -32,6 +32,46 @@ const validateMessage = (message: string): { valid: boolean; error?: string } =>
   return { valid: true };
 };
 
+// Check if AI response indicates topic mismatch
+// Returns true if response contains keywords indicating conversation should end
+const checkIfTopicMismatch = (response: string): boolean => {
+  console.log("🔍 [MathTutor] Sprawdzam odpowiedź pod kątem zakończenia rozmowy...");
+  console.log("🔍 [MathTutor] Odpowiedź (pierwsze 200 znaków):", response.substring(0, 200));
+
+  const lowerResponse = response.toLowerCase();
+  // Check for exact phrase matches first (more reliable)
+  const exactPhrases = [
+    "rozmowa zostaje zakończona",
+    "rozmowa jest zakończona",
+    "wróć do formularza",
+    "wybierz właściwy temat",
+    "nie pasuje do wybranego tematu",
+    "musisz wrócić",
+    "musisz wrócić do formularza",
+  ];
+
+  // Check exact phrases first
+  for (const phrase of exactPhrases) {
+    if (lowerResponse.includes(phrase)) {
+      console.log(`✅ [MathTutor] Wykryto dokładną frazę: "${phrase}"`);
+      return true;
+    }
+  }
+
+  // Check for "zakończona" but only if it appears with context indicating conversation end
+  if (lowerResponse.includes("zakończona")) {
+    const contextKeywords = ["rozmowa", "konwersacja", "wróć", "formularz", "temat"];
+    const hasContext = contextKeywords.some((keyword) => lowerResponse.includes(keyword));
+    if (hasContext) {
+      console.log("✅ [MathTutor] Wykryto 'zakończona' z kontekstem zakończenia rozmowy");
+      return true;
+    }
+  }
+
+  console.log("ℹ️ [MathTutor] Brak wykrycia zakończenia rozmowy w odpowiedzi");
+  return false;
+};
+
 // Format conversation history for Mistral API
 // Limits history to recent messages to save costs
 const formatHistory = (history: Message[], studentData?: StudentData): Message[] => {
@@ -130,14 +170,21 @@ export const sendMessage = async (
 
     const responseText = typeof aiMessage === "string" ? aiMessage : JSON.stringify(aiMessage);
 
+    // Check if AI response indicates topic mismatch and conversation should end
+    const shouldRedirect = checkIfTopicMismatch(responseText);
+
     console.log("✅ [MathTutor] Sukces!");
     console.log("⏱️ [MathTutor] Czas:", duration, "ms");
     console.log("🎫 [MathTutor] Tokeny:", chatResponse.usage?.totalTokens);
     console.log("💬 [MathTutor] Odpowiedź (preview):", responseText.substring(0, 100) + "...");
+    if (shouldRedirect) {
+      console.log("🔄 [MathTutor] Wykryto niezgodność tematu - przekierowanie do wyboru tematu");
+    }
 
     return {
       success: true,
       response: responseText,
+      shouldRedirect,
       metadata: {
         model: mathTutorConfig.model,
         tokens: chatResponse.usage?.totalTokens,

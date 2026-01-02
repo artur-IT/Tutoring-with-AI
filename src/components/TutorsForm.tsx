@@ -2,39 +2,49 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
-
-type Subject = "matematyka" | "chemia" | null;
+import { getTopicsForSubject, type Subject } from "../lib/subjectTopics";
 
 // Available emoji avatars for students
-const AVATAR_EMOJIS = ["😊", "😎", "🤓", "😸", "🦊", "🐼", "🦁", "🐶", "🐱", "🦄", "🌟", "⚡"];
+const AVATAR_EMOJIS = ["🦊", "🐼", "🦁", "🐶", "🐱"];
 
 export default function TutorsForm() {
-  const [selectedSubject, setSelectedSubject] = useState<Subject>(null);
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<string>("");
   const [problemDescription, setProblemDescription] = useState("");
   const [interests, setInterests] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState<string>("😊");
 
   const handleSubjectSelect = (subject: Subject) => {
     setSelectedSubject(subject);
+    // Reset topic when subject changes
+    setSelectedTopic("");
   };
+
+  const handleTopicChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedTopic(e.target.value);
+  };
+
   const handleProblemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProblemDescription(e.target.value);
   };
+
   const handleInterestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInterests(e.target.value);
   };
+
   const handleAvatarSelect = (emoji: string) => {
     setSelectedAvatar(emoji);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedSubject) return;
+    if (!selectedSubject || !selectedTopic || !problemDescription.trim()) return;
 
     // Save studentData to localStorage before redirecting
     const studentData = {
       subject: selectedSubject,
-      problem: problemDescription,
+      topic: selectedTopic,
+      problem: problemDescription.trim(),
       interests: interests,
       avatar: selectedAvatar,
     };
@@ -43,6 +53,9 @@ export default function TutorsForm() {
     window.location.href = "/chat";
   };
 
+  const availableTopics = getTopicsForSubject(selectedSubject);
+  const isFormValid = selectedSubject && selectedTopic && problemDescription.trim();
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center gap-6">
       {/* Subject Selection Buttons */}
@@ -50,42 +63,60 @@ export default function TutorsForm() {
         <Button
           type="button"
           onClick={() => handleSubjectSelect("matematyka")}
-          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${
-            selectedSubject === "matematyka"
-              ? "bg-green-600 text-white shadow-md"
-              : "bg-green-100 text-green-700 hover:bg-green-200"
-          }`}
+          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${selectedSubject === "matematyka" ? "bg-blue-600 text-white shadow-md" : "bg-blue-100 text-blue-700 hover:bg-blue-200"}`}
         >
           Matematyka
         </Button>
         <Button
           type="button"
-          onClick={() => handleSubjectSelect("chemia")}
-          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${
-            selectedSubject === "chemia"
-              ? "bg-blue-600 text-white shadow-md"
-              : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-          }`}
+          onClick={() => handleSubjectSelect("angielski")}
+          className={`py-3 px-6 text-base font-medium rounded-xl transition-all 
+            ${selectedSubject === "angielski" ? "bg-blue-600 text-white shadow-md" : "bg-blue-100 text-blue-700 hover:bg-blue-200"}`}
         >
-          Chemia
+          Język angielski
         </Button>
       </div>
+
+      {/* Topic Selection Dropdown */}
+      {selectedSubject && (
+        <div className="flex flex-col gap-2">
+          <label htmlFor="topic-select" className="text-sm text-gray-900">
+            Wybierz temat:
+          </label>
+          <select
+            id="topic-select"
+            value={selectedTopic}
+            onChange={handleTopicChange}
+            className="w-[350px] text-sm px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            aria-label="Wybierz temat"
+            required
+          >
+            <option value="">-- Wybierz temat --</option>
+            {availableTopics.map((topic) => (
+              <option key={topic} value={topic}>
+                {topic}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Problem Description Input */}
       <div className="flex flex-col gap-2">
         <label htmlFor="problem-description" className="text-sm text-gray-900">
-          Czego dokładnie dotyczy problem?
+          Opisz szczegółowo swój problem: <span className="text-red-500">*</span>
         </label>
         <Input
           id="problem-description"
           type="text"
           value={problemDescription}
           onChange={handleProblemChange}
-          placeholder="np. równania, geometria itp."
+          placeholder="np. Nie rozumiem jak rozwiązywać równania kwadratowe"
           className="w-[350px] text-sm"
           aria-label="Opisz problem"
           required
         />
+        <p className="text-xs text-gray-500">To pole jest obowiązkowe. Opisz dokładnie, z czym masz problem.</p>
       </div>
 
       {/* Interests Input */}
@@ -114,9 +145,7 @@ export default function TutorsForm() {
               key={emoji}
               type="button"
               onClick={() => handleAvatarSelect(emoji)}
-              className={`text-3xl p-2 rounded-lg transition-all hover:scale-110 ${
-                selectedAvatar === emoji ? "bg-blue-100 ring-2 ring-blue-500 scale-110" : "bg-gray-50 hover:bg-gray-100"
-              }`}
+              className={`text-3xl p-2 rounded-lg transition-all hover:scale-110 ${selectedAvatar === emoji ? "bg-blue-100 ring-2 ring-blue-500 scale-110" : "bg-gray-50 hover:bg-gray-100"}`}
               aria-label={`Wybierz avatar ${emoji}`}
             >
               {emoji}
@@ -129,7 +158,7 @@ export default function TutorsForm() {
       </div>
 
       {/* Submit Button */}
-      <Button type="submit" disabled={!selectedSubject} variant="ok">
+      <Button type="submit" disabled={!isFormValid} variant="ok">
         Zaczynamy
       </Button>
 
