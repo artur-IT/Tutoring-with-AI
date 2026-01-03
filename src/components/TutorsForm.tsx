@@ -7,71 +7,60 @@ import { getTopicsForSubject, type Subject } from "../lib/subjectTopics";
 // Available emoji avatars for students
 const AVATAR_EMOJIS = ["🦊", "🐼", "🦁", "🐶", "🐱"];
 
+// Helper function to get subject button styles
+const getSubjectButtonStyles = (isSelected: boolean) =>
+  `py-3 px-6 text-base font-medium rounded-xl transition-all ${isSelected ? "bg-blue-600 text-white shadow-md" : "bg-blue-100 text-blue-700 hover:bg-blue-200"}`;
+
 export default function TutorsForm() {
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<string>("");
   const [problemDescription, setProblemDescription] = useState("");
   const [interests, setInterests] = useState("");
-  const [selectedAvatar, setSelectedAvatar] = useState<string>("😊");
+  const [selectedAvatar, setSelectedAvatar] = useState<string>("");
 
   const handleSubjectSelect = (subject: Subject) => {
     setSelectedSubject(subject);
-    // Reset topic when subject changes
-    setSelectedTopic("");
+    setSelectedTopic(""); // Reset topic when subject changes
   };
 
-  const handleTopicChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedTopic(e.target.value);
-  };
-
-  const handleProblemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProblemDescription(e.target.value);
-  };
-
-  const handleInterestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInterests(e.target.value);
-  };
-
-  const handleAvatarSelect = (emoji: string) => {
-    setSelectedAvatar(emoji);
-  };
+  const handleTopicChange = (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedTopic(e.target.value);
+  const handleProblemChange = (e: React.ChangeEvent<HTMLInputElement>) => setProblemDescription(e.target.value);
+  const handleInterestsChange = (e: React.ChangeEvent<HTMLInputElement>) => setInterests(e.target.value);
+  const handleAvatarSelect = (emoji: string) => setSelectedAvatar(emoji);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedSubject || !selectedTopic || !problemDescription.trim()) return;
+    if (!selectedSubject || !selectedTopic || !problemDescription.trim() || !selectedAvatar) return;
 
-    // Save studentData to localStorage before redirecting
     const studentData = {
       subject: selectedSubject,
       topic: selectedTopic,
       problem: problemDescription.trim(),
-      interests: interests,
+      interests,
       avatar: selectedAvatar,
     };
     localStorage.setItem("studentData", JSON.stringify(studentData));
-
     window.location.href = "/chat";
   };
 
   const availableTopics = getTopicsForSubject(selectedSubject);
-  const isFormValid = selectedSubject && selectedTopic && problemDescription.trim();
+  const isFormValid = selectedSubject && selectedTopic && problemDescription.trim() && selectedAvatar;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center gap-6">
       {/* Subject Selection Buttons */}
-      <div className="flex flex-col gap-4 sm:flex-row ">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <Button
           type="button"
           onClick={() => handleSubjectSelect("matematyka")}
-          className={`py-3 px-6 text-base font-medium rounded-xl transition-all ${selectedSubject === "matematyka" ? "bg-blue-600 text-white shadow-md" : "bg-blue-100 text-blue-700 hover:bg-blue-200"}`}
+          className={getSubjectButtonStyles(selectedSubject === "matematyka")}
         >
           Matematyka
         </Button>
         <Button
           type="button"
           onClick={() => handleSubjectSelect("angielski")}
-          className={`py-3 px-6 text-base font-medium rounded-xl transition-all 
-            ${selectedSubject === "angielski" ? "bg-blue-600 text-white shadow-md" : "bg-blue-100 text-blue-700 hover:bg-blue-200"}`}
+          className={getSubjectButtonStyles(selectedSubject === "angielski")}
         >
           Język angielski
         </Button>
@@ -91,7 +80,7 @@ export default function TutorsForm() {
             aria-label="Wybierz temat"
             required
           >
-            <option value="">-- Wybierz temat --</option>
+            <option value=""></option>
             {availableTopics.map((topic) => (
               <option key={topic} value={topic}>
                 {topic}
@@ -104,19 +93,17 @@ export default function TutorsForm() {
       {/* Problem Description Input */}
       <div className="flex flex-col gap-2">
         <label htmlFor="problem-description" className="text-sm text-gray-900">
-          Opisz szczegółowo swój problem: <span className="text-red-500">*</span>
+          Opisz szczegółowo swój problem:
         </label>
         <Input
           id="problem-description"
           type="text"
           value={problemDescription}
           onChange={handleProblemChange}
-          placeholder="np. Nie rozumiem jak rozwiązywać równania kwadratowe"
           className="w-[350px] text-sm"
           aria-label="Opisz problem"
           required
         />
-        <p className="text-xs text-gray-500">To pole jest obowiązkowe. Opisz dokładnie, z czym masz problem.</p>
       </div>
 
       {/* Interests Input */}
@@ -138,7 +125,7 @@ export default function TutorsForm() {
 
       {/* Avatar Selection */}
       <div className="flex flex-col items-center gap-3">
-        <p className="text-sm text-gray-900">Wybierz swój avatar:</p>
+        <p className="text-sm text-gray-900 self-start">Wybierz swój avatar:</p>
         <div className="flex flex-wrap gap-2 justify-center max-w-[350px]">
           {AVATAR_EMOJIS.map((emoji) => (
             <button
@@ -152,9 +139,6 @@ export default function TutorsForm() {
             </button>
           ))}
         </div>
-        <p className="text-xs text-gray-500">
-          Wybrany: <span className="text-2xl">{selectedAvatar}</span>
-        </p>
       </div>
 
       {/* Submit Button */}
@@ -164,8 +148,8 @@ export default function TutorsForm() {
 
       {/* Back Button */}
       <Button onClick={() => (window.location.href = "/")} variant="back">
-        <img src={ArrowLeftSimpleIcon} alt="" className="w-5 h-5" />
-        wróć
+        <img src={ArrowLeftSimpleIcon} alt="" className="w-5 h-4" />
+        powrót
       </Button>
     </form>
   );

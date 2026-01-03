@@ -1,0 +1,6 @@
+---
+alwaysApply: false
+---
+
+- Zrefaktoryzuj kod w taki sposób, aby był bardziej czytelny, modularny i łatwy w utrzymaniu.
+- funkcje, które maja tylko 1 linię kodu, należy zastąpić strzałkami i zapisać w 1 linii.
