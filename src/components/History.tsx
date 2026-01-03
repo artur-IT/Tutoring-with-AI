@@ -105,10 +105,14 @@ export default function History() {
               tabIndex={0}
               className="bg-white shadow-md rounded-xl p-4 md:p-6 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-shadow w-full text-left"
             >
-              {/* User icon */}
+              {/* User avatar */}
               <div className="shrink-0">
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                  <img src={UserIcon} alt="" className="w-6 h-6 text-blue-600" />
+                  {session.avatar ? (
+                    <span className="text-2xl">{session.avatar}</span>
+                  ) : (
+                    <img src={UserIcon} alt="" className="w-6 h-6 text-blue-600" />
+                  )}
                 </div>
               </div>
 
