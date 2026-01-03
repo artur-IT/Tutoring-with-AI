@@ -6,9 +6,15 @@ const MODAL_STATE_EVENT = "nameInputModalState";
 
 export default function NameInput() {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { name, setName, saveName } = useUserName();
   const inputId = useId();
   const formId = useId();
+
+  // Set mounted flag after hydration to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Dispatch event when modal state changes
   useEffect(() => {
@@ -30,7 +36,7 @@ export default function NameInput() {
   return (
     <>
       <Button onClick={handleOpen} variant="ok" aria-label="Otwórz formularz wprowadzania imienia">
-        {!name ? "Podaj imię" : "Zmień imię"}
+        {!mounted || !name ? "Podaj imię" : "Zmień imię"}
       </Button>
       {isOpen &&
         (<form

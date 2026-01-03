@@ -24,6 +24,7 @@ export interface ChatSession {
   tokensUsed: number;
   createdAt: number;
   lastMessageAt: number;
+  avatar?: string; // User's chosen emoji avatar for this session
 }
 
 // All chat sessions

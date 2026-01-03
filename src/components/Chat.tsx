@@ -65,6 +65,7 @@ export default function Chat() {
       tokensUsed,
       createdAt: parseInt(currentSessionId),
       lastMessageAt: Date.now(),
+      avatar: studentData?.avatar,
     };
 
     if (sessionIndex >= 0) {
@@ -76,7 +77,7 @@ export default function Chat() {
     history.currentSessionId = currentSessionId;
     localStorage.setItem("chatHistory", JSON.stringify(history));
     console.log("💾 [Chat.tsx] Sesja zapisana:", sessionName);
-  }, [currentSessionId, sessionName, messages, tokensUsed, shouldSaveSession]);
+  }, [currentSessionId, sessionName, messages, tokensUsed, shouldSaveSession, studentData]);
 
   // Remove current session from history (used when topic mismatch is detected)
   const removeCurrentSessionFromHistory = useCallback(() => {
@@ -389,10 +390,6 @@ export default function Chat() {
       <div className="flex-1 space-y-4 mb-4 overflow-y-auto">
         {messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
-            <p className="text-lg mb-2">👋 Cześć {localStorage.getItem("userName")}</p>
-            <p className="text-sm">
-              Twój problem to <span className="font-bold">{studentData?.problem}</span>
-            </p>
             <p className="text-sm">Postaram się to wytłumaczyć w sposób, który będzie dla Ciebie zrozumiały</p>
           </div>
         )}
