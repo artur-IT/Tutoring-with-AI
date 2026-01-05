@@ -20,6 +20,7 @@ export default function Chat() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [sessionName, setSessionName] = useState<string>("");
   const [shouldSaveSession, setShouldSaveSession] = useState(true); // Flag to prevent saving sessions ended due to topic mismatch
+  const [isSessionFromHistory, setIsSessionFromHistory] = useState(false); // Flag to check if session was loaded from history (read-only)
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Token limit per session (can be adjusted)
@@ -119,12 +120,16 @@ export default function Chat() {
             setSessionName(session.name);
             setMessages(session.messages);
             setTokensUsed(session.tokensUsed);
+            // Check if session was loaded from history (has messages) - this means it's read-only
+            setIsSessionFromHistory(session.messages.length > 0);
             console.log("📂 [Chat.tsx] Załadowano aktywną sesję:", session.name);
           } else {
             createNewSession();
+            setIsSessionFromHistory(false);
           }
         } else {
           createNewSession();
+          setIsSessionFromHistory(false);
         }
       } catch (e) {
         console.error("Error loading chat history:", e);
@@ -138,12 +143,20 @@ export default function Chat() {
   // Auto-scroll to bottom
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
-  // Save session when messages or tokens change
+  // Save session when messages or tokens change (only if not from history)
   useEffect(() => {
-    if (currentSessionId && messages.length > 0 && shouldSaveSession) {
+    if (!isSessionFromHistory && currentSessionId && messages.length > 0 && shouldSaveSession) {
       saveCurrentSession();
     }
-  }, [messages, tokensUsed, currentSessionId, sessionName, shouldSaveSession, saveCurrentSession]);
+  }, [
+    messages,
+    tokensUsed,
+    currentSessionId,
+    sessionName,
+    shouldSaveSession,
+    saveCurrentSession,
+    isSessionFromHistory,
+  ]);
 
   // Send initial greeting message
   const sendInitialGreeting = useCallback(async () => {
@@ -316,38 +329,24 @@ export default function Chat() {
     }
   };
 
-  //  <style>
-  //   progress::-moz-progress-bar {
-  //     background: blue !important;
-  //   }
-
-  //   progress::-webkit-progress-bar {
-  //     background-color: #000;
-  //     width: 100%;
-  //    }
-
-  //   progress::-webkit-progress-value {
-  //     background: yellow;
-  //     width: 100%;
-  //   }
-
-  //   progress {
-  //     color: blue !important;
-  //   }
-  // </style>
-
   return (
     <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto relative">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Chat</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{isSessionFromHistory ? "Historia rozmowy" : "Chat"}</h1>
           {sessionName && <p className="text-xs text-gray-500 mt-1">{sessionName}</p>}
         </div>
         <div className="flex gap-2">
           <Button
             variant="back"
             onClick={() => {
+              if (isSessionFromHistory) {
+                // In history mode, redirect back to history
+                window.location.href = "/history";
+                return;
+              }
+
               // Save current session if there are messages
               if (messages.length > 0) {
                 saveCurrentSession();
@@ -363,7 +362,7 @@ export default function Chat() {
               window.location.href = "/";
             }}
           >
-            Koniec
+            {isSessionFromHistory ? "Wróć" : "Koniec"}
           </Button>
         </div>
       </div>
@@ -424,58 +423,62 @@ export default function Chat() {
         </Alert>
       )}
 
-      {/* Input section */}
-      <div className="bg-white rounded-xl shadow-md p-3 mb-4">
-        <div className="flex items-center gap-2">
-          {/* Plus icon button */}
-          <button
-            type="button"
-            className="shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
-            aria-label="Add attachment"
-            disabled={isLoading}
-          >
-            <img src={PlusIcon} alt="" className="w-5 h-5" />
-          </button>
-          {/* Input field */}
-          <div className="flex-1">
-            <Input
-              type="text"
-              placeholder="Wpisz pytanie z matematyki..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+      {/* Input section - hidden if session was loaded from history */}
+      {!isSessionFromHistory && (
+        <div className="bg-white rounded-xl shadow-md p-3 mb-4">
+          <div className="flex items-center gap-2">
+            {/* Plus icon button */}
+            <button
+              type="button"
+              className="shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
+              aria-label="Add attachment"
               disabled={isLoading}
-            />
+            >
+              <img src={PlusIcon} alt="" className="w-5 h-5" />
+            </button>
+            {/* Input field */}
+            <div className="flex-1">
+              <Input
+                type="text"
+                placeholder="Wpisz pytanie z matematyki..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                disabled={isLoading}
+              />
+            </div>
+            {/* Send button */}
+            <button
+              type="button"
+              onClick={handleSend}
+              disabled={isLoading || !input.trim()}
+              className="shrink-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Send message"
+            >
+              <img src={SendIcon} alt="" className="w-5 h-5" />
+            </button>
           </div>
-          {/* Send button */}
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={isLoading || !input.trim()}
-            className="shrink-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Send message"
-          >
-            <img src={SendIcon} alt="" className="w-5 h-5" />
-          </button>
         </div>
-      </div>
+      )}
 
-      {/* Progress bar section - Token usage */}
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-sm text-gray-400 italic">wykorzystane tokeny</p>
-          <p className="text-xs text-gray-500">
-            {tokensUsed.toLocaleString()} / {TOKEN_LIMIT.toLocaleString()}
-          </p>
+      {/* Progress bar section - Token usage - hidden if session was loaded from history */}
+      {!isSessionFromHistory && (
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-sm text-gray-400 italic">wykorzystane tokeny</p>
+            <p className="text-xs text-gray-500">
+              {tokensUsed.toLocaleString()} / {TOKEN_LIMIT.toLocaleString()}
+            </p>
+          </div>
+          <Progress
+            value={Math.min((tokensUsed / TOKEN_LIMIT) * 100, 100)}
+            className={`h-2 ${tokensUsed / TOKEN_LIMIT < 0.7 ? "[&>div]:bg-blue-600" : tokensUsed / TOKEN_LIMIT < 0.9 ? "[&>div]:bg-yellow-500" : "[&>div]:bg-red-500"}`}
+          />
+          {tokensUsed >= TOKEN_LIMIT && (
+            <p className="text-xs text-red-600 mt-1">⚠️ Osiągnięto limit tokenów dla tej sesji</p>
+          )}
         </div>
-        <Progress
-          value={Math.min((tokensUsed / TOKEN_LIMIT) * 100, 100)}
-          className={`h-2 ${tokensUsed / TOKEN_LIMIT < 0.7 ? "[&>div]:bg-blue-600" : tokensUsed / TOKEN_LIMIT < 0.9 ? "[&>div]:bg-yellow-500" : "[&>div]:bg-red-500"}`}
-        />
-        {tokensUsed >= TOKEN_LIMIT && (
-          <p className="text-xs text-red-600 mt-1">⚠️ Osiągnięto limit tokenów dla tej sesji</p>
-        )}
-      </div>
+      )}
     </div>
   );
 }
