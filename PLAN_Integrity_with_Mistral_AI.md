@@ -285,8 +285,7 @@ Dane z localStorage (z poprzedniego kroku):
 
 ### Faza personalizacji
 
-- [ ] 15. Dołącz dane studenta do zapytań
-- [ ] 16. Zaimplementuj timer sesji
+- [x] 15. Dołącz dane studenta do zapytań
 - [x] 17. Dodaj zapisywanie historii
 
 ### Faza testów
@@ -326,12 +325,7 @@ Dane z localStorage (z poprzedniego kroku):
 ## Następne kroki po MVP
 
 1. Dodaj więcej agentów (chemTutor, physicsTutor, etc.)
-2. Zapisywanie historii w bazie danych (Supabase?)
-3. System nagród/gamifikacja
-4. Analityka postępów ucznia
-5. Panel rodzica/nauczyciela
-6. Tryb offline z podstawowymi odpowiedziami
-7. Integracja z materiałami nauczania
+2. Zapisywanie historii w bazie danych (Supabase)
 
 ---
 
