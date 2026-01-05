@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
 import { getTopicsForSubject, type Subject } from "../lib/subjectTopics";
 

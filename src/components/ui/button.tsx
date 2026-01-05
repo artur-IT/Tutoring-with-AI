@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const baseStyles =
@@ -14,25 +14,27 @@ const variantStyles = {
 type ButtonVariant = keyof typeof variantStyles;
 
 // Export buttonVariants for use in other components (like alert-dialog)
-export const buttonVariants = cva(
-  baseStyles,
-  {
-    variants: {
-      variant: {
-        default: variantStyles.ok,
-        outline: variantStyles.cancel,
-        ok: variantStyles.ok,
-        cancel: variantStyles.cancel,
-        back: variantStyles.back,
-      },
+export const buttonVariants = cva(baseStyles, {
+  variants: {
+    variant: {
+      default: variantStyles.ok,
+      outline: variantStyles.cancel,
+      ok: variantStyles.ok,
+      cancel: variantStyles.cancel,
+      back: variantStyles.back,
     },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
-const Button = ({ variant = "ok", className, ...props }: React.ComponentProps<"button"> & { variant?: ButtonVariant }) =>
-  <button className={cn(baseStyles, variantStyles[variant], className)} {...props} />;
+const Button = ({
+  variant = "ok",
+  className,
+  ...props
+}: React.ComponentProps<"button"> & { variant?: ButtonVariant }) => (
+  <button className={cn(baseStyles, variantStyles[variant], className)} {...props} />
+);
 
 export { Button };

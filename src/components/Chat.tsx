@@ -58,7 +58,8 @@ export default function Chat() {
   // Save current session to history
   const saveCurrentSession = useCallback(() => {
     if (!currentSessionId || messages.length === 0 || !shouldSaveSession) {
-      if (!shouldSaveSession) console.log("🚫 [Chat.tsx] Pomijam zapis sesji - zakończona z powodu niezgodności tematu");
+      if (!shouldSaveSession)
+        console.log("🚫 [Chat.tsx] Pomijam zapis sesji - zakończona z powodu niezgodności tematu");
       return;
     }
 
@@ -74,7 +75,11 @@ export default function Chat() {
       avatar: studentData?.avatar,
     };
 
-    sessionIndex >= 0 ? (history.sessions[sessionIndex] = session) : history.sessions.push(session);
+    if (sessionIndex >= 0) {
+      history.sessions[sessionIndex] = session;
+    } else {
+      history.sessions.push(session);
+    }
     history.currentSessionId = currentSessionId;
     saveHistory(history);
     console.log("💾 [Chat.tsx] Sesja zapisana:", sessionName);
