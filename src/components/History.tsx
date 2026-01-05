@@ -1,5 +1,18 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
+import { Avatar, AvatarFallback } from "./ui/avatar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 import UserIcon from "../assets/icons/user.svg?url";
 import ChevronRightIcon from "../assets/icons/chevron-right.svg?url";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
@@ -8,18 +21,24 @@ import type { ChatHistory, ChatSession } from "../agents/mathTutor/types";
 // Load sessions helper function
 const loadSessionsFromStorage = (): ChatSession[] => {
   const historyJson = localStorage.getItem("chatHistory");
-  if (historyJson) {
-    try {
-      const history: ChatHistory = JSON.parse(historyJson);
-      // Sort by last message time (newest first)
-      return [...history.sessions].sort((a, b) => b.lastMessageAt - a.lastMessageAt);
-    } catch (e) {
-      console.error("Error loading history:", e);
-      return [];
-    }
+  if (!historyJson) return [];
+  try {
+    const history: ChatHistory = JSON.parse(historyJson);
+    return [...history.sessions].sort((a, b) => b.lastMessageAt - a.lastMessageAt);
+  } catch (e) {
+    console.error("Error loading history:", e);
+    return [];
   }
-  return [];
 };
+
+// Helper to get history from localStorage
+const getHistory = (): ChatHistory => {
+  const historyJson = localStorage.getItem("chatHistory");
+  return historyJson ? JSON.parse(historyJson) : { sessions: [], currentSessionId: null };
+};
+
+// Helper to save history to localStorage
+const saveHistory = (history: ChatHistory) => localStorage.setItem("chatHistory", JSON.stringify(history));
 
 export default function History() {
   const [sessions, setSessions] = useState<ChatSession[]>(() => {
@@ -31,52 +50,31 @@ export default function History() {
   });
 
   const handleSessionClick = (sessionId: string) => {
-    // Set this session as current and redirect to chat
-    const historyJson = localStorage.getItem("chatHistory");
-    if (historyJson) {
-      try {
-        const history: ChatHistory = JSON.parse(historyJson);
-        history.currentSessionId = sessionId;
-        localStorage.setItem("chatHistory", JSON.stringify(history));
-        // Use location.assign instead of direct assignment
-        setTimeout(() => {
-          location.assign("/chat");
-        }, 0);
-      } catch (e) {
-        console.error("Error setting current session:", e);
-      }
+    try {
+      const history = getHistory();
+      history.currentSessionId = sessionId;
+      saveHistory(history);
+      setTimeout(() => location.assign("/chat"), 0);
+    } catch (e) {
+      console.error("Error setting current session:", e);
     }
   };
 
-  const handleDeleteSession = (sessionId: string, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent opening the session
-
-    if (confirm("Czy na pewno chcesz usunąć tę rozmowę?")) {
-      const historyJson = localStorage.getItem("chatHistory");
-      if (historyJson) {
-        try {
-          const history: ChatHistory = JSON.parse(historyJson);
-          history.sessions = history.sessions.filter((s) => s.id !== sessionId);
-
-          // If deleted session was current, clear current
-          if (history.currentSessionId === sessionId) {
-            history.currentSessionId = null;
-          }
-
-          localStorage.setItem("chatHistory", JSON.stringify(history));
-          setSessions(history.sessions.sort((a, b) => b.lastMessageAt - a.lastMessageAt));
-          console.log("🗑️ [History.tsx] Sesja usunięta");
-        } catch (e) {
-          console.error("Error deleting session:", e);
-        }
-      }
+  const handleDeleteSession = (sessionId: string) => {
+    try {
+      const history = getHistory();
+      history.sessions = history.sessions.filter((s) => s.id !== sessionId);
+      if (history.currentSessionId === sessionId) history.currentSessionId = null;
+      saveHistory(history);
+      setSessions(history.sessions.sort((a, b) => b.lastMessageAt - a.lastMessageAt));
+      console.log("🗑️ [History.tsx] Sesja usunięta");
+    } catch (e) {
+      console.error("Error deleting session:", e);
     }
   };
 
-  const getFirstUserMessage = (session: ChatSession): string => {
-    const firstUserMsg = session.messages.find((m) => m.role === "user");
-    return firstUserMsg?.content || "Brak wiadomości";
-  };
+  const getFirstUserMessage = (session: ChatSession): string =>
+    session.messages.find((m) => m.role === "user")?.content || "Brak wiadomości";
 
   return (
     <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
@@ -92,7 +90,7 @@ export default function History() {
           </div>
         ) : (
           sessions.map((session) => (
-            <div
+            <Card
               key={session.id}
               onClick={() => handleSessionClick(session.id)}
               onKeyDown={(e) => {
@@ -103,41 +101,57 @@ export default function History() {
               }}
               role="button"
               tabIndex={0}
-              className="bg-white shadow-md rounded-xl p-4 md:p-6 flex items-center gap-4 cursor-pointer hover:shadow-lg transition-shadow w-full text-left"
+              className="cursor-pointer hover:shadow-lg transition-shadow"
             >
-              {/* User avatar */}
-              <div className="shrink-0">
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                  {session.avatar ? (
-                    <span className="text-2xl">{session.avatar}</span>
-                  ) : (
-                    <img src={UserIcon} alt="" className="w-6 h-6 text-blue-600" />
-                  )}
-                </div>
-              </div>
+              <CardContent className="flex items-center gap-4 p-4 md:p-6">
+                {/* User avatar */}
+                <Avatar className="w-12 h-12 shrink-0 bg-blue-100">
+                  <AvatarFallback className="text-2xl bg-blue-100">
+                    {session.avatar ? <span>{session.avatar}</span> : <img src={UserIcon} alt="" className="w-6 h-6" />}
+                  </AvatarFallback>
+                </Avatar>
 
-              {/* Title and description */}
-              <div className="flex-1 min-w-0">
-                <h2 className="text-base font-semibold text-gray-900 mb-1">{session.name}</h2>
-                <p className="text-sm text-gray-500 line-clamp-2">{getFirstUserMessage(session)}</p>
-                <div className="flex gap-3 mt-2 text-xs text-gray-400">
-                  <span>💬 {session.messages.filter((m) => m.role !== "system").length} wiadomości</span>
-                  <span>🎫 {session.tokensUsed.toLocaleString()} tokenów</span>
+                {/* Title and description */}
+                <div className="flex-1 min-w-0">
+                  <CardHeader className="p-0">
+                    <CardTitle className="text-base mb-1">{session.name}</CardTitle>
+                    <CardDescription className="line-clamp-2">{getFirstUserMessage(session)}</CardDescription>
+                  </CardHeader>
+                  <div className="flex gap-3 mt-2 text-xs text-gray-400">
+                    <span>💬 {session.messages.filter((m) => m.role !== "system").length} wiadomości</span>
+                    <span>🎫 {session.tokensUsed.toLocaleString()} tokenów</span>
+                  </div>
                 </div>
-              </div>
 
-              {/* Actions */}
-              <div className="shrink-0 flex items-center gap-2">
-                <button
-                  onClick={(e) => handleDeleteSession(session.id, e)}
-                  className="text-red-500 hover:text-red-700 p-2"
-                  aria-label="Usuń rozmowę"
-                >
-                  🗑️
-                </button>
-                <img src={ChevronRightIcon} alt="" className="w-5 h-5 text-gray-600" />
-              </div>
-            </div>
+                {/* Actions */}
+                <div className="shrink-0 flex items-center gap-2">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-red-500 hover:text-red-700 p-2"
+                        aria-label="Usuń rozmowę"
+                      >
+                        🗑️
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Usuń rozmowę</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Czy na pewno chcesz usunąć tę rozmowę? Tej operacji nie można cofnąć.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Anuluj</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDeleteSession(session.id)}>Usuń</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <img src={ChevronRightIcon} alt="" className="w-5 h-5 text-gray-600" />
+                </div>
+              </CardContent>
+            </Card>
           ))
         )}
       </div>
