@@ -41,6 +41,20 @@ export default function TutorsForm() {
       avatar: selectedAvatar,
     };
     localStorage.setItem("studentData", JSON.stringify(studentData));
+
+    // Clear current session ID to start a new session
+    const historyJson = localStorage.getItem("chatHistory");
+    if (historyJson) {
+      try {
+        const history = JSON.parse(historyJson);
+        history.currentSessionId = null;
+        localStorage.setItem("chatHistory", JSON.stringify(history));
+        console.log("🆕 [TutorsForm] Wyczyszczono currentSessionId - rozpoczynamy nową sesję");
+      } catch (e) {
+        console.error("Error clearing current session:", e);
+      }
+    }
+
     window.location.href = "/chat";
   };
 

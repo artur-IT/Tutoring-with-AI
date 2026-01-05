@@ -1,9 +1,24 @@
 import type { APIRoute } from "astro";
 import { sendMessage } from "../../agents/mathTutor";
 import type { Message, StudentData } from "../../agents/mathTutor/types";
+import { sessionLimits } from "../../agents/mathTutor/config";
 
 // Mark as server-rendered (required for POST endpoints)
 export const prerender = false;
+
+// In-memory store for rate limiting (sessionId -> request count)
+// In production, consider using Redis or a database
+const sessionRequestCounts = new Map<string, { count: number; createdAt: number }>();
+
+// Clean up old sessions (older than 1 hour)
+const cleanupOldSessions = () => {
+  const oneHourAgo = Date.now() - 60 * 60 * 1000;
+  for (const [sessionId, data] of sessionRequestCounts.entries()) {
+    if (data.createdAt < oneHourAgo) {
+      sessionRequestCounts.delete(sessionId);
+    }
+  }
+};
 
 // POST /api/chat
 // Handles chat requests from frontend
@@ -29,13 +44,46 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const body = JSON.parse(text);
-    const { message, history, studentData, subject } = body;
+    const { message, history, studentData, subject, sessionId } = body;
 
     console.log("📥 [API] Otrzymano:");
     console.log("  - Message:", message);
     console.log("  - History length:", history?.length || 0);
     console.log("  - Student data:", studentData);
     console.log("  - Subject:", subject);
+    console.log("  - Session ID:", sessionId);
+
+    // Rate limiting: check request count per session
+    if (sessionId) {
+      cleanupOldSessions();
+      const sessionData = sessionRequestCounts.get(sessionId);
+      const requestCount = sessionData ? sessionData.count + 1 : 1;
+
+      if (requestCount > sessionLimits.maxMessagesPerSession) {
+        console.warn(`⚠️ [API] Limit zapytań przekroczony dla sesji ${sessionId}: ${requestCount}`);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "Osiągnięto limit zapytań dla tej sesji. Proszę rozpocząć nową sesję.",
+            limitExceeded: true,
+          }),
+          {
+            status: 429, // Too Many Requests
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      // Update request count
+      sessionRequestCounts.set(sessionId, {
+        count: requestCount,
+        createdAt: sessionData?.createdAt || Date.now(),
+      });
+
+      console.log(
+        `📊 [API] Liczba zapytań dla sesji ${sessionId}: ${requestCount}/${sessionLimits.maxMessagesPerSession}`
+      );
+    }
 
     // Validate required fields
     if (!message || typeof message !== "string") {
@@ -84,8 +132,25 @@ export const POST: APIRoute = async ({ request }) => {
       metadata: response.metadata,
     });
 
+    // Add rate limiting info to response
+    let remainingRequests = sessionLimits.maxMessagesPerSession;
+    if (sessionId) {
+      const sessionData = sessionRequestCounts.get(sessionId);
+      if (sessionData) {
+        remainingRequests = Math.max(0, sessionLimits.maxMessagesPerSession - sessionData.count);
+      }
+    }
+
+    const responseWithRateLimit = {
+      ...response,
+      rateLimit: {
+        remaining: remainingRequests,
+        limit: sessionLimits.maxMessagesPerSession,
+      },
+    };
+
     // Return response
-    return new Response(JSON.stringify(response), {
+    return new Response(JSON.stringify(responseWithRateLimit), {
       status: response.success ? 200 : 500,
       headers: { "Content-Type": "application/json" },
     });

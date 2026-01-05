@@ -77,8 +77,7 @@ export default function History() {
     }
   };
 
-  const getFirstUserMessage = (session: ChatSession): string =>
-    session.messages.find((m) => m.role === "user")?.content || "Brak wiadomości";
+  const getSessionDescription = (session: ChatSession): string => session.topic || "Brak tematu";
 
   return (
     <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
@@ -119,7 +118,7 @@ export default function History() {
                 <div className="flex-1 min-w-0">
                   <CardHeader className="p-0">
                     <CardTitle className="text-base mb-1">{session.name}</CardTitle>
-                    <CardDescription className="line-clamp-2">{getFirstUserMessage(session)}</CardDescription>
+                    <CardDescription className="line-clamp-2">{getSessionDescription(session)}</CardDescription>
                   </CardHeader>
                   <div className="flex gap-3 mt-2 text-xs text-gray-400">
                     <span>💬 {session.messages.filter((m) => m.role !== "system").length} wiadomości</span>
