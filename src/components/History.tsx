@@ -64,10 +64,14 @@ export default function History() {
     try {
       const history = getHistory();
       history.sessions = history.sessions.filter((s) => s.id !== sessionId);
-      if (history.currentSessionId === sessionId) history.currentSessionId = null;
+      // If we're deleting the current session, clear it but stay on history page
+      if (history.currentSessionId === sessionId) {
+        history.currentSessionId = null;
+      }
       saveHistory(history);
+      // Update local state to reflect the deletion
       setSessions(history.sessions.sort((a, b) => b.lastMessageAt - a.lastMessageAt));
-      console.log("🗑️ [History.tsx] Sesja usunięta");
+      console.log("🗑️ [History.tsx] Sesja usunięta, pozostajemy na stronie historii");
     } catch (e) {
       console.error("Error deleting session:", e);
     }
@@ -143,8 +147,15 @@ export default function History() {
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Anuluj</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDeleteSession(session.id)}>Usuń</AlertDialogAction>
+                        <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Anuluj</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteSession(session.id);
+                          }}
+                        >
+                          Usuń
+                        </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
