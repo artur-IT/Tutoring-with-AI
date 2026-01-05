@@ -25,6 +25,7 @@ export interface ChatSession {
   createdAt: number;
   lastMessageAt: number;
   avatar?: string; // User's chosen emoji avatar for this session
+  topic?: string; // Selected topic from predefined list (e.g., "Równania i nierówności")
 }
 
 // All chat sessions
@@ -39,10 +40,15 @@ export interface AIResponse {
   response?: string;
   error?: string;
   shouldRedirect?: boolean; // If true, redirect user to topic selection
+  limitExceeded?: boolean; // If true, rate limit was exceeded
   metadata?: {
     tokens?: number;
     model?: string;
     duration?: number;
+  };
+  rateLimit?: {
+    remaining: number; // Number of remaining requests in this session
+    limit: number; // Maximum number of requests per session
   };
 }
 
