@@ -1,6 +1,8 @@
 ---
 import { Button } from "./ui/button";
-import UserIcon from "../assets/icons/user.svg";
+import { Input } from "./ui/input";
+import { Progress } from "./ui/progress";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 import PlusIcon from "../assets/icons/plus.svg";
 import SendIcon from "../assets/icons/send.svg";
 ---
@@ -19,11 +21,9 @@ import SendIcon from "../assets/icons/send.svg";
     {/* Tutor message */}
     <div class="flex items-start gap-3">
       {/* Avatar */}
-      <div class="shrink-0">
-        <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
-          <UserIcon />
-        </div>
-      </div>
+      <Avatar client:load className="w-10 h-10 shrink-0 bg-yellow-100">
+        <AvatarFallback client:load className="text-2xl bg-yellow-100">👨‍🏫</AvatarFallback>
+      </Avatar>
       {/* Message bubble */}
       <div class="bg-yellow-200 rounded-2xl px-4 py-3 max-w-[80%]">
         <p class="text-sm font-semibold text-gray-900 mb-1">tutor + avatar</p>
@@ -39,11 +39,9 @@ import SendIcon from "../assets/icons/send.svg";
         <p class="text-sm text-white">Message. Lorem ipsum dolor.</p>
       </div>
       {/* Avatar */}
-      <div class="shrink-0">
-        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-          <UserIcon />
-        </div>
-      </div>
+      <Avatar client:load className="w-10 h-10 shrink-0 bg-blue-100">
+        <AvatarFallback client:load className="text-2xl bg-blue-100">🦊</AvatarFallback>
+      </Avatar>
     </div>
   </div>
 
@@ -60,11 +58,7 @@ import SendIcon from "../assets/icons/send.svg";
       </button>
       {/* Input field */}
       <div class="flex-1">
-        <input
-          type="text"
-          placeholder="Message"
-          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-        />
+        <Input client:load type="text" placeholder="Message" />
       </div>
       {/* Send button */}
       <button
@@ -80,9 +74,6 @@ import SendIcon from "../assets/icons/send.svg";
   {/* Progress bar section */}
   <div class="mb-4">
     <p class="text-sm text-gray-400 italic mb-2">wykorzystany czas</p>
-    <div class="w-full h-1 rounded-full bg-red-500 overflow-hidden">
-      <div class="h-full bg-blue-600 rounded-full" style={{ width: "35%" }}></div>
-      {/* <progress value='35' max='100' class='w-full rounded-full'></progress>  */}
-    </div>
+    <Progress client:load value={35} className="h-2 [&>div]:bg-blue-600" />
   </div>
 </div>

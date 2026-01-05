@@ -3,30 +3,30 @@ import { Button } from "./ui/button";
 import NameInput from "./NameInput";
 ---
 
-<div class='min-h-screen bg-white flex flex-col items-center justify-center p-4 relative'>
-  <div class='text-center my-10'>
-    <h1 class='text-2xl text-black mb-2'>Korepetytor AI</h1>
-    <p class='text-sm text-gray-500'>Pomoc dla uczniów liceów i techników</p>
+<div class="min-h-screen bg-white flex flex-col items-center justify-center p-4 relative">
+  <div class="text-center my-10">
+    <h1 class="text-2xl text-black mb-2">Korepetytor AI</h1>
+    <p class="text-sm text-gray-500">Pomoc dla uczniów liceów i techników</p>
   </div>
 
   <NameInput client:load />
 
   <!-- Content that should be inert when modal is open -->
-  <div id='home-content' class='hidden flex-col items-center justify-center'>
+  <div id="home-content" class="hidden flex-col items-center justify-center">
     <!-- Welcome text centered -->
-    <div class='text-center my-10'>
-      <h1 class='text-2xl text-black mb-2'>Witaj, <span id='name-display'></span>!</h1>
+    <div class="text-center my-10">
+      <h1 class="text-2xl text-black mb-2">Witaj, <span id="name-display"></span>!</h1>
     </div>
 
-    <div class='mb-6'>
-      <a href='/tutors' class='inline-block'>
-        <Button variant='ok'> Zaczynamy </Button>
+    <div class="mb-6">
+      <a href="/tutors" class="inline-block">
+        <Button variant="ok"> Zaczynamy </Button>
       </a>
     </div>
 
     <div>
-      <a href='/history' class='inline-block'>
-        <Button variant='back'> Historia rozmów </Button>
+      <a href="/history" class="inline-block">
+        <Button variant="back"> Historia rozmów </Button>
       </a>
     </div>
   </div>

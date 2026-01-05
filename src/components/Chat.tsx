@@ -1,5 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Alert, AlertDescription } from "./ui/alert";
+import { Progress } from "./ui/progress";
+import { Avatar, AvatarFallback } from "./ui/avatar";
+import { Skeleton } from "./ui/skeleton";
 import UserIcon from "../assets/icons/user.svg?url";
 import PlusIcon from "../assets/icons/plus.svg?url";
 import SendIcon from "../assets/icons/send.svg?url";
@@ -28,6 +33,13 @@ export default function Chat() {
     return `${date} ${time}`;
   };
 
+  // Helper to get history from localStorage
+  const getHistory = (): ChatHistory =>
+    JSON.parse(localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}');
+
+  // Helper to save history to localStorage
+  const saveHistory = (history: ChatHistory) => localStorage.setItem("chatHistory", JSON.stringify(history));
+
   // Create new session
   const createNewSession = useCallback(() => {
     const newSessionId = Date.now().toString();
@@ -45,18 +57,13 @@ export default function Chat() {
 
   // Save current session to history
   const saveCurrentSession = useCallback(() => {
-    if (!currentSessionId || messages.length === 0) return;
-
-    // Don't save session if it was ended due to topic mismatch
-    if (!shouldSaveSession) {
-      console.log("🚫 [Chat.tsx] Pomijam zapis sesji - zakończona z powodu niezgodności tematu");
+    if (!currentSessionId || messages.length === 0 || !shouldSaveSession) {
+      if (!shouldSaveSession)
+        console.log("🚫 [Chat.tsx] Pomijam zapis sesji - zakończona z powodu niezgodności tematu");
       return;
     }
 
-    const history: ChatHistory = JSON.parse(
-      localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}'
-    );
-
+    const history = getHistory();
     const sessionIndex = history.sessions.findIndex((s) => s.id === currentSessionId);
     const session: ChatSession = {
       id: currentSessionId,
@@ -73,27 +80,18 @@ export default function Chat() {
     } else {
       history.sessions.push(session);
     }
-
     history.currentSessionId = currentSessionId;
-    localStorage.setItem("chatHistory", JSON.stringify(history));
+    saveHistory(history);
     console.log("💾 [Chat.tsx] Sesja zapisana:", sessionName);
   }, [currentSessionId, sessionName, messages, tokensUsed, shouldSaveSession, studentData]);
 
   // Remove current session from history (used when topic mismatch is detected)
   const removeCurrentSessionFromHistory = useCallback(() => {
     if (!currentSessionId) return;
-
-    const history: ChatHistory = JSON.parse(
-      localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}'
-    );
-
-    // Remove session from history
+    const history = getHistory();
     history.sessions = history.sessions.filter((s) => s.id !== currentSessionId);
-
-    // Clear current session ID
     history.currentSessionId = null;
-
-    localStorage.setItem("chatHistory", JSON.stringify(history));
+    saveHistory(history);
     console.log("🗑️ [Chat.tsx] Sesja usunięta z historii z powodu niezgodności tematu");
   }, [currentSessionId]);
 
@@ -138,9 +136,7 @@ export default function Chat() {
   }, [createNewSession]);
 
   // Auto-scroll to bottom
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   // Save session when messages or tokens change
   useEffect(() => {
@@ -200,19 +196,14 @@ export default function Chat() {
 
         // Check if we should redirect to topic selection (topic mismatch detected)
         if (data.shouldRedirect) {
-          console.log("🔄 [Chat.tsx] Wykryto niezgodność tematu w powitaniu - przekierowanie");
-          console.log("🔄 [Chat.tsx] Treść odpowiedzi AI:", data.response);
-          // Prevent saving this session to history
+          console.log("🔄 [Chat.tsx] Wykryto niezgodność tematu w powitaniu - przekierowanie", data.response);
           setShouldSaveSession(false);
-          // Remove session from history if it was already saved
           removeCurrentSessionFromHistory();
-          // Clear student data to force new selection
           localStorage.removeItem("studentData");
           setTimeout(() => {
             console.log("🔄 [Chat.tsx] Wykonuję przekierowanie do /tutors");
-            // Redirect to topic selection page using replace to avoid back button issues
             window.location.replace("/tutors");
-          }, 8000); // 8 seconds delay to let user read the message
+          }, 8000);
         }
       } else {
         console.error("❌ [Chat.tsx] Błąd w automatycznym powitaniu:", data.error);
@@ -303,21 +294,14 @@ export default function Chat() {
 
         // Check if we should redirect to topic selection
         if (data.shouldRedirect) {
-          console.log("🔄 [Chat.tsx] Wykryto niezgodność tematu - przekierowanie");
-          console.log("🔄 [Chat.tsx] Treść odpowiedzi AI:", data.response);
-          // Prevent saving this session to history
+          console.log("🔄 [Chat.tsx] Wykryto niezgodność tematu - przekierowanie", data.response);
           setShouldSaveSession(false);
-          // Remove session from history if it was already saved
           removeCurrentSessionFromHistory();
-          // Clear student data to force new selection
           localStorage.removeItem("studentData");
           setTimeout(() => {
             console.log("🔄 [Chat.tsx] Wykonuję przekierowanie do /tutors");
-            // Redirect to topic selection page using replace to avoid back button issues
             window.location.replace("/tutors");
-          }, 8000); // 8 seconds delay to let user read the message
-        } else {
-          console.log("ℹ️ [Chat.tsx] shouldRedirect jest false, brak przekierowania");
+          }, 8000);
         }
       } else {
         console.error("❌ [Chat.tsx] Błąd w odpowiedzi:", data.error);
@@ -370,11 +354,9 @@ export default function Chat() {
               }
 
               // Clear current session ID so next chat starts fresh
-              const history: ChatHistory = JSON.parse(
-                localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}'
-              );
+              const history = getHistory();
               history.currentSessionId = null;
-              localStorage.setItem("chatHistory", JSON.stringify(history));
+              saveHistory(history);
               console.log("✅ [Chat.tsx] Sesja zakończona, następny chat będzie czysty");
 
               // Redirect to home page
@@ -397,9 +379,9 @@ export default function Chat() {
         {messages.map((msg, idx) =>
           msg.role === "assistant" ? (
             <div key={idx} className="flex items-start gap-3">
-              <div className="shrink-0">
-                <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-2xl">👨‍🏫</div>
-              </div>
+              <Avatar className="w-10 h-10 shrink-0 bg-yellow-100">
+                <AvatarFallback className="text-2xl bg-yellow-100">👨‍🏫</AvatarFallback>
+              </Avatar>
               <div className="bg-yellow-200 rounded-2xl px-4 py-3 max-w-[80%]">
                 <p className="text-sm font-semibold text-gray-900 mb-1">Korepetytor</p>
                 <p className="text-sm text-gray-900 whitespace-pre-wrap">{msg.content}</p>
@@ -411,24 +393,23 @@ export default function Chat() {
                 <p className="text-sm font-semibold text-white mb-1">Ty</p>
                 <p className="text-sm text-white whitespace-pre-wrap">{msg.content}</p>
               </div>
-              <div className="shrink-0">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-2xl">
-                  {studentData?.avatar || "🦊"}
-                </div>
-              </div>
+              <Avatar className="w-10 h-10 shrink-0 bg-blue-100">
+                <AvatarFallback className="text-2xl bg-blue-100">{studentData?.avatar || "🦊"}</AvatarFallback>
+              </Avatar>
             </div>
           )
         )}
 
         {isLoading && (
           <div className="flex items-start gap-3">
-            <div className="shrink-0">
-              <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+            <Avatar className="w-10 h-10 shrink-0 bg-yellow-100">
+              <AvatarFallback className="bg-yellow-100">
                 <img src={UserIcon} alt="" className="w-5 h-5" />
-              </div>
-            </div>
-            <div className="bg-yellow-200 rounded-2xl px-4 py-3">
-              <p className="text-sm text-gray-900">Pisze...</p>
+              </AvatarFallback>
+            </Avatar>
+            <div className="bg-yellow-200 rounded-2xl px-4 py-3 space-y-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-48" />
             </div>
           </div>
         )}
@@ -438,9 +419,9 @@ export default function Chat() {
 
       {/* Error message */}
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          <p className="text-sm">{error}</p>
-        </div>
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
       {/* Input section */}
@@ -457,14 +438,13 @@ export default function Chat() {
           </button>
           {/* Input field */}
           <div className="flex-1">
-            <input
+            <Input
               type="text"
               placeholder="Wpisz pytanie z matematyki..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               disabled={isLoading}
-              className="w-full rounded-lg border text-sm border-gray-300 px-3 py-2 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
             />
           </div>
           {/* Send button */}
@@ -488,12 +468,10 @@ export default function Chat() {
             {tokensUsed.toLocaleString()} / {TOKEN_LIMIT.toLocaleString()}
           </p>
         </div>
-        <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all duration-300 ${tokensUsed / TOKEN_LIMIT < 0.7 ? "bg-blue-600" : tokensUsed / TOKEN_LIMIT < 0.9 ? "bg-yellow-500" : "bg-red-500"}`}
-            style={{ width: `${Math.min((tokensUsed / TOKEN_LIMIT) * 100, 100)}%` }}
-          ></div>
-        </div>
+        <Progress
+          value={Math.min((tokensUsed / TOKEN_LIMIT) * 100, 100)}
+          className={`h-2 ${tokensUsed / TOKEN_LIMIT < 0.7 ? "[&>div]:bg-blue-600" : tokensUsed / TOKEN_LIMIT < 0.9 ? "[&>div]:bg-yellow-500" : "[&>div]:bg-red-500"}`}
+        />
         {tokensUsed >= TOKEN_LIMIT && (
           <p className="text-xs text-red-600 mt-1">⚠️ Osiągnięto limit tokenów dla tej sesji</p>
         )}
