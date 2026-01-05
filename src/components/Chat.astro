@@ -7,64 +7,64 @@ import PlusIcon from "../assets/icons/plus.svg";
 import SendIcon from "../assets/icons/send.svg";
 ---
 
-<div class='min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto relative'>
+<div class="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto relative">
   {/* Header */}
-  <div class='flex justify-center mb-6 relative'>
-    <h1 class='text-3xl font-bold text-gray-900 text-center mb-8 mt-8'>Chat</h1>
-    <a href='/' class='inline-block absolute top-0 right-0'>
-      <Button variant='back'>Koniec na dziś</Button>
+  <div class="flex justify-center mb-6 relative">
+    <h1 class="text-3xl font-bold text-gray-900 text-center mb-8 mt-8">Chat</h1>
+    <a href="/" class="inline-block absolute top-0 right-0">
+      <Button variant="back">Koniec na dziś</Button>
     </a>
   </div>
 
   {/* Messages section */}
-  <div class='flex-1 space-y-4 mb-4 overflow-y-auto'>
+  <div class="flex-1 space-y-4 mb-4 overflow-y-auto">
     {/* Tutor message */}
-    <div class='flex items-start gap-3'>
+    <div class="flex items-start gap-3">
       {/* Avatar */}
-      <Avatar client:load className='w-10 h-10 shrink-0 bg-yellow-100'>
-        <AvatarFallback client:load className='text-2xl bg-yellow-100'>👨‍🏫</AvatarFallback>
+      <Avatar client:load className="w-10 h-10 shrink-0 bg-yellow-100">
+        <AvatarFallback client:load className="text-2xl bg-yellow-100">👨‍🏫</AvatarFallback>
       </Avatar>
       {/* Message bubble */}
-      <div class='bg-yellow-200 rounded-2xl px-4 py-3 max-w-[80%]'>
-        <p class='text-sm font-semibold text-gray-900 mb-1'>tutor + avatar</p>
-        <p class='text-sm text-gray-900'>Message. Lorem ipsum dolor.</p>
+      <div class="bg-yellow-200 rounded-2xl px-4 py-3 max-w-[80%]">
+        <p class="text-sm font-semibold text-gray-900 mb-1">tutor + avatar</p>
+        <p class="text-sm text-gray-900">Message. Lorem ipsum dolor.</p>
       </div>
     </div>
 
     {/* User message */}
-    <div class='flex items-start gap-3 justify-end'>
+    <div class="flex items-start gap-3 justify-end">
       {/* Message bubble */}
-      <div class='bg-blue-600 rounded-2xl px-4 py-3 max-w-[80%]'>
-        <p class='text-sm font-semibold text-white mb-1'>Me + avatar</p>
-        <p class='text-sm text-white'>Message. Lorem ipsum dolor.</p>
+      <div class="bg-blue-600 rounded-2xl px-4 py-3 max-w-[80%]">
+        <p class="text-sm font-semibold text-white mb-1">Me + avatar</p>
+        <p class="text-sm text-white">Message. Lorem ipsum dolor.</p>
       </div>
       {/* Avatar */}
-      <Avatar client:load className='w-10 h-10 shrink-0 bg-blue-100'>
-        <AvatarFallback client:load className='text-2xl bg-blue-100'>🦊</AvatarFallback>
+      <Avatar client:load className="w-10 h-10 shrink-0 bg-blue-100">
+        <AvatarFallback client:load className="text-2xl bg-blue-100">🦊</AvatarFallback>
       </Avatar>
     </div>
   </div>
 
   {/* Input section */}
-  <div class='bg-white rounded-xl shadow-md p-3 mb-4'>
-    <div class='flex items-center gap-2'>
+  <div class="bg-white rounded-xl shadow-md p-3 mb-4">
+    <div class="flex items-center gap-2">
       {/* Plus icon button */}
       <button
-        type='button'
-        class='shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors'
-        aria-label='Add attachment'
+        type="button"
+        class="shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
+        aria-label="Add attachment"
       >
         <PlusIcon />
       </button>
       {/* Input field */}
-      <div class='flex-1'>
-        <Input client:load type='text' placeholder='Message' />
+      <div class="flex-1">
+        <Input client:load type="text" placeholder="Message" />
       </div>
       {/* Send button */}
       <button
-        type='button'
-        class='shrink-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors'
-        aria-label='Send message'
+        type="button"
+        class="shrink-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors"
+        aria-label="Send message"
       >
         <SendIcon />
       </button>
@@ -72,8 +72,8 @@ import SendIcon from "../assets/icons/send.svg";
   </div>
 
   {/* Progress bar section */}
-  <div class='mb-4'>
-    <p class='text-sm text-gray-400 italic mb-2'>wykorzystany czas</p>
-    <Progress client:load value={35} className='h-2 [&>div]:bg-blue-600' />
+  <div class="mb-4">
+    <p class="text-sm text-gray-400 italic mb-2">wykorzystany czas</p>
+    <Progress client:load value={35} className="h-2 [&>div]:bg-blue-600" />
   </div>
 </div>

@@ -1,27 +1,16 @@
 import { useState, useId, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { useUserName } from "./hooks/useUserName";
 
 const MODAL_STATE_EVENT = "nameInputModalState";
 
 export default function NameInput() {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const { name, setName, saveName } = useUserName();
   const inputId = useId();
   const formId = useId();
-
-  // Set mounted flag after hydration to avoid hydration mismatch
-  useEffect(() => setMounted(true), []);
 
   // Dispatch event when modal state changes
   useEffect(() => {
@@ -40,8 +29,8 @@ export default function NameInput() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ok" aria-label="Otwórz formularz wprowadzania imienia">
-          {!mounted || !name ? "Podaj imię" : "Zmień imię"}
+        <Button variant="ok" aria-label="Otwórz formularz wprowadzania imienia" suppressHydrationWarning>
+          {!name ? "Podaj imię" : "Zmień imię"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -59,6 +48,7 @@ export default function NameInput() {
               placeholder="Wpisz imię"
               aria-label="Wprowadź swoje imię"
               spellCheck={false}
+              // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus={true}
             />
           </div>

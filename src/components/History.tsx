@@ -107,11 +107,7 @@ export default function History() {
                 {/* User avatar */}
                 <Avatar className="w-12 h-12 shrink-0 bg-blue-100">
                   <AvatarFallback className="text-2xl bg-blue-100">
-                    {session.avatar ? (
-                      <span>{session.avatar}</span>
-                    ) : (
-                      <img src={UserIcon} alt="" className="w-6 h-6" />
-                    )}
+                    {session.avatar ? <span>{session.avatar}</span> : <img src={UserIcon} alt="" className="w-6 h-6" />}
                   </AvatarFallback>
                 </Avatar>
 
@@ -148,9 +144,7 @@ export default function History() {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Anuluj</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDeleteSession(session.id)}>
-                          Usuń
-                        </AlertDialogAction>
+                        <AlertDialogAction onClick={() => handleDeleteSession(session.id)}>Usuń</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
