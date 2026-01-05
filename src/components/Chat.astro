@@ -5,7 +5,7 @@ import PlusIcon from "../assets/icons/plus.svg";
 import SendIcon from "../assets/icons/send.svg";
 ---
 
-<div class="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-screen-md mx-auto relative">
+<div class="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto relative">
   {/* Header */}
   <div class="flex justify-center mb-6 relative">
     <h1 class="text-3xl font-bold text-gray-900 text-center mb-8 mt-8">Chat</h1>
@@ -19,7 +19,7 @@ import SendIcon from "../assets/icons/send.svg";
     {/* Tutor message */}
     <div class="flex items-start gap-3">
       {/* Avatar */}
-      <div class="flex-shrink-0">
+      <div class="shrink-0">
         <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
           <UserIcon />
         </div>
@@ -39,7 +39,7 @@ import SendIcon from "../assets/icons/send.svg";
         <p class="text-sm text-white">Message. Lorem ipsum dolor.</p>
       </div>
       {/* Avatar */}
-      <div class="flex-shrink-0">
+      <div class="shrink-0">
         <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
           <UserIcon />
         </div>
@@ -53,7 +53,7 @@ import SendIcon from "../assets/icons/send.svg";
       {/* Plus icon button */}
       <button
         type="button"
-        class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
+        class="shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
         aria-label="Add attachment"
       >
         <PlusIcon />
@@ -69,7 +69,7 @@ import SendIcon from "../assets/icons/send.svg";
       {/* Send button */}
       <button
         type="button"
-        class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors"
+        class="shrink-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors"
         aria-label="Send message"
       >
         <SendIcon />
