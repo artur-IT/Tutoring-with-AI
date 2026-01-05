@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
 import { getTopicsForSubject, type Subject } from "../lib/subjectTopics";
 
@@ -20,10 +27,10 @@ export default function TutorsForm() {
 
   const handleSubjectSelect = (subject: Subject) => {
     setSelectedSubject(subject);
-    setSelectedTopic(""); // Reset topic when subject changes
+    setSelectedTopic("");
   };
 
-  const handleTopicChange = (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedTopic(e.target.value);
+  const handleTopicChange = (value: string) => setSelectedTopic(value);
   const handleProblemChange = (e: React.ChangeEvent<HTMLInputElement>) => setProblemDescription(e.target.value);
   const handleInterestsChange = (e: React.ChangeEvent<HTMLInputElement>) => setInterests(e.target.value);
   const handleAvatarSelect = (emoji: string) => setSelectedAvatar(emoji);
@@ -69,28 +76,23 @@ export default function TutorsForm() {
       {selectedSubject && (
         <>
           {/* Topic Selection Dropdown */}
-          {selectedSubject && (
-            <div className="flex flex-col gap-2">
-              <label htmlFor="topic-select" className="text-sm text-gray-900">
-                Wybierz temat:
-              </label>
-              <select
-                id="topic-select"
-                value={selectedTopic}
-                onChange={handleTopicChange}
-                className="w-[350px] text-sm px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                aria-label="Wybierz temat"
-                required
-              >
-                <option value=""></option>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="topic-select" className="text-sm text-gray-900">
+              Wybierz temat:
+            </label>
+            <Select value={selectedTopic} onValueChange={handleTopicChange} required>
+              <SelectTrigger id="topic-select" className="w-[350px]" aria-label="Wybierz temat">
+                <SelectValue placeholder="Wybierz temat" />
+              </SelectTrigger>
+              <SelectContent>
                 {availableTopics.map((topic) => (
-                  <option key={topic} value={topic}>
+                  <SelectItem key={topic} value={topic}>
                     {topic}
-                  </option>
+                  </SelectItem>
                 ))}
-              </select>
-            </div>
-          )}
+              </SelectContent>
+            </Select>
+          </div>
 
           {/* Problem Description Input */}
           <div className="flex flex-col gap-2">
@@ -152,7 +154,7 @@ export default function TutorsForm() {
         </Button>
 
         {/* Back Button */}
-        <Button onClick={() => (window.location.href = "/")} variant="back">
+        <Button onClick={() => window.location.assign("/")} variant="back">
           <img src={ArrowLeftSimpleIcon} alt="" className="w-5 h-4" />
           powrót
         </Button>
