@@ -5,7 +5,6 @@ import { Alert, AlertDescription } from "./ui/alert";
 import { Progress } from "./ui/progress";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Skeleton } from "./ui/skeleton";
-import UserIcon from "../assets/icons/user.svg?url";
 import PlusIcon from "../assets/icons/plus.svg?url";
 import SendIcon from "../assets/icons/send.svg?url";
 import type { Message, StudentData, AIResponse, ChatSession, ChatHistory } from "../agents/mathTutor/types";
@@ -31,6 +30,16 @@ export default function Chat() {
 
   // Token limit per session (can be adjusted)
   const TOKEN_LIMIT = 128_000;
+
+  // Clean LaTeX notation from AI response
+  // Removes / / delimiters and other LaTeX markers for better readability
+  const cleanMathNotation = (text: string): string => {
+    return text
+      .replace(/\/([^/]+)\//g, "$1") // Remove /expression/
+      .replace(/\\?\\\(([^)]+)\\\)/g, "$1") // Remove \(expression\)
+      .replace(/\\?\\\[([^\]]+)\\\]/g, "$1") // Remove \[expression\]
+      .replace(/\$([^$]+)\$/g, "$1"); // Remove $expression$
+  };
 
   // Create session name from date
   const createSessionName = () => {
@@ -329,11 +338,11 @@ export default function Chat() {
     setError(null);
 
     try {
-      // Create a special initial message that asks AI to start the conversation
-      // Include the student's problem to pass the math topic check in the agent
+      // Create a natural initial message that presents the student's actual problem
+      // This way AI knows this is a real problem to help with, not just a general topic
       const initialPrompt = studentData?.problem
-        ? `Przywitaj się i ogólnie wprowadź temat: ${studentData.problem}. Nie odpowiadaj na konkretne pytanie, tylko nawiąż do tematu.`
-        : `Przywitaj się i powiedz ogólnie coś o matematyce.`;
+        ? `Cześć! Mam problem z: ${studentData.problem}. Możesz mi to wytłumaczyć?`
+        : `Cześć! Chciałbym nauczyć się matematyki.`;
 
       const requestBody = {
         message: initialPrompt,
@@ -408,7 +417,7 @@ export default function Chat() {
       setIsLoading(false);
       console.log("✅ [Chat.tsx] Zakończono wysyłanie automatycznego powitania");
     }
-  }, [studentData, removeCurrentSessionFromHistory]);
+  }, [studentData, currentSessionId, messages.length, removeCurrentSessionFromHistory, saveCurrentSession]);
 
   // Send initial greeting from AI after 2 seconds
   useEffect(() => {
@@ -652,7 +661,7 @@ export default function Chat() {
               </Avatar>
               <div className="bg-yellow-200 rounded-2xl px-4 py-3 max-w-[80%]">
                 <p className="text-sm font-semibold text-gray-900 mb-1">Korepetytor</p>
-                <p className="text-sm text-gray-900 whitespace-pre-wrap">{msg.content}</p>
+                <p className="text-sm text-gray-900 whitespace-pre-wrap">{cleanMathNotation(msg.content)}</p>
               </div>
             </div>
           ) : (
@@ -671,9 +680,7 @@ export default function Chat() {
         {isLoading && (
           <div className="flex items-start gap-3">
             <Avatar className="w-10 h-10 shrink-0 bg-yellow-100">
-              <AvatarFallback className="bg-yellow-100">
-                <img src={UserIcon} alt="" className="w-5 h-5" />
-              </AvatarFallback>
+              <AvatarFallback className="text-2xl bg-yellow-100">👨‍🏫</AvatarFallback>
             </Avatar>
             <div className="bg-yellow-200 rounded-2xl px-4 py-3 space-y-2">
               <Skeleton className="h-4 w-32" />
