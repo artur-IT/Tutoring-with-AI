@@ -9,6 +9,7 @@ import PlusIcon from "../assets/icons/plus.svg?url";
 import SendIcon from "../assets/icons/send.svg?url";
 import type { Message, StudentData, AIResponse, ChatSession, ChatHistory } from "../agents/mathTutor/types";
 import { sessionLimits } from "../agents/mathTutor/config";
+import { useDebounce } from "./hooks/useDebounce";
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -435,7 +436,7 @@ export default function Chat() {
   }, [messages.length, studentData, isLoading, currentSessionId, sendInitialGreeting]);
 
   // Send message to API
-  const handleSend = async () => {
+  const handleSendInternal = async () => {
     if (!input.trim() || isLoading || isSessionEnded) return;
 
     // Check if we've reached the message limit
@@ -585,6 +586,10 @@ export default function Chat() {
       console.log("✅ [Chat.tsx] Zakończono wysyłanie");
     }
   };
+
+  // Debounced version of handleSend to prevent rapid successive calls
+  // User can click multiple times, but the function will only execute once after 500ms delay
+  const handleSend = useDebounce(handleSendInternal, 500);
 
   return (
     <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto relative">
