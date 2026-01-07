@@ -8,3 +8,4 @@ alwaysApply: false
 - javascript zgodny m.in. z ES8, ES9, ES11, ES12, ES2022, ES2023
 - css wykorzystujący rozwiązania z roku 2025 i 5 lat wstecz
 - html 5
+- React 19.2

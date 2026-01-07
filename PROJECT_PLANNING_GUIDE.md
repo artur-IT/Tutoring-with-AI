@@ -8,7 +8,6 @@
   - [Metoda 1: User Stories (dla aplikacji z użytkownikami)](#metoda-1-user-stories-dla-aplikacji-z-użytkownikami)
   - [Metoda 2: Epiki → Features → Tasks](#metoda-2-epiki--features--tasks)
   - [Metoda 3: Według warstw architektury](#metoda-3-według-warstw-architektury)
-  - [Metoda 4: Priorytetyzacja (MoSCoW)](#metoda-4-priorytetyzacja-moscow)
 - [3. Jak szczegółowy powinien być plan?](#3-jak-szczegółowy-powinien-być-plan)
   - [Poziom 1: Wysoki poziom (dla całego projektu)](#poziom-1-wysoki-poziom-dla-całego-projektu)
   - [Poziom 2: Średni poziom (dla każdego etapu)](#poziom-2-średni-poziom-dla-każdego-etapu)
@@ -359,26 +358,6 @@ INFRASTRUKTURA:
 - [ ] Konfiguracja zmiennych środowiskowych
 - [ ] Setup CI/CD
 - [ ] Deployment
-```
-
-### Metoda 4: Priorytetyzacja (MoSCoW)
-
-```
-MUST HAVE (musi być):
-- Podstawowy chat z AI
-- Wybór przedmiotu
-
-SHOULD HAVE (powinno być):
-- Historia rozmów
-- Personalizacja odpowiedzi
-
-COULD HAVE (może być):
-- Eksport historii
-- Tryb offline
-
-WON'T HAVE (nie będzie):
-- Integracja z social media
-- Płatności
 ```
 
 ---
