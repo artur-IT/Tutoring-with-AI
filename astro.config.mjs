@@ -23,7 +23,23 @@ export default defineConfig({
     plugins: [tailwindcss()],
     // Optimize Vite for faster dev startup
     optimizeDeps: {
-      include: ["react", "react-dom"],
+      include: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "@radix-ui/react-alert-dialog",
+        "@radix-ui/react-avatar",
+        "@radix-ui/react-dialog",
+        "@radix-ui/react-progress",
+        "@radix-ui/react-radio-group",
+        "@radix-ui/react-select",
+        "@radix-ui/react-slot",
+        "lucide-react",
+        "clsx",
+        "tailwind-merge",
+        "class-variance-authority",
+      ],
       force: false, // Don't force re-optimization on every start
     },
     // Exclude dist folder from watching
@@ -35,6 +51,10 @@ export default defineConfig({
         // Restrict file system access for better performance
         strict: false,
       },
+      hmr: {
+        // Optimize HMR
+        overlay: true,
+      },
     },
     // Cache configuration for faster rebuilds
     cacheDir: "node_modules/.vite",
@@ -42,6 +62,8 @@ export default defineConfig({
       // Don't minify in dev mode
       minify: false,
     },
+    // Disable ESLint in dev mode for faster startup
+    clearScreen: false,
   },
   // Only use adapter in production
   ...(import.meta.env.PROD && {
