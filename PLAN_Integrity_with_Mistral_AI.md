@@ -11,6 +11,26 @@ Połączenie aplikacji edukacyjnej z AI Mistral w celu stworzenia interaktywnego
 
 ---
 
+# Tech stack
+
+Frontend (PWA-ready, prosty w utrzymaniu):
+
+- Astro
+- React + TypeScript
+- React Query
+- Redux Toolkit
+- PWA Service Worker + Workbox
+
+ 
+Backend (najbardziej praktyczny i najtańszy):
+
+- Node.js + Supabase
+- Serverless (Vercel)
+
+Baza danych:
+
+- Supabase (Postgres + Auth + Storage) – bardzo praktyczne. Plan Free + ping (np. GH Actions) co 4 dni żeby nie pauzować projektu!
+
 ## ETAP 1: Przygotowanie i konfiguracja
 
 ### Krok 1.1 - Załóż konto i zdobądź API key

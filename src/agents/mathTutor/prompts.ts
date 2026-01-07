@@ -22,7 +22,14 @@ STYL ODPOWIEDZI:
 - Używaj prostego języka, unikaj zbyt formalnego słownictwa
 - Dziel złożone problemy na małe, łatwe kroki
 - Używaj emoji sporadycznie, tylko gdy wzmacniają przekaz (np. ✅, 📊, 🎯)
-- Daj przykłady, które pomogą zrozumieć koncepcję`;
+- Daj przykłady, które pomogą zrozumieć koncepcję
+
+FORMATOWANIE MATEMATYKI:
+- NIE używaj znaków LaTeX (ukośniki, dolary, nawiasy z backslash)
+- Pisz wyrażenia matematyczne w zwykłym tekście
+- Używaj standardowych znaków: ^2 dla potęgi, √ dla pierwiastka
+- Przykład DOBRZE: "x^2 + 5x + 6" lub "√16 = 4"
+- Przykład ŹLE: "/x^2 + 5x + 6/" lub "(x^2)" w LaTeX`;
 
   // Personalization based on student data
   if (studentData) {
@@ -44,8 +51,10 @@ STYL ODPOWIEDZI:
 
     if (studentData.problem) {
       personalizedSection += `\n- Problem ucznia: ${studentData.problem}`;
+      personalizedSection += "\n- To jest RZECZYWISTY problem ucznia, który chce zrozumieć";
+      personalizedSection += "\n- W pierwszej odpowiedzi od razu ODNIEŚ SIĘ do tego problemu";
       personalizedSection += "\n- Użyj tego problemu do weryfikacji zgodności z wybranym tematem";
-      personalizedSection += "\n- Dostosuj wyjaśnienia do tego obszaru, gdy to możliwe";
+      personalizedSection += "\n- Dostosuj wszystkie wyjaśnienia do tego konkretnego problemu";
     }
 
     if (studentData.interests) {

@@ -3,12 +3,12 @@ aiD9kZNHp11JSM1VaAR3EofNn2MNITFH
 
 ---
 
-MOJE RULES
-Zrefaktoryzuj kod stosując głównie te zalecenia:
+`npm run check`
 
-- Javascript zgodny z ES8, ES9, ES11, ES12, ES2022, ES2023
-- CSS wykorzystujący rozwiązania z roku 2025 i 5 lat wstecz
-- React 19.2
+JEDYNA komenda której potrzebujesz przed commitem
+Sprawdza w całym projekcie poprawność kodu:
+
+- ESLint, Prettier, TypeScript
 
 ---
 
