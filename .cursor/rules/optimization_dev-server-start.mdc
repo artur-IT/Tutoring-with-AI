@@ -1,0 +1,9 @@
+---
+alwaysApply: false
+---
+
+# Optimization: Dev Server Start
+
+<!-- - server dev bardzo długo sie uruchamia, dlaczego? spróbuj to zoptymalizować -->
+
+- zweryfikuj czy jestesmy w stanie zoptymalizować dev server start

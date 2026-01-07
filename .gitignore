@@ -7,6 +7,9 @@ dist/
 # Vite cache
 node_modules/.vite
 
+# TypeScript cache
+*.tsbuildinfo
+
 # dependencies
 node_modules/
 
