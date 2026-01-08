@@ -215,4 +215,169 @@ describe("Chat Component - Edge Cases", () => {
       );
     });
   });
+
+  describe("TEST 3: Walidacja limitu wiadomości", () => {
+    it("should disable Send button and show red border when message length >= 400", async () => {
+      localStorage.setItem(
+        "studentData",
+        JSON.stringify({
+          name: "Test User",
+          subject: "matematyka",
+          topic: "algebra",
+        })
+      );
+
+      render(<Chat />);
+
+      await waitFor(() => {
+        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+      });
+
+      const textarea = screen.getByPlaceholderText(/wpisz pytanie/i);
+      const sendButton = screen.getByLabelText(/send message/i);
+
+      // Test with short message - should be enabled
+      await userEvent.type(textarea, "Short message");
+
+      await waitFor(() => {
+        expect(sendButton).not.toBeDisabled();
+      });
+
+      // Clear and test with 400 characters - should be disabled
+      await userEvent.clear(textarea);
+      const text400 = "a".repeat(400);
+      await userEvent.paste(text400);
+
+      await waitFor(
+        () => {
+          expect(sendButton).toBeDisabled();
+          expect(screen.queryByText(/400 \/ 400/)).toBeInTheDocument();
+          expect(textarea).toHaveClass("border-red-500");
+        },
+        { timeout: 5000 }
+      );
+    });
+  });
+
+  describe("TEST 10: Licznik znaków", () => {
+    it("should show character counter that updates dynamically", async () => {
+      localStorage.setItem(
+        "studentData",
+        JSON.stringify({
+          name: "Test User",
+          subject: "matematyka",
+          topic: "algebra",
+        })
+      );
+
+      render(<Chat />);
+
+      await waitFor(() => {
+        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+      });
+
+      // Initial state - should show "0 / 400"
+      expect(screen.getByText("0 / 400")).toBeInTheDocument();
+
+      const textarea = screen.getByPlaceholderText(/wpisz pytanie/i);
+
+      // Type few characters
+      await userEvent.type(textarea, "Hi");
+
+      await waitFor(() => {
+        expect(screen.queryByText(/2 \/ 400/)).toBeInTheDocument();
+      });
+    });
+
+    it("should show red counter and disable button when at limit", async () => {
+      localStorage.setItem(
+        "studentData",
+        JSON.stringify({
+          name: "Test User",
+          subject: "matematyka",
+          topic: "algebra",
+        })
+      );
+
+      render(<Chat />);
+
+      await waitFor(() => {
+        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+      });
+
+      const textarea = screen.getByPlaceholderText(/wpisz pytanie/i);
+      const sendButton = screen.getByLabelText(/send message/i);
+
+      // Directly set value to test validation without slow typing
+      const text400 = "a".repeat(400);
+      await userEvent.click(textarea);
+      await userEvent.paste(text400);
+
+      await waitFor(
+        () => {
+          // Counter should show 400 / 400 in red
+          const counter = screen.queryByText(/400 \/ 400/);
+          expect(counter).toBeInTheDocument();
+          if (counter) {
+            expect(counter).toHaveClass("text-red-500");
+          }
+          // Send button should be disabled
+          expect(sendButton).toBeDisabled();
+        },
+        { timeout: 5000 }
+      );
+    });
+  });
+
+  describe("TEST 11: Textarea wieloliniowa", () => {
+    it("should handle Shift+Enter for new line and Enter for sending", async () => {
+      localStorage.setItem(
+        "studentData",
+        JSON.stringify({
+          name: "Test User",
+          subject: "matematyka",
+          topic: "algebra",
+        })
+      );
+
+      const user = userEvent.setup();
+      render(<Chat />);
+
+      await waitFor(() => {
+        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+      });
+
+      const textarea = screen.getByPlaceholderText(/wpisz pytanie/i) as HTMLTextAreaElement;
+
+      // Type "Line 1"
+      await user.type(textarea, "Line 1");
+
+      await waitFor(() => {
+        expect(textarea.value).toBe("Line 1");
+      });
+
+      // Simulate Shift+Enter (adds new line, doesn't send)
+      await user.keyboard("{Shift>}{Enter}{/Shift}");
+
+      // Type "Line 2"
+      await user.type(textarea, "Line 2");
+
+      // Check if textarea contains newline character
+      await waitFor(() => {
+        expect(textarea.value).toContain("\n");
+        expect(textarea.value).toBe("Line 1\nLine 2");
+      });
+
+      // Verify message was NOT sent (no fetch call yet, only the initial greeting)
+      const fetchCalls = (global.fetch as ReturnType<typeof vi.fn>).mock.calls.length;
+
+      // Press Enter (without Shift) - should send message
+      await user.keyboard("{Enter}");
+
+      // Wait for message to be sent (one more fetch call than before)
+      await waitFor(() => {
+        expect((global.fetch as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(fetchCalls);
+      });
+    });
+  });
 });
