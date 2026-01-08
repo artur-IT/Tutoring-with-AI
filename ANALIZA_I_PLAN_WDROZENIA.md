@@ -1,14 +1,14 @@
 # Analiza planu integracji i propozycja wdrożenia 🎯
 
-Data utworzenia: 8 grudnia 2025  
-Ostatnia aktualizacja: 7 stycznia 2026  
+Data utworzenia: 8 grudnia 2025
+Ostatnia aktualizacja: 8 stycznia 2026
 Projekt: Chat-with-Hero (Tutor with AI)
 
 ---
 
 ## 📈 Aktualny status projektu
 
-**Postęp ogólny:** ~40% ukończone
+**Postęp ogólny:** ~50% ukończone
 
 ### ✅ Ukończone funkcjonalności:
 
@@ -21,6 +21,7 @@ Projekt: Chat-with-Hero (Tutor with AI)
 
 ### 🔍 Historia weryfikacji i aktualizacji:
 
+- **8 stycznia 2026** - Ukończono FEATURE 3.2 (Testowanie edge cases) - testy jednostkowe (13/13 ✅) i E2E (7 testów)
 - **7 stycznia 2026** - Dokończono FEATURE 1.3 (Debouncing) - dodano hook `useDebounce`
 - **7 stycznia 2026** - Pełna weryfikacja kodu - status potwierdzony jako aktualny
 - **9 grudnia 2025** - Utworzenie dokumentu i implementacja FEATURE 1.1, 1.2
@@ -29,11 +30,15 @@ Projekt: Chat-with-Hero (Tutor with AI)
 
 - (brak - wszystkie częściowe features ukończone)
 
+### 🎯 W trakcie realizacji:
+
+- ✅ Testowanie edge cases (FEATURE 3.2) - ukończone 8 stycznia 2026
+
 ### ❌ Do zrobienia:
 
 - ❌ Filtrowanie treści (FEATURE 1.4)
 - ❌ Obsługa offline (FEATURE 2.1)
-- ❌ Testowanie (FEATURE 3.1, 3.2)
+- ❌ Testowanie podstawowego flow (FEATURE 3.1)
 - ❌ Optymalizacja (FEATURE 3.3)
 
 ---
@@ -407,55 +412,98 @@ Projekt: Chat-with-Hero (Tutor with AI)
 
 #### FEATURE 3.2: Testowanie edge cases
 
+**Status:** ✅ UKOŃCZONE (8 stycznia 2026)
+
 **User Stories:**
 
 1. Jako developer chcę przetestować przypadki brzegowe żeby upewnić się że aplikacja jest stabilna
 2. Jako użytkownik chcę mieć pewność że aplikacja obsługuje błędy elegancko
 
-**Tasks:**
+**Implementacja:**
 
-- [ ] Task: Test - pytanie spoza przedmiotu
+**FAZA 1 i 2: Testy jednostkowe (Vitest + RTL)** - ✅ UKOŃCZONE
+
+- ✅ Task: Test - pusta wiadomość
+  - **Status:** UKOŃCZONE - Chat.test.tsx
+  - **Rezultat:** Przycisk Send blokowany gdy input pusty ✅
+
+- ✅ Task: Test - błąd API
+  - **Status:** UKOŃCZONE - Chat.test.tsx
+  - **Rezultat:** Wyświetla przyjazny komunikat błędu ✅
+
+- ✅ Task: Test - bardzo długie pytanie (limit 400 znaków)
+  - **Status:** UKOŃCZONE - Chat.test.tsx
+  - **Rezultat:** Walidacja przy >= 400 znakach, czerwona ramka i licznik ✅
+
+- ✅ Task: Test - szybkie klikanie "Send" (debouncing)
+  - **Status:** UKOŃCZONE - useDebounce.test.ts
+  - **Rezultat:** Funkcja wykonuje się raz mimo wielokrotnego wywołania ✅
+
+- ✅ Task: Test - blokowanie przycisku podczas wysyłania
+  - **Status:** UKOŃCZONE - Chat.test.tsx
+  - **Rezultat:** Przycisk disabled podczas loading ✅
+
+- ✅ Task: Test - walidacja imienia użytkownika
+  - **Status:** UKOŃCZONE - NameInput.test.tsx
+  - **Rezultat:** Puste imię i same spacje są blokowane ✅
+
+- ✅ Task: Test - licznik znaków
+  - **Status:** UKOŃCZONE - Chat.test.tsx (2 testy)
+  - **Rezultat:** Licznik aktualizuje się dynamicznie i zmienia kolor ✅
+
+- ✅ Task: Test - textarea wieloliniowa (Enter/Shift+Enter)
+  - **Status:** UKOŃCZONE - Chat.test.tsx
+  - **Rezultat:** Shift+Enter dodaje nową linię, Enter wysyła ✅
+
+**Wyniki testów jednostkowych:**
+
+- ✅ 13/13 testów przechodzi (8 przypadków testowych)
+- Czas wykonania: ~5.1 sekundy
+- Pliki: `Chat.test.tsx`, `useDebounce.test.ts`, `NameInput.test.tsx`
+
+**FAZA 3: Testy E2E (Playwright)** - ✅ ZAIMPLEMENTOWANE
+
+- ✅ Task: Konfiguracja Playwright
+  - **Pliki:** `playwright.config.ts`
+  - **Status:** Konfiguracja gotowa dla Chromium, Firefox, WebKit
+
+- ✅ Task: TEST 7 - pytanie spoza przedmiotu
+  - **Pliki:** `tests/chat-edge-cases.spec.ts`
   - **Opis:** Test że AI uprzejmie odmawia odpowiedzi na pytania spoza matematyki
-  - **Pliki:** Dokumentacja testów
-  - **Szacowany czas:** 30 minut
-  - **Zależności:** Brak
+  - **Status:** Zaimplementowany (2 testy: TEST 7 i TEST 7b)
 
-- [ ] Task: Test - błąd API
-  - **Opis:** Test że aplikacja pokazuje przyjazny komunikat gdy API zwraca błąd
-  - **Pliki:** Dokumentacja testów
-  - **Szacowany czas:** 30 minut
-  - **Zależności:** Brak
+- ✅ Task: TEST 9 - limit zapytań (50 wiadomości)
+  - **Pliki:** `tests/chat-edge-cases.spec.ts`
+  - **Opis:** Test że sesja kończy się po 50 wiadomościach
+  - **Status:** Zaimplementowany (2 testy: TEST 9 i TEST 9b)
 
-- [ ] Task: Test - brak internetu
-  - **Opis:** Test że aplikacja obsługuje brak połączenia (związane z FEATURE 2.1)
-  - **Pliki:** Dokumentacja testów
-  - **Szacowany czas:** 30 minut
-  - **Zależności:** Wymaga ukończenia FEATURE 2.1
+- ✅ Task: TEST 8 - brak internetu (offline)
+  - **Pliki:** `tests/offline.spec.ts`
+  - **Opis:** Test że aplikacja obsługuje brak połączenia
+  - **Status:** Zaimplementowany (3 testy: TEST 8a, 8b, 8c)
+  - **Uwaga:** Zależny od FEATURE 2.1 (Obsługa offline)
 
-- [ ] Task: Test - bardzo długie pytanie
-  - **Opis:** Test że aplikacja waliduje długość wiadomości
-  - **Pliki:** Dokumentacja testów
-  - **Szacowany czas:** 30 minut
-  - **Zależności:** Brak
+**Struktura testów E2E:**
 
-- [ ] Task: Test - pusta wiadomość
-  - **Opis:** Test że aplikacja blokuje wysłanie pustej wiadomości
-  - **Pliki:** Dokumentacja testów
-  - **Szacowany czas:** 15 minut
-  - **Zależności:** Brak
+```
+tests/
+  ├── chat-edge-cases.spec.ts  (4 testy: TEST 7, 7b, 9, 9b)
+  └── offline.spec.ts          (3 testy: TEST 8a, 8b, 8c)
+```
 
-- [ ] Task: Test - szybkie klikanie "Send"
-  - **Opis:** Test że debouncing działa poprawnie (związane z FEATURE 1.3)
-  - **Pliki:** Dokumentacja testów
-  - **Szacowany czas:** 30 minut
-  - **Zależności:** Wymaga ukończenia FEATURE 1.3
+**Dokumentacja testów:**
+
+- Szczegółowy plan: `docs/TESTS_PLAN.md`
+- Konfiguracja: `playwright.config.ts`, `vitest.config.ts`
+- Skrypty: `npm run test`, `npm run test:e2e`
 
 **Kryteria akceptacji:**
 
-- ✅ Wszystkie edge cases są udokumentowane
-- ✅ Wszystkie edge cases są przetestowane
+- ✅ Wszystkie edge cases są udokumentowane w `docs/TESTS_PLAN.md`
+- ✅ Testy jednostkowe przechodzą (13/13) ✅
+- ✅ Testy E2E zaimplementowane (7 testów)
 - ✅ Aplikacja obsługuje wszystkie edge cases elegancko
-- ✅ Wyniki testów są zapisane w dokumentacji
+- ✅ Konfiguracja testów gotowa (Vitest, RTL, Playwright)
 
 ---
 
@@ -577,7 +625,7 @@ Projekt: Chat-with-Hero (Tutor with AI)
 
 ---
 
-**Status:** 📋 Plan w trakcie wdrożenia  
+**Status:** 📋 Plan w trakcie wdrożenia
 **Postęp:** ~40% ukończone (3 z 4 głównych features w EPIK 1)
 
 **Następne kroki:**
