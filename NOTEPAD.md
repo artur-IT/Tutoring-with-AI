@@ -3,6 +3,15 @@ aiD9kZNHp11JSM1VaAR3EofNn2MNITFH
 
 ---
 
+# CODZIENNIE NA POCZĄTKU PRACY
+
+1. Nowa gałąź + nazwa funkcji
+2. Określ jakie są niezbędne test do nowej funk.
+3. Stwów te niezbędne testy
+4. commit i push + PR
+
+---
+
 `npm run check`
 
 JEDYNA komenda której potrzebujesz przed commitem

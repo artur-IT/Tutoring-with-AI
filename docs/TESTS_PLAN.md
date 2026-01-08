@@ -87,20 +87,25 @@ src/components/
 
 ---
 
-### TEST 3: Bardzo długa wiadomość (Chat.test.tsx)
+### TEST 3: Walidacja limitu wiadomości (Chat.test.tsx)
 
-**Priorytet:** NISKI
+**Priorytet:** WYSOKI
 
-**Co testujemy:** Walidacja długości wiadomości (jeśli jest zaimplementowana)
+**Co testujemy:** Walidacja limitu 400 znaków
 
 **Scenariusz:**
 
 1. Renderuj komponent `Chat`
-2. Wpisz bardzo długą wiadomość (np. 10000 znaków)
-3. Spróbuj wysłać
-4. Sprawdź czy:
-   - Jest komunikat o za długiej wiadomości LUB
-   - Wiadomość jest wysłana ale obcięta
+2. Wpisz dokładnie 399 znaków
+3. Sprawdź czy przycisk Send jest enabled
+4. Sprawdź czy licznik pokazuje "399 / 400" w szarym kolorze
+5. Dodaj 1 znak (400 znaków)
+6. Sprawdź czy:
+   - Przycisk Send jest disabled
+   - Textarea ma czerwoną ramkę (border-red-500)
+   - Licznik pokazuje "400 / 400" w czerwonym kolorze
+7. Dodaj kolejny znak (401 znaków)
+8. Sprawdź te same warunki (disabled, czerwona ramka, czerwony licznik)
 
 **Narzędzia:** Vitest + RTL
 
@@ -108,9 +113,7 @@ src/components/
 
 - Mock fetch API
 
-**Oczekiwany rezultat:** ✅ Aplikacja obsługuje długie wiadomości
-
-**⚠️ Uwaga:** Jeśli walidacja długości nie jest zaimplementowana, test może wykryć brak tej funkcjonalności
+**Oczekiwany rezultat:** ✅ Walidacja działa poprawnie przy >= 400 znakach
 
 ---
 
@@ -181,6 +184,58 @@ src/components/
 **Mockowanie:** Brak (czysty komponent)
 
 **Oczekiwany rezultat:** ✅ Puste imię jest blokowane
+
+---
+
+### TEST 10: Licznik znaków (Chat.test.tsx)
+
+**Priorytet:** ŚREDNI
+
+**Co testujemy:** Licznik znaków aktualizuje się dynamicznie i zmienia kolor
+
+**Scenariusz:**
+
+1. Renderuj komponent `Chat`
+2. Znajdź licznik (powinien pokazywać "0 / 400")
+3. Wpisz "Test" (4 znaki)
+4. Sprawdź czy licznik pokazuje "4 / 400"
+5. Wpisz więcej tekstu do 399 znaków
+6. Sprawdź czy licznik jest szary (text-gray-500)
+7. Dodaj 1 znak (400 znaków)
+8. Sprawdź czy licznik zmienił kolor na czerwony (text-red-500)
+
+**Narzędzia:** Vitest + RTL
+
+**Mockowanie:** Mock fetch API
+
+**Oczekiwany rezultat:** ✅ Licznik dynamicznie aktualizuje się i zmienia kolor
+
+---
+
+### TEST 11: Textarea wieloliniowa (Chat.test.tsx)
+
+**Priorytet:** NISKI
+
+**Co testujemy:** Textarea obsługuje Enter i Shift+Enter
+
+**Scenariusz:**
+
+1. Renderuj komponent `Chat`
+2. Wpisz "Line 1"
+3. Symuluj Shift+Enter
+4. Wpisz "Line 2"
+5. Sprawdź czy textarea zawiera "\n" (nowa linia)
+6. Sprawdź czy wiadomość NIE została wysłana
+7. Naciśnij Enter (bez Shift)
+8. Sprawdź czy wiadomość została wysłana
+
+**Narzędzia:** Vitest + RTL
+
+**Mockowanie:** Mock fetch API
+
+**Oczekiwany rezultat:** ✅ Shift+Enter dodaje nową linię, Enter wysyła
+
+**⚠️ Uwaga:** Test może być trudny w RTL, może być lepiej zaimplementować jako E2E
 
 ---
 
@@ -306,21 +361,23 @@ npx playwright install
 1. **WYSOKI** (podstawowe edge cases):
    - TEST 1: Pusta wiadomość
    - TEST 2: Błąd API
+   - TEST 3: Walidacja limitu 400 znaków
    - TEST 5: Blokowanie przycisku
 
 2. **ŚREDNI** (dodatkowe zabezpieczenia):
    - TEST 4: Debouncing hook
    - TEST 6: Walidacja imienia
+   - TEST 10: Licznik znaków
 
 3. **NISKI** (nice to have):
-   - TEST 3: Bardzo długa wiadomość
+   - TEST 11: Textarea wieloliniowa
 
 **Kolejność wykonania:**
 
-1. Stwórz `Chat.test.tsx` z TEST 1, 2, 5
+1. Stwórz `Chat.test.tsx` z TEST 1, 2, 3, 5, 10
 2. Stwórz `useDebounce.test.ts` z TEST 4
 3. Stwórz `NameInput.test.tsx` z TEST 6
-4. Opcjonalnie: dodaj TEST 3
+4. Opcjonalnie: dodaj TEST 11
 
 ---
 
@@ -367,16 +424,18 @@ npx playwright install
 
 ## 📊 Podsumowanie testów
 
-### Testy Vitest + RTL (6 testów):
+### Testy Vitest + RTL (8 testów):
 
-| #   | Nazwa                | Plik                | Priorytet |
-| --- | -------------------- | ------------------- | --------- |
-| 1   | Pusta wiadomość      | Chat.test.tsx       | WYSOKI    |
-| 2   | Błąd API             | Chat.test.tsx       | WYSOKI    |
-| 3   | Długa wiadomość      | Chat.test.tsx       | NISKI     |
-| 4   | Debouncing           | useDebounce.test.ts | ŚREDNI    |
-| 5   | Blokowanie przycisku | Chat.test.tsx       | WYSOKI    |
-| 6   | Walidacja imienia    | NameInput.test.tsx  | ŚREDNI    |
+| #   | Nazwa                   | Plik                | Priorytet |
+| --- | ----------------------- | ------------------- | --------- |
+| 1   | Pusta wiadomość         | Chat.test.tsx       | WYSOKI    |
+| 2   | Błąd API                | Chat.test.tsx       | WYSOKI    |
+| 3   | Walidacja limitu 400 zn | Chat.test.tsx       | WYSOKI    |
+| 4   | Debouncing              | useDebounce.test.ts | ŚREDNI    |
+| 5   | Blokowanie przycisku    | Chat.test.tsx       | WYSOKI    |
+| 6   | Walidacja imienia       | NameInput.test.tsx  | ŚREDNI    |
+| 10  | Licznik znaków          | Chat.test.tsx       | ŚREDNI    |
+| 11  | Textarea wieloliniowa   | Chat.test.tsx       | NISKI     |
 
 ### Testy Playwright (3 testy):
 
@@ -394,13 +453,16 @@ npx playwright install
 
 ### Ukończone (FAZA 1 i 2):
 
-- ✅ Wszystkie 6 edge cases z planu są pokryte testami jednostkowymi
-- ✅ Testy jednostkowe przechodzą (`npm run test`) - 9/9 testów ✅
+- ✅ Wszystkie 8 edge cases z planu są pokryte testami jednostkowymi
+- ✅ Testy jednostkowe przechodzą (`npm run test`) - 13/13 testów ✅
 - ✅ Każdy test ma jasny opis i oczekiwany rezultat
 - ✅ Mockowanie tylko tam gdzie konieczne (network requests)
 - ✅ Konfiguracja Vitest i RTL działa poprawnie
+- ✅ TEST 3: Walidacja limitu 400 znaków - zaimplementowane
+- ✅ TEST 10: Licznik znaków - zaimplementowane (2 testy)
+- ✅ TEST 11: Textarea wieloliniowa - zaimplementowane
 
-### Do ukończenia (FAZA 3 i 4):
+### Do ukończenia (FAZA 3 i 4 - E2E):
 
 - ❌ Testy E2E przechodzą (`npm run test:e2e`) - oczekuje na implementację
 - ❌ Wyniki są udokumentowane w `ANALIZA_I_PLAN_WDROZENIA.md` - oczekuje na ukończenie FAZY 3
@@ -413,15 +475,17 @@ npx playwright install
 
 1. ✅ TEST 1: Pusta wiadomość - **Zaimplementowane i przechodzi**
 2. ✅ TEST 2: Błąd API - **Zaimplementowane i przechodzi**
-3. ✅ TEST 4: Debouncing - **Zaimplementowane i przechodzi** (3 testy)
-4. ✅ TEST 5: Blokowanie przycisku - **Zaimplementowane i przechodzi**
-5. ✅ TEST 6: Walidacja imienia - **Zaimplementowane i przechodzi** (3 testy)
+3. ✅ TEST 3: Walidacja limitu 400 znaków - **Zaimplementowane i przechodzi**
+4. ✅ TEST 4: Debouncing - **Zaimplementowane i przechodzi** (3 testy)
+5. ✅ TEST 5: Blokowanie przycisku - **Zaimplementowane i przechodzi**
+6. ✅ TEST 6: Walidacja imienia - **Zaimplementowane i przechodzi** (3 testy)
+7. ✅ TEST 10: Licznik znaków - **Zaimplementowane i przechodzi** (2 testy)
+8. ✅ TEST 11: Textarea wieloliniowa - **Zaimplementowane i przechodzi**
 
 ### ⏳ Do zrobienia (testy E2E):
 
 - ❌ TEST 7: Pytanie spoza przedmiotu (Playwright)
 - ❌ TEST 8: Brak internetu (Playwright) - zależny od FEATURE 2.1
-- ❌ TEST 3: Długa wiadomość (opcjonalny, nice to have)
 - ❌ TEST 9: Limit zapytań (Playwright, czasochłonny)
 
 ---
@@ -439,26 +503,29 @@ npx playwright install
 ## 📊 Status implementacji
 
 **Data utworzenia:** 7 stycznia 2026
-**Ostatnia aktualizacja:** 7 stycznia 2026
+**Ostatnia aktualizacja:** 8 stycznia 2026
 
 ### ✅ Ukończone fazy:
 
 - ✅ **FAZA 1: Przygotowanie** - Konfiguracja Vitest, RTL i Playwright
-- ✅ **FAZA 2: Testy jednostkowe** - Wszystkie 6 testów Vitest + RTL zaimplementowane i przechodzące
+- ✅ **FAZA 2: Testy jednostkowe** - Wszystkie 8 testów jednostkowych zaimplementowane i przechodzące
 
-### 📈 Wyniki testów (FAZA 2):
+### 📈 Wyniki testów (FAZA 2 - UKOŃCZONA):
 
-**Testy Vitest + RTL:** ✅ 9/9 testów przechodzi
+**Testy Vitest + RTL:** ✅ 13/13 testów przechodzi (8 przypadków testowych)
 
 | Test                         | Status  | Plik                          |
 | ---------------------------- | ------- | ----------------------------- |
 | TEST 1: Pusta wiadomość      | ✅ PASS | Chat.test.tsx                 |
 | TEST 2: Błąd API             | ✅ PASS | Chat.test.tsx                 |
+| TEST 3: Walidacja limitu     | ✅ PASS | Chat.test.tsx                 |
 | TEST 4: Debouncing           | ✅ PASS | useDebounce.test.ts (3 testy) |
 | TEST 5: Blokowanie przycisku | ✅ PASS | Chat.test.tsx                 |
 | TEST 6: Walidacja imienia    | ✅ PASS | NameInput.test.tsx (3 testy)  |
+| TEST 10: Licznik znaków      | ✅ PASS | Chat.test.tsx (2 testy)       |
+| TEST 11: Textarea            | ✅ PASS | Chat.test.tsx                 |
 
-**Czas wykonania:** ~3.5 sekundy
+**Czas wykonania:** ~5.1 sekundy
 
 ### ⏳ Do zrobienia:
 
