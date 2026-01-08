@@ -1,53 +1,56 @@
-# Tutor with AI
+# 🎓 Tutor with AI
 
-### 10x Astro Starter
+Interactive AI tutor for teenagers (13-19 years old). The app explains difficult school topics in a simple and understandable way.
 
-A modern, opinionated starter template for building fast, accessible, and AI-friendly web applications.
+## ✨ Features
 
-## Tech Stack
+- 🤖 Chat with AI tutor (Mistral)
+- 📐 Math support
+- 💬 Conversation history
+- 🎯 Personalization based on student interests
+- ⏱️ Session limits for safety
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+## 🛠️ Tech Stack
 
-## Prerequisites
+- **Astro 5** + **React 19**
+- **TypeScript 5**
+- **Tailwind CSS 4** + **shadcn/ui**
+- **Mistral AI**
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+## 📋 Prerequisites
 
-## Available Scripts
+- Node.js v22.14.0+ (see `.nvmrc`)
+- npm
+- Mistral AI API key
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
+## ⚙️ Environment Variables
 
-## Project Structure
+Create a `.env` file in the root directory:
 
-```md
-.
-├── src/
-│ ├── layouts/ # Astro layouts
-│ ├── pages/ # Astro pages
-│ │ └── api/ # API endpoints
-│ ├── components/ # UI components (Astro & React)
-│ └── assets/ # Static assets
-├── public/ # Public assets
+```env
+MISTRAL_API_KEY=your_api_key_here
 ```
 
-## AI Development Support
+## 🚀 Getting Started
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+```bash
+npm install
+npm run dev
+```
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
+## 📁 Structure
 
-### Cursor IDE
+```
+src/
+├── agents/        # AI agents (tutors)
+├── components/    # UI components
+├── pages/         # App pages
+└── pages/api/     # API endpoints
+```
 
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
+## 🧪 Testing
+
+```bash
+npm run test        # Unit tests (Vitest)
+npm run test:e2e    # E2E tests (Playwright)
+```
