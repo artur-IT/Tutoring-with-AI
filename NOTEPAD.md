@@ -7,8 +7,9 @@ aiD9kZNHp11JSM1VaAR3EofNn2MNITFH
 
 1. Nowa gałąź + nazwa funkcji
 2. Określ jakie są niezbędne test do nowej funk.
-3. Stwów te niezbędne testy
+3. Stwórz te niezbędne testy
 4. commit i push + PR
+5. Merge do main
 
 ---
 
