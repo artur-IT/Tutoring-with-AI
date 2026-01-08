@@ -27,7 +27,7 @@ export const mathTutorConfig: AgentConfig = {
 // Safety and content restrictions
 export const contentRestrictions = {
   // Maximum message length from user (characters)
-  maxMessageLength: 1000,
+  maxMessageLength: 400,
 
   // Maximum conversation history to send to API (to save costs)
   maxHistoryMessages: 15,

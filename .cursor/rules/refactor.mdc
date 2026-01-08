@@ -7,5 +7,6 @@ alwaysApply: false
 - zawsze stosuj zasady SOLID, DRY, KISS, YAGNI, KISS.
 - javascript zgodny m.in. z ES8, ES9, ES11, ES12, ES2022, ES2023
 - css wykorzystujący rozwiązania z roku 2025 i 5 lat wstecz
-- html 5
-- React 19.2
+- zastosuj tagi html 5 z roku 2025 i 5 lat wstecz
+- zastosuj funkcjonalności z React 19.2
+- usuń niepotrzebne i oczywiste komentarze, zostaw tylko te, które są potrzebne do zrozumienia kodu i z nazwami sekcji kodu.
