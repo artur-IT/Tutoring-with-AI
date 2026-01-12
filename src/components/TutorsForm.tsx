@@ -1,80 +1,100 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
 import { getTopicsForSubject, type Subject } from "../lib/subjectTopics";
+import { useOnline } from "./hooks/useOnline";
 
-// Available emoji avatars for students
-const AVATAR_EMOJIS = ["🦊", "🐼", "🦁", "🐶", "🐱"];
+const AVATAR_EMOJIS = ["🦊", "🐼", "🦁", "🐶", "🐱"] as const;
 
-// Helper function to get subject button styles
 const getSubjectButtonStyles = (isSelected: boolean) =>
   `py-3 px-6 text-base font-medium rounded-xl transition-all ${isSelected ? "bg-blue-600 text-white shadow-md" : "bg-blue-100 text-blue-700 hover:bg-blue-200"}`;
 
+const clearCurrentSession = () => {
+  const historyJson = localStorage.getItem("chatHistory");
+  if (!historyJson) return;
+  try {
+    const history = JSON.parse(historyJson);
+    history.currentSessionId = null;
+    localStorage.setItem("chatHistory", JSON.stringify(history));
+  } catch (e) {
+    console.error("Error clearing current session:", e);
+  }
+};
+
 export default function TutorsForm() {
+  const isOnline = useOnline();
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
-  const [selectedTopic, setSelectedTopic] = useState<string>("");
+  const [selectedTopic, setSelectedTopic] = useState("");
   const [problemDescription, setProblemDescription] = useState("");
   const [interests, setInterests] = useState("");
-  const [selectedAvatar, setSelectedAvatar] = useState<string>("");
+  const [selectedAvatar, setSelectedAvatar] = useState("");
 
-  const handleSubjectSelect = (subject: Subject) => {
+  const handleSubjectSelect = useCallback((subject: Subject) => {
     setSelectedSubject(subject);
     setSelectedTopic("");
-  };
+  }, []);
 
-  const handleTopicChange = (value: string) => setSelectedTopic(value);
-  const handleProblemChange = (e: React.ChangeEvent<HTMLInputElement>) => setProblemDescription(e.target.value);
-  const handleInterestsChange = (e: React.ChangeEvent<HTMLInputElement>) => setInterests(e.target.value);
-  const handleAvatarSelect = (emoji: string) => setSelectedAvatar(emoji);
+  const handleTopicChange = useCallback((value: string) => setSelectedTopic(value), []);
+  const handleProblemChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => setProblemDescription(e.target.value),
+    []
+  );
+  const handleInterestsChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => setInterests(e.target.value),
+    []
+  );
+  const handleAvatarSelect = useCallback((emoji: string) => setSelectedAvatar(emoji), []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!selectedSubject || !selectedTopic || !problemDescription.trim() || !selectedAvatar) return;
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (!selectedSubject || !selectedTopic || !problemDescription.trim() || !selectedAvatar) return;
 
-    const studentData = {
-      subject: selectedSubject,
-      topic: selectedTopic,
-      problem: problemDescription.trim(),
-      interests,
-      avatar: selectedAvatar,
-    };
-    localStorage.setItem("studentData", JSON.stringify(studentData));
+      localStorage.setItem(
+        "studentData",
+        JSON.stringify({
+          subject: selectedSubject,
+          topic: selectedTopic,
+          problem: problemDescription.trim(),
+          interests,
+          avatar: selectedAvatar,
+        })
+      );
 
-    // Clear current session ID to start a new session
-    const historyJson = localStorage.getItem("chatHistory");
-    if (historyJson) {
-      try {
-        const history = JSON.parse(historyJson);
-        history.currentSessionId = null;
-        localStorage.setItem("chatHistory", JSON.stringify(history));
-        console.log("🆕 [TutorsForm] Wyczyszczono currentSessionId - rozpoczynamy nową sesję");
-      } catch (e) {
-        console.error("Error clearing current session:", e);
-      }
-    }
+      clearCurrentSession();
+      setTimeout(() => {
+        window.location.href = "/chat";
+      }, 0);
+    },
+    [selectedSubject, selectedTopic, problemDescription, interests, selectedAvatar]
+  );
 
-    window.location.href = "/chat";
-  };
+  const availableTopics = useMemo(() => getTopicsForSubject(selectedSubject), [selectedSubject]);
+  const isFormValid = useMemo(
+    () => Boolean(selectedSubject && selectedTopic && problemDescription.trim() && selectedAvatar),
+    [selectedSubject, selectedTopic, problemDescription, selectedAvatar]
+  );
 
-  const availableTopics = getTopicsForSubject(selectedSubject);
-  const isFormValid = selectedSubject && selectedTopic && problemDescription.trim() && selectedAvatar;
+  const handleMathClick = useCallback(() => handleSubjectSelect("matematyka"), [handleSubjectSelect]);
+  const handleEnglishClick = useCallback(() => handleSubjectSelect("angielski"), [handleSubjectSelect]);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center gap-6">
-      {/* Subject Selection Buttons */}
       <div className="flex flex-col gap-4 sm:flex-row">
         <Button
           type="button"
-          onClick={() => handleSubjectSelect("matematyka")}
+          onClick={handleMathClick}
+          disabled={!isOnline}
           className={getSubjectButtonStyles(selectedSubject === "matematyka")}
         >
           Matematyka
         </Button>
         <Button
           type="button"
-          onClick={() => handleSubjectSelect("angielski")}
+          onClick={handleEnglishClick}
+          disabled={!isOnline}
           className={getSubjectButtonStyles(selectedSubject === "angielski")}
         >
           Język angielski
@@ -156,16 +176,15 @@ export default function TutorsForm() {
       )}
 
       <div className="flex flex-col gap-4 mt-6">
-        {/* Submit Button */}
         <Button type="submit" disabled={!isFormValid} variant="ok">
           Do nauki
         </Button>
-
-        {/* Back Button */}
-        <Button onClick={() => window.location.assign("/")} variant="back">
-          <img src={ArrowLeftSimpleIcon} alt="" className="w-5 h-4" />
-          powrót
-        </Button>
+        <a href="/">
+          <Button variant="back">
+            <img src={ArrowLeftSimpleIcon} alt="" className="w-5 h-4" />
+            powrót
+          </Button>
+        </a>
       </div>
     </form>
   );
