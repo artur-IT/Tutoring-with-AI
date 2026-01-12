@@ -51,8 +51,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // No navigateFallback - let each page handle its own caching
-        navigateFallbackDenylist: [/^\/api\//],
+        navigateFallback: null, // Disable navigation fallback
         globPatterns: ["**/*.{css,js,html,svg,png,ico,txt,woff,woff2}"],
         cleanupOutdatedCaches: true,
         skipWaiting: true,

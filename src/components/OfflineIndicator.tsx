@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useOnline } from "./hooks/useOnline";
 import { Alert, AlertDescription } from "./ui/alert";
 import { WifiOff } from "lucide-react";
@@ -8,9 +9,15 @@ import { WifiOff } from "lucide-react";
  */
 export function OfflineIndicator() {
   const isOnline = useOnline();
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Don't show anything when online
-  if (isOnline) {
+  // Ensure component only renders after client-side hydration
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Don't render during SSR or if online
+  if (!isMounted || isOnline) {
     return null;
   }
 
