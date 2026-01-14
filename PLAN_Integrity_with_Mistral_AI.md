@@ -1,6 +1,6 @@
 # Plan integracji z Mistral AI 🎯
 
-Data utworzenia: 8 grudnia 2025  
+Data utworzenia: 8 grudnia 2025
 Projekt: Chat-with-Hero (Tutor with AI)
 
 ---
@@ -275,6 +275,56 @@ Dane z localStorage (z poprzedniego kroku):
 
 ---
 
+## ETAP 7: Progressive Web App (PWA)
+
+### Krok 7.1 - Zainstaluj integrację PWA
+
+- Użyj `@vite-pwa/astro` - automatyzuje konfigurację
+- Dodaj do `astro.config.mjs`
+- Konfiguruj Service Worker z Workbox
+
+### Krok 7.2 - Utwórz Web App Manifest
+
+**W `public/manifest.json`:**
+
+- Nazwa aplikacji i opis
+- Ikony (192x192, 512x512)
+- Kolory (theme_color, background_color)
+- Display mode (standalone)
+- Start URL
+
+### Krok 7.3 - Dodaj ikony aplikacji
+
+- Wygeneruj ikony w różnych rozmiarach
+- Umieść w `public/icons/`
+- Dodaj do manifestu
+- Favicon i Apple Touch Icon
+
+### Krok 7.4 - Skonfiguruj cache strategy
+
+**Service Worker:**
+
+- Cache statyczne zasoby (CSS, JS, obrazy)
+- Network-first dla API (/api/chat)
+- Cache-first dla assets
+- Offline fallback page
+
+### Krok 7.5 - Dodaj obsługę offline
+
+- Wykryj stan offline
+- Pokaż komunikat użytkownikowi
+- Queue wiadomości do wysłania
+- Sync po powrocie online (opcjonalnie)
+
+### Krok 7.6 - Testuj PWA
+
+- Lighthouse audit (min. 90 punktów)
+- Testuj instalację na mobile
+- Sprawdź cache offline
+- Weryfikuj manifest i Service Worker
+
+---
+
 ## Kolejność wykonania (krok po kroku)
 
 ### Faza przygotowawcza
@@ -314,6 +364,14 @@ Dane z localStorage (z poprzedniego kroku):
 - [ ] 19. Testuj edge cases
 - [ ] 20. Optymalizuj koszty i wydajność
 
+### Faza PWA (opcjonalnie)
+
+- [ ] 21. Zainstaluj `@vite-pwa/astro`
+- [ ] 22. Stwórz manifest.json i dodaj ikony
+- [ ] 23. Skonfiguruj Service Worker i cache
+- [ ] 24. Dodaj obsługę offline
+- [ ] 25. Testuj z Lighthouse (cel: 90+ punktów)
+
 ---
 
 ## Najważniejsze zasady
@@ -344,10 +402,12 @@ Dane z localStorage (z poprzedniego kroku):
 
 ## Następne kroki po MVP
 
-1. Dodaj więcej agentów (chemTutor, physicsTutor, etc.)
-2. Zapisywanie historii w bazie danych (Supabase)
+1. **PWA** - dodaj obsługę offline i instalację (ETAP 7)
+2. Dodaj więcej agentów (chemTutor, physicsTutor, etc.)
+3. Zapisywanie historii w bazie danych (Supabase)
+4. Push notifications dla przypomnień o nauce
 
 ---
 
-**Status:** ✅ MVP ukończone! (14/20 kroków wykonane - wszystkie kluczowe funkcje działają)  
-**Następny krok:** Opcjonalnie: Usuń console.logi lub dostosuj je do produkcji
+**Status:** ✅ MVP ukończone! (14/20 kroków wykonane - wszystkie kluczowe funkcje działają)
+**Następny krok:** Testy E2E (kroki 18-20) lub implementacja PWA (kroki 21-25)

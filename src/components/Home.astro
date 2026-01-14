@@ -34,12 +34,12 @@ import NameInput from "./NameInput";
 
 <script>
   /* eslint-disable prettier/prettier */
-  const nameDisplay = document.getElementById("name-display");
-  const homeContent = document.getElementById("home-content");
-  const storedName = localStorage.getItem("userName");
 
   // Function to show welcome section when name is available
   const showWelcomeSection = (userName: string) => {
+    const nameDisplay = document.getElementById("name-display");
+    const homeContent = document.getElementById("home-content");
+
     if (nameDisplay) {
       nameDisplay.textContent = userName;
     }
@@ -49,10 +49,21 @@ import NameInput from "./NameInput";
     }
   };
 
-  // Check if name exists on page load
-  if (storedName) {
-    showWelcomeSection(storedName);
-  }
+  // Function to initialize home page
+  const initHome = () => {
+    const storedName = localStorage.getItem("userName");
+
+    // Check if name exists on page load
+    if (storedName) {
+      showWelcomeSection(storedName);
+    }
+  };
+
+  // Run on initial load
+  initHome();
+
+  // Re-run after View Transitions navigation
+  document.addEventListener("astro:page-load", initHome);
 
   // Listen for name updates from NameInput component
   window.addEventListener("nameUpdated", (event) => {
@@ -65,6 +76,7 @@ import NameInput from "./NameInput";
   // Listen for modal state changes to set inert attribute
   window.addEventListener("nameInputModalState", (event) => {
     const customEvent = event as CustomEvent;
+    const homeContent = document.getElementById("home-content");
     if (homeContent && customEvent.detail) {
       if (customEvent.detail.isOpen) {
         homeContent.setAttribute("inert", "");

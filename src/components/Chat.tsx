@@ -8,8 +8,10 @@ import SendIcon from "../assets/icons/send.svg?url";
 import type { Message, StudentData, AIResponse, ChatSession, ChatHistory } from "../agents/mathTutor/types";
 import { sessionLimits, contentRestrictions } from "../agents/mathTutor/config";
 import { useDebounce } from "./hooks/useDebounce";
+import { useOnline } from "./hooks/useOnline";
 
 export default function Chat() {
+  const isOnline = useOnline();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -577,7 +579,13 @@ export default function Chat() {
               <textarea
                 ref={textareaRef}
                 rows={1}
-                placeholder={isSessionEnded ? "Sesja zakończona" : "Wpisz pytanie z matematyki..."}
+                placeholder={
+                  isSessionEnded
+                    ? "Sesja zakończona"
+                    : !isOnline
+                      ? "Brak połączenia z internetem"
+                      : "Wpisz pytanie z matematyki..."
+                }
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -588,7 +596,7 @@ export default function Chat() {
                     }
                   }
                 }}
-                disabled={isLoading || isSessionEnded}
+                disabled={isLoading || isSessionEnded || !isOnline}
                 className={`w-full max-h-48 min-w-0 rounded-md border px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none resize-none overflow-y-auto disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm ${
                   input.length >= MAX_MESSAGE_LENGTH
                     ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50 focus-visible:ring-[3px]"
@@ -605,7 +613,7 @@ export default function Chat() {
             <button
               type="button"
               onClick={handleSend}
-              disabled={isLoading || !input.trim() || isSessionEnded || input.length >= MAX_MESSAGE_LENGTH}
+              disabled={isLoading || !input.trim() || isSessionEnded || input.length >= MAX_MESSAGE_LENGTH || !isOnline}
               className="shrink-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Send message"
             >
