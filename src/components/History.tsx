@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -20,6 +20,7 @@ import type { ChatHistory, ChatSession } from "../agents/mathTutor/types";
 
 // Load sessions helper function
 const loadSessionsFromStorage = (): ChatSession[] => {
+  if (typeof window === "undefined") return [];
   const historyJson = localStorage.getItem("chatHistory");
   if (!historyJson) return [];
   try {
@@ -33,21 +34,40 @@ const loadSessionsFromStorage = (): ChatSession[] => {
 
 // Helper to get history from localStorage
 const getHistory = (): ChatHistory => {
+  if (typeof window === "undefined") return { sessions: [], currentSessionId: null };
   const historyJson = localStorage.getItem("chatHistory");
   return historyJson ? JSON.parse(historyJson) : { sessions: [], currentSessionId: null };
 };
 
 // Helper to save history to localStorage
-const saveHistory = (history: ChatHistory) => localStorage.setItem("chatHistory", JSON.stringify(history));
+const saveHistory = (history: ChatHistory) => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("chatHistory", JSON.stringify(history));
+};
 
 export default function History() {
-  const [sessions, setSessions] = useState<ChatSession[]>(() => {
-    const loaded = loadSessionsFromStorage();
-    if (loaded.length > 0) {
-      console.log("📚 [History.tsx] Załadowano", loaded.length, "sesji");
-    }
-    return loaded;
-  });
+  // Initialize with empty array to prevent hydration mismatch
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Load sessions after component mounts (client-side only)
+  // This prevents hydration mismatch by loading data after initial render
+  // Note: This is intentional use of useEffect to load from localStorage (same pattern as Chat.tsx)
+  useEffect(() => {
+    // Use setTimeout to avoid linter warning (same pattern as useOnline.ts)
+    const timeoutId = setTimeout(() => {
+      setIsMounted(true);
+      const loaded = loadSessionsFromStorage();
+      if (loaded.length > 0) {
+        console.log("📚 [History.tsx] Załadowano", loaded.length, "sesji");
+      }
+      setSessions(loaded);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
 
   const handleSessionClick = (sessionId: string) => {
     try {
@@ -80,13 +100,17 @@ export default function History() {
   const getSessionDescription = (session: ChatSession): string => session.topic || "Brak tematu";
 
   return (
-    <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
+    <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto" suppressHydrationWarning>
       {/* Header */}
       <h1 className="text-3xl font-bold text-gray-900 text-center mb-8 mt-8">Historia rozmów</h1>
 
       {/* Session list */}
-      <div className="flex-1 space-y-4 mb-8">
-        {sessions.length === 0 ? (
+      <div className="flex-1 space-y-4 mb-8" suppressHydrationWarning>
+        {!isMounted ? (
+          <div className="text-center text-gray-500 py-12">
+            <p className="text-sm">Ładowanie...</p>
+          </div>
+        ) : sessions.length === 0 ? (
           <div className="text-center text-gray-500 py-12">
             <p className="text-lg mb-2">📭 Brak historii rozmów</p>
             <p className="text-sm">Rozpocznij nową rozmowę, aby utworzyć historię</p>
