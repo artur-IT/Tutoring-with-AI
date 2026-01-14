@@ -8,8 +8,8 @@ import { useOnline } from "./hooks/useOnline";
 
 const AVATAR_EMOJIS = ["🦊", "🐼", "🦁", "🐶", "🐱"] as const;
 
-const getSubjectButtonStyles = (isSelected: boolean) =>
-  `py-3 px-6 text-base font-medium rounded-xl transition-all ${isSelected ? "bg-blue-600 text-white shadow-md" : "bg-blue-100 text-blue-700 hover:bg-blue-200"}`;
+const getSubjectButtonStyles = (isSelected: boolean, isDisabled: boolean) =>
+  `py-3 px-6 text-base font-medium rounded-xl transition-all ${isSelected ? "bg-blue-600 text-white shadow-md" : "bg-blue-100 text-blue-700 hover:bg-blue-200"} ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`;
 
 const clearCurrentSession = () => {
   const historyJson = localStorage.getItem("chatHistory");
@@ -87,7 +87,7 @@ export default function TutorsForm() {
           type="button"
           onClick={handleMathClick}
           disabled={!isOnline}
-          className={getSubjectButtonStyles(selectedSubject === "matematyka")}
+          className={getSubjectButtonStyles(selectedSubject === "matematyka", !isOnline)}
         >
           Matematyka
         </Button>
@@ -95,7 +95,7 @@ export default function TutorsForm() {
           type="button"
           onClick={handleEnglishClick}
           disabled={!isOnline}
-          className={getSubjectButtonStyles(selectedSubject === "angielski")}
+          className={getSubjectButtonStyles(selectedSubject === "angielski", !isOnline)}
         >
           Język angielski
         </Button>

@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { title = "Tutor AI" } = Astro.props;
+const isProduction = import.meta.env.PROD;
 ---
 
 <!doctype html>
@@ -17,24 +18,29 @@ const { title = "Tutor AI" } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/manifest.webmanifest" />
+    {isProduction && <link rel="manifest" href="/manifest.webmanifest" />}
     <meta name="theme-color" content="#ffffff" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <ViewTransitions />
-    <script is:inline>
-      // Service Worker Registration (production only, disabled in dev)
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", async function () {
-          try {
-            const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-            console.log("✅ SW registered:", registration.scope);
-          } catch (e) {
-            console.error("❌ SW registration failed:", e);
-          }
-        });
-      }
-    </script>
+    <script
+      is:inline
+      set:html={isProduction
+        ? `
+        // Service Worker Registration (production only, disabled in dev)
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", async function () {
+            try {
+              const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+              console.log("✅ SW registered:", registration.scope);
+            } catch (e) {
+              console.error("❌ SW registration failed:", e);
+            }
+          });
+        }
+      `
+        : ""}
+    />
   </head>
   <body>
     <slot />
