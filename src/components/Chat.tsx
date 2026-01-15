@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Button } from "./ui/button";
 import { Alert, AlertDescription } from "./ui/alert";
-import { Progress } from "./ui/progress";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Skeleton } from "./ui/skeleton";
-import SendIcon from "../assets/icons/send.svg?url";
+import ChatHeader from "./chat/ChatHeader";
+import ChatMessages from "./chat/ChatMessages";
+import ChatInput from "./chat/ChatInput";
+import ChatStats from "./chat/ChatStats";
 import type { Message, StudentData, AIResponse, ChatSession, ChatHistory } from "../agents/mathTutor/types";
 import { sessionLimits, contentRestrictions } from "../agents/mathTutor/config";
 import { useDebounce } from "./hooks/useDebounce";
@@ -20,25 +19,17 @@ export default function Chat() {
   const [tokensUsed, setTokensUsed] = useState(0);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [sessionName, setSessionName] = useState<string>("");
-  const [shouldSaveSession, setShouldSaveSession] = useState(true); // Flag to prevent saving sessions ended due to topic mismatch
-  const [isSessionFromHistory, setIsSessionFromHistory] = useState(false); // Flag to check if session was loaded from history (read-only)
-  const [remainingRequests, setRemainingRequests] = useState(sessionLimits.maxMessagesPerSession); // Rate limiting counter
-  const [sessionStartTime, setSessionStartTime] = useState<number | null>(null); // Session start timestamp
-  const [timeRemaining, setTimeRemaining] = useState(sessionLimits.maxSessionDuration * 60); // Time remaining in seconds
-  const [isSessionEnded, setIsSessionEnded] = useState(false); // Flag to indicate session ended due to limits
+  const [shouldSaveSession, setShouldSaveSession] = useState(true);
+  const [remainingRequests, setRemainingRequests] = useState(sessionLimits.maxMessagesPerSession);
+  const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState(sessionLimits.maxSessionDuration * 60);
+  const [isSessionEnded, setIsSessionEnded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const TOKEN_LIMIT = 128_000;
   const MAX_MESSAGE_LENGTH = contentRestrictions.maxMessageLength;
-
-  const cleanMathNotation = (text: string): string =>
-    text
-      .replace(/\/([^/]+)\//g, "$1")
-      .replace(/\\?\\\(([^)]+)\\\)/g, "$1")
-      .replace(/\\?\\\[([^\]]+)\\\]/g, "$1")
-      .replace(/\$([^$]+)\$/g, "$1");
 
   const createSessionName = () => {
     const now = new Date();
@@ -51,7 +42,32 @@ export default function Chat() {
     JSON.parse(localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}');
   const saveHistory = (history: ChatHistory) => localStorage.setItem("chatHistory", JSON.stringify(history));
 
-  // Create new session
+  const buildSession = useCallback(
+    (messagesToSave: Message[] = messages, tokensToSave: number = tokensUsed): ChatSession | null =>
+      currentSessionId
+        ? {
+            id: currentSessionId,
+            name: sessionName,
+            messages: messagesToSave,
+            tokensUsed: tokensToSave,
+            createdAt: parseInt(currentSessionId),
+            lastMessageAt: Date.now(),
+            avatar: studentData?.avatar,
+            topic: studentData?.topic,
+          }
+        : null,
+    [currentSessionId, sessionName, messages, tokensUsed, studentData]
+  );
+
+  const upsertSession = useCallback((history: ChatHistory, session: ChatSession) => {
+    const sessionIndex = history.sessions.findIndex((item) => item.id === session.id);
+    if (sessionIndex >= 0) {
+      history.sessions[sessionIndex] = session;
+      return;
+    }
+    history.sessions.push(session);
+  }, []);
+
   const createNewSession = useCallback(() => {
     const newSessionId = Date.now().toString();
     const newSessionName = createSessionName();
@@ -66,7 +82,6 @@ export default function Chat() {
     setSessionStartTime(startTime);
     setTimeRemaining(sessionLimits.maxSessionDuration * 60);
     setIsSessionEnded(false);
-    setIsSessionFromHistory(false);
 
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
 
@@ -77,31 +92,15 @@ export default function Chat() {
     return { id: newSessionId, name: newSessionName };
   }, []);
 
-  // Save current session to history
   const saveCurrentSession = useCallback(() => {
     if (!currentSessionId || messages.length === 0 || !shouldSaveSession) return;
-
+    const session = buildSession();
+    if (!session) return;
     const history = getHistory();
-    const sessionIndex = history.sessions.findIndex((s) => s.id === currentSessionId);
-    const session: ChatSession = {
-      id: currentSessionId,
-      name: sessionName,
-      messages,
-      tokensUsed,
-      createdAt: parseInt(currentSessionId),
-      lastMessageAt: Date.now(),
-      avatar: studentData?.avatar,
-      topic: studentData?.topic,
-    };
-
-    if (sessionIndex >= 0) {
-      history.sessions[sessionIndex] = session;
-    } else {
-      history.sessions.push(session);
-    }
+    upsertSession(history, session);
     history.currentSessionId = currentSessionId;
     saveHistory(history);
-  }, [currentSessionId, sessionName, messages, tokensUsed, shouldSaveSession, studentData]);
+  }, [currentSessionId, messages.length, shouldSaveSession, buildSession, upsertSession]);
 
   const removeCurrentSessionFromHistory = useCallback(() => {
     if (!currentSessionId) return;
@@ -111,7 +110,6 @@ export default function Chat() {
     saveHistory(history);
   }, [currentSessionId]);
 
-  // Load student data and current session on mount
   useEffect(() => {
     const dataJson = localStorage.getItem("studentData");
     if (dataJson) {
@@ -121,41 +119,7 @@ export default function Chat() {
         console.error("Error loading student data:", e);
       }
     }
-
-    const historyJson = localStorage.getItem("chatHistory");
-    if (historyJson) {
-      try {
-        const history: ChatHistory = JSON.parse(historyJson);
-
-        if (history.currentSessionId) {
-          const session = history.sessions.find((s) => s.id === history.currentSessionId);
-          if (session) {
-            setCurrentSessionId(session.id);
-            setSessionName(session.name);
-            setMessages(session.messages);
-            setTokensUsed(session.tokensUsed);
-
-            const isFromHistory = session.messages.length > 0;
-            setIsSessionFromHistory(isFromHistory);
-
-            if (!isFromHistory) {
-              setSessionStartTime(session.createdAt || Date.now());
-              const userMessageCount = session.messages.filter((msg) => msg.role === "user").length;
-              setRemainingRequests(Math.max(0, sessionLimits.maxMessagesPerSession - userMessageCount));
-            }
-          } else {
-            createNewSession();
-          }
-        } else {
-          createNewSession();
-        }
-      } catch (e) {
-        console.error("Error loading chat history:", e);
-        createNewSession();
-      }
-    } else {
-      createNewSession();
-    }
+    createNewSession();
   }, [createNewSession]);
 
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
@@ -170,7 +134,6 @@ export default function Chat() {
     }
   }, [input]);
 
-  // End session due to limit (time or messages)
   const endSessionDueToLimit = useCallback(
     (reason: string) => {
       if (isSessionEnded) return;
@@ -180,27 +143,14 @@ export default function Chat() {
 
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
 
-      const history = getHistory();
       if (currentSessionId && messages.length > 0 && shouldSaveSession) {
-        const sessionIndex = history.sessions.findIndex((s) => s.id === currentSessionId);
-        const session: ChatSession = {
-          id: currentSessionId,
-          name: sessionName,
-          messages,
-          tokensUsed,
-          createdAt: parseInt(currentSessionId),
-          lastMessageAt: Date.now(),
-          avatar: studentData?.avatar,
-          topic: studentData?.topic,
-        };
-
-        if (sessionIndex >= 0) {
-          history.sessions[sessionIndex] = session;
-        } else {
-          history.sessions.push(session);
+        const session = buildSession();
+        if (session) {
+          const history = getHistory();
+          upsertSession(history, session);
+          history.currentSessionId = currentSessionId;
+          saveHistory(history);
         }
-        history.currentSessionId = currentSessionId;
-        saveHistory(history);
       }
 
       alert(`${reason}\n\nSesja zostanie zakończona. Historia rozmowy została zapisana.`);
@@ -212,11 +162,11 @@ export default function Chat() {
         window.location.href = "/";
       }, 3000);
     },
-    [isSessionEnded, currentSessionId, messages, shouldSaveSession, sessionName, tokensUsed, studentData]
+    [isSessionEnded, currentSessionId, messages.length, shouldSaveSession, buildSession, upsertSession]
   );
 
   useEffect(() => {
-    if (!sessionStartTime || isSessionFromHistory || isSessionEnded) return;
+    if (!sessionStartTime || isSessionEnded) return;
 
     timerIntervalRef.current = setInterval(() => {
       const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
@@ -229,54 +179,31 @@ export default function Chat() {
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, [sessionStartTime, isSessionFromHistory, isSessionEnded, endSessionDueToLimit]);
+  }, [sessionStartTime, isSessionEnded, endSessionDueToLimit]);
 
   useEffect(() => {
-    if (isSessionFromHistory || isSessionEnded) return;
+    if (isSessionEnded) return;
 
     const userMessageCount = messages.filter((msg) => msg.role === "user").length;
 
     if (userMessageCount >= sessionLimits.maxMessagesPerSession) {
       endSessionDueToLimit(`Osiągnięto limit wiadomości (${sessionLimits.maxMessagesPerSession} pytań).`);
     }
-  }, [messages, isSessionFromHistory, isSessionEnded, endSessionDueToLimit]);
+  }, [messages, isSessionEnded, endSessionDueToLimit]);
 
   useEffect(() => {
-    if (!isSessionFromHistory && currentSessionId && messages.length > 0 && shouldSaveSession && !isSessionEnded) {
+    if (currentSessionId && messages.length > 0 && shouldSaveSession && !isSessionEnded) {
       saveCurrentSession();
     }
-  }, [
-    messages,
-    tokensUsed,
-    currentSessionId,
-    sessionName,
-    shouldSaveSession,
-    saveCurrentSession,
-    isSessionFromHistory,
-    isSessionEnded,
-  ]);
+  }, [messages, tokensUsed, currentSessionId, sessionName, shouldSaveSession, saveCurrentSession, isSessionEnded]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (currentSessionId && messages.length > 0 && shouldSaveSession && !isSessionEnded) {
+        const session = buildSession();
+        if (!session) return;
         const history = getHistory();
-        const sessionIndex = history.sessions.findIndex((s) => s.id === currentSessionId);
-        const session: ChatSession = {
-          id: currentSessionId,
-          name: sessionName,
-          messages,
-          tokensUsed,
-          createdAt: parseInt(currentSessionId),
-          lastMessageAt: Date.now(),
-          avatar: studentData?.avatar,
-          topic: studentData?.topic,
-        };
-
-        if (sessionIndex >= 0) {
-          history.sessions[sessionIndex] = session;
-        } else {
-          history.sessions.push(session);
-        }
+        upsertSession(history, session);
         history.currentSessionId = currentSessionId;
         saveHistory(history);
       }
@@ -284,7 +211,7 @@ export default function Chat() {
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [currentSessionId, messages, tokensUsed, sessionName, shouldSaveSession, isSessionEnded, studentData]);
+  }, [currentSessionId, messages.length, shouldSaveSession, isSessionEnded, buildSession, upsertSession]);
 
   // Send initial greeting message
   const sendInitialGreeting = useCallback(async () => {
@@ -425,28 +352,15 @@ export default function Chat() {
 
         if (data.shouldRedirect) {
           if (userMessagesBeforeNew > 0 && messagesBeforeNew > 0 && currentSessionId) {
-            const history = getHistory();
-            const sessionIndex = history.sessions.findIndex((s) => s.id === currentSessionId);
             const messagesToSave = messages.slice(0, -2);
             if (messagesToSave.length > 0) {
-              const session: ChatSession = {
-                id: currentSessionId,
-                name: sessionName,
-                messages: messagesToSave,
-                tokensUsed: tokensUsed - (data.metadata?.tokens || 0),
-                createdAt: parseInt(currentSessionId),
-                lastMessageAt: Date.now(),
-                avatar: studentData?.avatar,
-                topic: studentData?.topic,
-              };
-
-              if (sessionIndex >= 0) {
-                history.sessions[sessionIndex] = session;
-              } else {
-                history.sessions.push(session);
+              const session = buildSession(messagesToSave, tokensUsed - (data.metadata?.tokens || 0));
+              if (session) {
+                const history = getHistory();
+                upsertSession(history, session);
+                history.currentSessionId = currentSessionId;
+                saveHistory(history);
               }
-              history.currentSessionId = currentSessionId;
-              saveHistory(history);
             }
           } else {
             setShouldSaveSession(false);
@@ -469,102 +383,33 @@ export default function Chat() {
 
   const handleSend = useDebounce(handleSendInternal, 500);
 
+  const handleEndSession = useCallback(() => {
+    if (messages.length > 0 && currentSessionId) {
+      const session = buildSession();
+      if (session) {
+        const history = getHistory();
+        upsertSession(history, session);
+        history.currentSessionId = null;
+        saveHistory(history);
+      }
+    } else {
+      const history = getHistory();
+      history.currentSessionId = null;
+      saveHistory(history);
+    }
+    window.location.href = "/";
+  }, [messages.length, currentSessionId, buildSession, upsertSession]);
+
   return (
     <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto relative">
-      <div className="flex justify-between items-center mb-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">{isSessionFromHistory ? "Historia rozmowy" : "Chat"}</h1>
-          {sessionName && <p className="text-xs text-gray-500 mt-1">{sessionName}</p>}
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="back"
-            onClick={() => {
-              if (isSessionFromHistory) {
-                window.location.href = "/history";
-                return;
-              }
+      <ChatHeader sessionName={sessionName} onEnd={handleEndSession} />
 
-              if (messages.length > 0 && currentSessionId) {
-                const history = getHistory();
-                const sessionIndex = history.sessions.findIndex((s) => s.id === currentSessionId);
-                const session: ChatSession = {
-                  id: currentSessionId,
-                  name: sessionName,
-                  messages,
-                  tokensUsed,
-                  createdAt: parseInt(currentSessionId),
-                  lastMessageAt: Date.now(),
-                  avatar: studentData?.avatar,
-                  topic: studentData?.topic,
-                };
-
-                if (sessionIndex >= 0) {
-                  history.sessions[sessionIndex] = session;
-                } else {
-                  history.sessions.push(session);
-                }
-                history.currentSessionId = null;
-                saveHistory(history);
-              } else {
-                const history = getHistory();
-                history.currentSessionId = null;
-                saveHistory(history);
-              }
-
-              window.location.href = "/";
-            }}
-          >
-            {isSessionFromHistory ? "Wróć" : "Koniec"}
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex-1 space-y-4 mb-4 overflow-y-auto">
-        {messages.length === 0 && (
-          <div className="text-center text-gray-500 mt-8">
-            <p className="text-sm">Postaram się to wytłumaczyć w sposób, który będzie dla Ciebie zrozumiały</p>
-          </div>
-        )}
-
-        {messages.map((msg, idx) =>
-          msg.role === "assistant" ? (
-            <div key={idx} className="flex items-start gap-3">
-              <Avatar className="w-10 h-10 shrink-0 bg-yellow-100">
-                <AvatarFallback className="text-2xl bg-yellow-100">👨‍🏫</AvatarFallback>
-              </Avatar>
-              <div className="bg-yellow-200 rounded-2xl px-4 py-3 max-w-[80%]">
-                <p className="text-sm font-semibold text-gray-900 mb-1">Korepetytor</p>
-                <p className="text-sm text-gray-900 whitespace-pre-wrap">{cleanMathNotation(msg.content)}</p>
-              </div>
-            </div>
-          ) : (
-            <div key={idx} className="flex items-start gap-3 justify-end">
-              <div className="bg-blue-600 rounded-2xl px-4 py-3 max-w-[80%]">
-                <p className="text-sm font-semibold text-white mb-1">Ty</p>
-                <p className="text-sm text-white whitespace-pre-wrap">{msg.content}</p>
-              </div>
-              <Avatar className="w-10 h-10 shrink-0 bg-blue-100">
-                <AvatarFallback className="text-2xl bg-blue-100">{studentData?.avatar || "🦊"}</AvatarFallback>
-              </Avatar>
-            </div>
-          )
-        )}
-
-        {isLoading && (
-          <div className="flex items-start gap-3">
-            <Avatar className="w-10 h-10 shrink-0 bg-yellow-100">
-              <AvatarFallback className="text-2xl bg-yellow-100">👨‍🏫</AvatarFallback>
-            </Avatar>
-            <div className="bg-yellow-200 rounded-2xl px-4 py-3 space-y-2">
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-4 w-48" />
-            </div>
-          </div>
-        )}
-
-        <div ref={messagesEndRef} />
-      </div>
+      <ChatMessages
+        messages={messages}
+        isLoading={isLoading}
+        studentAvatar={studentData?.avatar}
+        messagesEndRef={messagesEndRef}
+      />
 
       {error && (
         <Alert variant="destructive" className="mb-4">
@@ -572,109 +417,25 @@ export default function Chat() {
         </Alert>
       )}
 
-      {!isSessionFromHistory && (
-        <div className="bg-white rounded-xl shadow-md p-3 mb-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1">
-              <textarea
-                ref={textareaRef}
-                rows={1}
-                placeholder={
-                  isSessionEnded
-                    ? "Sesja zakończona"
-                    : !isOnline
-                      ? "Brak połączenia z internetem"
-                      : "Wpisz pytanie z matematyki..."
-                }
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    if (input.length < MAX_MESSAGE_LENGTH) {
-                      handleSend();
-                    }
-                  }
-                }}
-                disabled={isLoading || isSessionEnded || !isOnline}
-                className={`w-full max-h-48 min-w-0 rounded-md border px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none resize-none overflow-y-auto disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm ${
-                  input.length >= MAX_MESSAGE_LENGTH
-                    ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50 focus-visible:ring-[3px]"
-                    : "border-input bg-transparent placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-                }`}
-                aria-invalid={input.length >= MAX_MESSAGE_LENGTH}
-              />
-              <p
-                className={`text-xs mt-1 text-right ${input.length >= MAX_MESSAGE_LENGTH ? "text-red-500" : "text-gray-500"}`}
-              >
-                {input.length} / {MAX_MESSAGE_LENGTH}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleSend}
-              disabled={isLoading || !input.trim() || isSessionEnded || input.length >= MAX_MESSAGE_LENGTH || !isOnline}
-              className="shrink-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Send message"
-            >
-              <img src={SendIcon} alt="" className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      )}
+      <ChatInput
+        input={input}
+        isLoading={isLoading}
+        isSessionEnded={isSessionEnded}
+        isOnline={isOnline}
+        maxMessageLength={MAX_MESSAGE_LENGTH}
+        onChange={setInput}
+        onSend={handleSend}
+        textareaRef={textareaRef}
+      />
 
-      {!isSessionFromHistory && (
-        <div className="mb-4 space-y-4">
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-gray-400 italic">pozostałe zapytania</p>
-              <p className="text-xs text-gray-500">
-                {remainingRequests} / {sessionLimits.maxMessagesPerSession}
-              </p>
-            </div>
-            <Progress
-              value={(remainingRequests / sessionLimits.maxMessagesPerSession) * 100}
-              className={`h-2 ${remainingRequests / sessionLimits.maxMessagesPerSession > 0.2 ? "[&>div]:bg-blue-600" : "[&>div]:bg-red-500"}`}
-            />
-            {remainingRequests === 0 && (
-              <p className="text-xs text-red-600 mt-1">⚠️ Osiągnięto limit zapytań dla tej sesji</p>
-            )}
-            {remainingRequests > 0 && remainingRequests <= sessionLimits.maxMessagesPerSession * 0.2 && (
-              <p className="text-xs text-yellow-600 mt-1">⚠️ Zostało niewiele zapytań</p>
-            )}
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-gray-400 italic">czas sesji</p>
-              <p className="text-xs text-gray-500">
-                {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, "0")}
-              </p>
-            </div>
-            <Progress
-              value={(timeRemaining / (sessionLimits.maxSessionDuration * 60)) * 100}
-              className={`h-2 ${timeRemaining / (sessionLimits.maxSessionDuration * 60) > 0.2 ? "[&>div]:bg-green-600" : "[&>div]:bg-red-500"}`}
-            />
-            {timeRemaining <= 0 && <p className="text-xs text-red-600 mt-1">⚠️ Czas sesji minął</p>}
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-gray-400 italic">wykorzystane tokeny</p>
-              <p className="text-xs text-gray-500">
-                {tokensUsed.toLocaleString()} / {TOKEN_LIMIT.toLocaleString()}
-              </p>
-            </div>
-            <Progress
-              value={Math.min((tokensUsed / TOKEN_LIMIT) * 100, 100)}
-              className={`h-2 ${tokensUsed / TOKEN_LIMIT < 0.7 ? "[&>div]:bg-blue-600" : tokensUsed / TOKEN_LIMIT < 0.9 ? "[&>div]:bg-yellow-500" : "[&>div]:bg-red-500"}`}
-            />
-            {tokensUsed >= TOKEN_LIMIT && (
-              <p className="text-xs text-red-600 mt-1">⚠️ Osiągnięto limit tokenów dla tej sesji</p>
-            )}
-          </div>
-        </div>
-      )}
+      <ChatStats
+        remainingRequests={remainingRequests}
+        maxMessagesPerSession={sessionLimits.maxMessagesPerSession}
+        timeRemaining={timeRemaining}
+        maxSessionDurationMinutes={sessionLimits.maxSessionDuration}
+        tokensUsed={tokensUsed}
+        tokenLimit={TOKEN_LIMIT}
+      />
     </div>
   );
 }
