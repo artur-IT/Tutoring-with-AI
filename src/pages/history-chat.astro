@@ -7,6 +7,6 @@ import Layout from "../layouts/Layout.astro";
 import HistoryChatView from "../components/HistoryChat";
 ---
 
-<Layout title="Historia rozmowy">
-  <HistoryChatView client:only="react" />
+<Layout title="Historia rozmowy" description="Podgląd pojedynczej rozmowy z korepetytorem AI.">
+  <HistoryChatView client:idle />
 </Layout>

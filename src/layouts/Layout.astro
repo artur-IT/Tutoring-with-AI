@@ -5,17 +5,35 @@ import { OfflineIndicator } from "../components/OfflineIndicator";
 
 interface Props {
   title?: string;
+  description?: string;
+  image?: string;
 }
 
-const { title = "Tutor AI" } = Astro.props;
+const {
+  title = "Tutor AI",
+  description = "Interaktywny korepetytor AI dla nastolatków.",
+  image = "/pwa-512x512.png",
+} = Astro.props;
 const isProduction = import.meta.env.PROD;
+const canonicalUrl = Astro.url;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="pl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {isProduction && <link rel="manifest" href="/manifest.webmanifest" />}
@@ -46,7 +64,7 @@ const isProduction = import.meta.env.PROD;
     <slot />
 
     <!-- Offline Indicator - React component that persists across navigation -->
-    <OfflineIndicator client:load />
+    <OfflineIndicator client:idle />
   </body>
 </html>
 

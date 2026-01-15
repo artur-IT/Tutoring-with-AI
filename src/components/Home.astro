@@ -9,7 +9,7 @@ import NameInput from "./NameInput";
     <p class="text-sm text-gray-500">Pomoc dla uczniów liceów i techników</p>
   </div>
 
-  <NameInput client:load />
+  <NameInput client:idle />
 
   <!-- Content that should be inert when modal is open -->
   <div id="home-content" class="hidden flex-col items-center justify-center">
@@ -59,11 +59,19 @@ import NameInput from "./NameInput";
     }
   };
 
-  // Run on initial load
-  initHome();
+  const runWhenIdle = (callback) => {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(callback, { timeout: 2000 });
+      return;
+    }
+    setTimeout(callback, 1);
+  };
+
+  // Run on initial load (defer to idle to reduce main-thread work)
+  runWhenIdle(initHome);
 
   // Re-run after View Transitions navigation
-  document.addEventListener("astro:page-load", initHome);
+  document.addEventListener("astro:page-load", () => runWhenIdle(initHome));
 
   // Listen for name updates from NameInput component
   window.addEventListener("nameUpdated", (event) => {
