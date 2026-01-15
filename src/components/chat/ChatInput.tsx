@@ -65,7 +65,7 @@ export default function ChatInput({
           className="shrink-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Send message"
         >
-          <img src={SendIcon} alt="" className="w-5 h-5" />
+          <img src={SendIcon} alt="" width={20} height={20} className="w-5 h-5" />
         </button>
       </div>
     </div>

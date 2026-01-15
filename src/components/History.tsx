@@ -134,7 +134,11 @@ export default function History() {
                 {/* User avatar */}
                 <Avatar className="w-12 h-12 shrink-0 bg-blue-100">
                   <AvatarFallback className="text-2xl bg-blue-100">
-                    {session.avatar ? <span>{session.avatar}</span> : <img src={UserIcon} alt="" className="w-6 h-6" />}
+                    {session.avatar ? (
+                      <span>{session.avatar}</span>
+                    ) : (
+                      <img src={UserIcon} alt="" width={24} height={24} className="w-6 h-6" />
+                    )}
                   </AvatarFallback>
                 </Avatar>
 
@@ -182,7 +186,7 @@ export default function History() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <img src={ChevronRightIcon} alt="" className="w-5 h-5 text-gray-600" />
+                  <img src={ChevronRightIcon} alt="" width={20} height={20} className="w-5 h-5 text-gray-600" />
                 </div>
               </CardContent>
             </Card>
@@ -194,7 +198,7 @@ export default function History() {
       <div className="flex justify-center mb-6">
         <a href="/" className="inline-block">
           <Button variant="back">
-            <img src={ArrowLeftSimpleIcon} alt="" className="w-5 h-5" />
+            <img src={ArrowLeftSimpleIcon} alt="" width={20} height={20} className="w-5 h-5" />
             wróć
           </Button>
         </a>
