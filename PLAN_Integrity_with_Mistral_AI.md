@@ -285,7 +285,7 @@ Dane z localStorage (z poprzedniego kroku):
 
 ### Krok 7.2 - Utwórz Web App Manifest
 
-**W `public/manifest.json`:**
+**W `astro.config.mjs` (generowany manifest):**
 
 - Nazwa aplikacji i opis
 - Ikony (192x192, 512x512)
@@ -296,7 +296,7 @@ Dane z localStorage (z poprzedniego kroku):
 ### Krok 7.3 - Dodaj ikony aplikacji
 
 - Wygeneruj ikony w różnych rozmiarach
-- Umieść w `public/icons/`
+- Umieść w `public/`
 - Dodaj do manifestu
 - Favicon i Apple Touch Icon
 
@@ -313,8 +313,24 @@ Dane z localStorage (z poprzedniego kroku):
 
 - Wykryj stan offline
 - Pokaż komunikat użytkownikowi
-- Queue wiadomości do wysłania
-- Sync po powrocie online (opcjonalnie)
+- Tryb offline: tylko odczyt historii rozmów
+- Zablokuj wysyłanie nowych wiadomości
+
+#### Krok 7.5.1 - Tryb tylko do odczytu historii
+
+- Wykorzystaj istniejącą historię z localStorage
+- Ukryj/wyłącz input oraz przycisk "Send"
+- Jasny komunikat: "Offline — możesz tylko czytać historię"
+
+#### Krok 7.5.2 - Powrót online
+
+- Przywróć możliwość pisania po odzyskaniu połączenia
+- Nie wykonuj automatycznej wysyłki zaległych wiadomości
+
+#### Krok 7.5.3 - Komunikaty i UX
+
+- Pokaż czytelny komunikat o trybie offline
+- Utrzymaj czytelny widok historii
 
 ### Krok 7.6 - Testuj PWA
 
@@ -366,11 +382,10 @@ Dane z localStorage (z poprzedniego kroku):
 
 ### Faza PWA (opcjonalnie)
 
-- [ ] 21. Zainstaluj `@vite-pwa/astro`
-- [ ] 22. Stwórz manifest.json i dodaj ikony
-- [ ] 23. Skonfiguruj Service Worker i cache
-- [ ] 24. Dodaj obsługę offline
-- [ ] 25. Testuj z Lighthouse (cel: 90+ punktów)
+- [x] 21. Zainstaluj `@vite-pwa/astro`
+- [x] 22. Skonfiguruj manifest w `astro.config.mjs` + dodaj ikony w `public/`
+- [x] 23. Skonfiguruj Service Worker i cache (Workbox)
+- [x] 25. Testuj z Lighthouse (cel: 90+ punktów)
 
 ---
 

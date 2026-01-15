@@ -1,7 +1,15 @@
 import { useState, useId, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 import { useUserName } from "./hooks/useUserName";
 
 const MODAL_STATE_EVENT = "nameInputModalState";
@@ -37,6 +45,7 @@ export default function NameInput() {
         <form id={formId} onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Wprowadź swoje imię</DialogTitle>
+            <DialogDescription>Twoje imię będzie użyte w rozmowach z korepetytorem.</DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <Input

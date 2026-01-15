@@ -181,7 +181,7 @@ export default function TutorsForm() {
         </Button>
         <a href="/">
           <Button variant="back">
-            <img src={ArrowLeftSimpleIcon} alt="" className="w-5 h-4" />
+            <img src={ArrowLeftSimpleIcon} alt="" width={20} height={16} className="w-5 h-4" />
             powrót
           </Button>
         </a>
