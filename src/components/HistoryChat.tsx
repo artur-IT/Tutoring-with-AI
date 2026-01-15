@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import type { ChatHistory, ChatSession, Message } from "../agents/mathTutor/types";
 
@@ -85,8 +85,8 @@ export default function HistoryChat() {
           <p className="text-sm">Wróć do historii i wybierz rozmowę ponownie</p>
         </div>
         <div className="flex justify-center mb-6">
-          <a href="/history-list" className="inline-block">
-            <Button variant="back">Wróć do historii</Button>
+          <a href="/history-list" className={buttonVariants({ variant: "back" })}>
+            Wróć do historii
           </a>
         </div>
       </div>
@@ -95,19 +95,19 @@ export default function HistoryChat() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+      <header className="flex justify-between items-center mb-6">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">Historia rozmowy</h1>
           {session.name && <p className="text-xs text-gray-500 mt-1">{session.name}</p>}
         </div>
         <div className="flex gap-2">
-          <a href="/history-list">
-            <Button variant="back">Wróć</Button>
+          <a href="/history-list" className={buttonVariants({ variant: "back" })}>
+            Wróć
           </a>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 space-y-4 mb-4 overflow-y-auto">
+      <div className="flex-1 space-y-4 mb-4 overflow-y-auto" role="region" aria-label="Wiadomości historii">
         {session.messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
             <p className="text-sm">Brak wiadomości w tej rozmowie</p>

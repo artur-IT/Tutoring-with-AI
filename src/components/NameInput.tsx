@@ -48,6 +48,9 @@ export default function NameInput() {
             <DialogDescription>Twoje imię będzie użyte w rozmowach z korepetytorem.</DialogDescription>
           </DialogHeader>
           <div className="py-4">
+            <label htmlFor={inputId} className="sr-only">
+              Imię
+            </label>
             <Input
               id={inputId}
               type="text"
@@ -55,7 +58,6 @@ export default function NameInput() {
               maxLength={20}
               onChange={handleInputChange}
               placeholder="Wpisz imię"
-              aria-label="Wprowadź swoje imię"
               spellCheck={false}
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus={true}

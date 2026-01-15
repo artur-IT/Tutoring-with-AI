@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo } from "react";
-import { Button } from "./ui/button";
+import { useState, useCallback, useMemo, useId } from "react";
+import { Button, buttonVariants } from "./ui/button";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
@@ -30,6 +30,7 @@ export default function TutorsForm() {
   const [problemDescription, setProblemDescription] = useState("");
   const [interests, setInterests] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState("");
+  const topicLabelId = useId();
 
   const handleSubjectSelect = useCallback((subject: Subject) => {
     setSelectedSubject(subject);
@@ -82,11 +83,13 @@ export default function TutorsForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center gap-6">
-      <div className="flex flex-col gap-4 sm:flex-row">
+      <fieldset className="flex flex-col gap-4 sm:flex-row">
+        <legend className="sr-only">Wybierz przedmiot</legend>
         <Button
           type="button"
           onClick={handleMathClick}
           disabled={!isOnline}
+          aria-pressed={selectedSubject === "matematyka"}
           className={getSubjectButtonStyles(selectedSubject === "matematyka", !isOnline)}
         >
           Matematyka
@@ -95,21 +98,22 @@ export default function TutorsForm() {
           type="button"
           onClick={handleEnglishClick}
           disabled={!isOnline}
+          aria-pressed={selectedSubject === "angielski"}
           className={getSubjectButtonStyles(selectedSubject === "angielski", !isOnline)}
         >
           Język angielski
         </Button>
-      </div>
+      </fieldset>
 
       {selectedSubject && (
         <>
           {/* Topic Selection Dropdown */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="topic-select" className="text-sm text-gray-900">
+            <label id={topicLabelId} htmlFor="topic-select" className="text-sm text-gray-900">
               Wybierz temat:
             </label>
             <Select value={selectedTopic} onValueChange={handleTopicChange} required>
-              <SelectTrigger id="topic-select" className="w-[350px]" aria-label="Wybierz temat">
+              <SelectTrigger id="topic-select" className="w-[350px]" aria-labelledby={topicLabelId}>
                 <SelectValue placeholder="Wybierz temat" />
               </SelectTrigger>
               <SelectContent>
@@ -133,7 +137,6 @@ export default function TutorsForm() {
               value={problemDescription}
               onChange={handleProblemChange}
               className="w-[350px] text-sm"
-              aria-label="Opisz problem"
               required
             />
           </div>
@@ -150,7 +153,6 @@ export default function TutorsForm() {
               onChange={handleInterestsChange}
               placeholder="krótko np. piłka nożna, książki, filmy itp."
               className="w-[350px] text-sm"
-              aria-label="Podaj swoje zainteresowania"
               required
             />
           </div>
@@ -158,7 +160,7 @@ export default function TutorsForm() {
           {/* Avatar Selection */}
           <div className="flex flex-col items-center gap-3 w-[350px]">
             <p className="text-sm text-gray-900 self-start">Wybierz swój avatar:</p>
-            <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex flex-wrap gap-2 justify-center" role="group" aria-label="Wybierz avatar">
               {AVATAR_EMOJIS.map((emoji) => (
                 <button
                   key={emoji}
@@ -166,6 +168,7 @@ export default function TutorsForm() {
                   onClick={() => handleAvatarSelect(emoji)}
                   className={`text-3xl p-2 rounded-lg transition-all hover:scale-110 ${selectedAvatar === emoji ? "bg-blue-100 ring-2 ring-blue-500 scale-110" : "bg-gray-50 hover:bg-gray-100"}`}
                   aria-label={`Wybierz avatar ${emoji}`}
+                  aria-pressed={selectedAvatar === emoji}
                 >
                   {emoji}
                 </button>
@@ -179,11 +182,9 @@ export default function TutorsForm() {
         <Button type="submit" disabled={!isFormValid} variant="ok">
           Do nauki
         </Button>
-        <a href="/">
-          <Button variant="back">
-            <img src={ArrowLeftSimpleIcon} alt="" width={20} height={16} className="w-5 h-4" />
-            powrót
-          </Button>
+        <a href="/" className={buttonVariants({ variant: "back" })}>
+          <img src={ArrowLeftSimpleIcon} alt="" width={20} height={16} className="w-5 h-4" aria-hidden="true" />
+          powrót
         </a>
       </div>
     </form>

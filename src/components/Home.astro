@@ -1,5 +1,4 @@
 ---
-import { Button } from "./ui/button";
 import NameInput from "./NameInput";
 ---
 
@@ -15,18 +14,26 @@ import NameInput from "./NameInput";
   <div id="home-content" class="hidden flex-col items-center justify-center">
     <!-- Welcome text centered -->
     <div class="text-center my-10">
-      <h1 class="text-2xl text-black mb-2">Witaj <span id="name-display"></span>!</h1>
+      <h2 class="text-2xl text-black mb-2">
+        Witaj <span id="name-display" aria-live="polite"></span>!
+      </h2>
     </div>
 
     <div class="mb-6">
-      <a href="/tutors" class="inline-block">
-        <Button variant="ok"> Zaczynamy </Button>
+      <a
+        href="/tutors"
+        class="inline-flex items-center cursor-pointer justify-center gap-2 whitespace-nowrap rounded-lg text-base font-medium transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+      >
+        Zaczynamy
       </a>
     </div>
 
     <div>
-      <a href="/history-list" class="inline-block">
-        <Button variant="back"> Historia rozmów </Button>
+      <a
+        href="/history-list"
+        class="inline-flex items-center cursor-pointer justify-center gap-2 whitespace-nowrap rounded-lg text-base font-medium transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 px-4 py-2 h-[40px] bg-white text-blue-600 hover:bg-blue-50 border border-blue-600"
+      >
+        Historia rozmów
       </a>
     </div>
   </div>
