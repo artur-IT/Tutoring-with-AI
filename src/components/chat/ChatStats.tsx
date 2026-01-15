@@ -29,6 +29,7 @@ export default function ChatStats({
         </div>
         <Progress
           value={(remainingRequests / maxMessagesPerSession) * 100}
+          aria-label="Pozostałe zapytania"
           className={`h-2 ${remainingRequests / maxMessagesPerSession > 0.2 ? "[&>div]:bg-blue-600" : "[&>div]:bg-red-500"}`}
         />
         {remainingRequests === 0 && (
@@ -48,6 +49,7 @@ export default function ChatStats({
         </div>
         <Progress
           value={(timeRemaining / maxSessionSeconds) * 100}
+          aria-label="Czas sesji"
           className={`h-2 ${timeRemaining / maxSessionSeconds > 0.2 ? "[&>div]:bg-green-600" : "[&>div]:bg-red-500"}`}
         />
         {timeRemaining <= 0 && <p className="text-xs text-red-600 mt-1">⚠️ Czas sesji minął</p>}
@@ -62,6 +64,7 @@ export default function ChatStats({
         </div>
         <Progress
           value={Math.min((tokensUsed / tokenLimit) * 100, 100)}
+          aria-label="Wykorzystane tokeny"
           className={`h-2 ${tokensUsed / tokenLimit < 0.7 ? "[&>div]:bg-blue-600" : tokensUsed / tokenLimit < 0.9 ? "[&>div]:bg-yellow-500" : "[&>div]:bg-red-500"}`}
         />
         {tokensUsed >= tokenLimit && (

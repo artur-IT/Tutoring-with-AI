@@ -1,14 +1,14 @@
 # Analiza planu integracji i propozycja wdrożenia 🎯
 
 Data utworzenia: 8 grudnia 2025
-Ostatnia aktualizacja: 8 stycznia 2026
+Ostatnia aktualizacja: 15 stycznia 2026
 Projekt: Chat-with-Hero (Tutor with AI)
 
 ---
 
 ## 📈 Aktualny status projektu
 
-**Postęp ogólny:** ~50% ukończone
+**Postęp ogólny:** ~60% ukończone
 
 ### ✅ Ukończone funkcjonalności:
 
@@ -18,9 +18,13 @@ Projekt: Chat-with-Hero (Tutor with AI)
 - ✅ Blokowanie przycisku podczas wysyłania
 - ✅ Wyświetlanie wybranego tematu w historii rozmowy
 - ✅ Debouncing (opóźnienie 500ms) - zapobieganie wielokrotnemu wysyłaniu
+- ✅ SEO podstawowe (meta description, canonical, OG, Twitter, lang=pl)
+- ✅ Odciążenie startu (client:idle, requestIdleCallback, width/height ikon)
 
 ### 🔍 Historia weryfikacji i aktualizacji:
 
+- **15 stycznia 2026** - Poprawki SEO + lekka optymalizacja wydajności, Lighthouse: Perf 78 / SEO 100
+- **15 stycznia 2026** - Poprawki a11y (skip link + main, etykiety pól, aria-live, semantyka list/regionów, usunięcie zagnieżdżonych elementów interaktywnych)
 - **8 stycznia 2026** - Ukończono FEATURE 3.2 (Testowanie edge cases) - testy jednostkowe (13/13 ✅) i E2E (7 testów)
 - **7 stycznia 2026** - Dokończono FEATURE 1.3 (Debouncing) - dodano hook `useDebounce`
 - **7 stycznia 2026** - Pełna weryfikacja kodu - status potwierdzony jako aktualny
@@ -28,7 +32,7 @@ Projekt: Chat-with-Hero (Tutor with AI)
 
 ### ⚠️ Częściowo zaimplementowane:
 
-- (brak - wszystkie częściowe features ukończone)
+- Obsługa offline: tylko odczyt historii rozmów (bez wysyłania)
 
 ### 🎯 W trakcie realizacji:
 
@@ -37,7 +41,6 @@ Projekt: Chat-with-Hero (Tutor with AI)
 ### ❌ Do zrobienia:
 
 - ❌ Filtrowanie treści (FEATURE 1.4)
-- ❌ Obsługa offline (FEATURE 2.1)
 - ❌ Testowanie podstawowego flow (FEATURE 3.1)
 - ❌ Optymalizacja (FEATURE 3.3)
 
@@ -75,6 +78,7 @@ Projekt: Chat-with-Hero (Tutor with AI)
 - ✅ Dynamiczne wyświetlanie wiadomości
 - ✅ Loading i error states
 - ✅ Auto-scroll do ostatniej wiadomości
+- ✅ Poprawki a11y (skip link + main, etykiety pól, aria-live, semantyka list/regionów, brak zagnieżdżonych elementów interaktywnych)
 
 **Faza personalizacji:**
 
@@ -110,9 +114,9 @@ Projekt: Chat-with-Hero (Tutor with AI)
 
 #### 1.2 Obsługa offline (ETAP 6, Krok 6.2)
 
-- **Status:** Wspomniane w planie, brak implementacji
-- **Co to:** Działanie aplikacji bez połączenia z internetem
-- **Dlaczego ważne:** Lepsze UX, możliwość kontynuacji nauki offline
+- **Status:** Wdrożone w ograniczonym zakresie (tylko odczyt historii)
+- **Co to:** Odczyt historii offline, bez wysyłania nowych wiadomości
+- **Dlaczego ważne:** Uczeń może wracać do notatek bez internetu
 
 #### 1.3 Debouncing dla szybkiego klikanie "Send" (ETAP 6, Krok 6.2)
 
