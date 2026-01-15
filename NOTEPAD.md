@@ -22,6 +22,8 @@ Sprawdza w całym projekcie poprawność kodu:
 
 ---
 
+---
+
 #### Czy asChild jest potrzebne?
 
 Tak, jeśli chcesz:
@@ -82,6 +84,12 @@ a. `📁 src/pages/`
 
 Każdy plik = jedna strona.
 
+Pliki w /pages to strony routingowe (będą w pasku adresu przeglądarki).
+
+Konwencja: małe litery, kebab-case
+Dobrze: chat.astro, user-profile.astro, about-us.astro
+Unikaj: Chat.astro, UserProfile.astro, aboutUs.astro
+
 `src/pages/index.astro → /`
 
 `src/pages/about.astro → /about`
@@ -103,6 +111,8 @@ export default {
   integrations: [react()],
 };
 ```
+
+---
 
 ## 3. Składnia plików .astro (najważniejsze 10 linijek)
 

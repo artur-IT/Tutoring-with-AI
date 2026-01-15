@@ -74,7 +74,7 @@ export default function History() {
       const history = getHistory();
       history.currentSessionId = sessionId;
       saveHistory(history);
-      setTimeout(() => location.assign("/chat"), 0);
+      setTimeout(() => location.assign("/history-chat"), 0);
     } catch (e) {
       console.error("Error setting current session:", e);
     }

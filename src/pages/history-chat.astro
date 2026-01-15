@@ -1,0 +1,12 @@
+---
+// Disable prerender to prevent hydration mismatch in offline mode
+// The component loads data from localStorage which is only available client-side
+export const prerender = false;
+
+import Layout from "../layouts/Layout.astro";
+import HistoryChatView from "../components/HistoryChat";
+---
+
+<Layout title="Historia rozmowy">
+  <HistoryChatView client:only="react" />
+</Layout>
