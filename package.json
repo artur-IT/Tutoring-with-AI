@@ -9,9 +9,7 @@
     "astro": "astro",
     "check": "eslint . && prettier --check . && astro check",
     "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
@@ -42,7 +40,6 @@
   "devDependencies": {
     "@eslint/compat": "2.0.0",
     "@eslint/js": "9.39.1",
-    "@playwright/test": "^1.57.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^14.6.1",

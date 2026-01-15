@@ -25,7 +25,7 @@ export function OfflineIndicator() {
     <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-md">
       <Alert variant="destructive" className="shadow-lg">
         <WifiOff className="h-4 w-4" />
-        <AlertDescription>Jesteś offline. Niektóre funkcje mogą być niedostępne.</AlertDescription>
+        <AlertDescription>Jesteś offline. Niektóre funkcje są niedostępne.</AlertDescription>
       </Alert>
     </div>
   );
