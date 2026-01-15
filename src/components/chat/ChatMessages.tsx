@@ -41,7 +41,14 @@ const MessageBubble = ({ message, studentAvatar }: { message: Message; studentAv
 
 export default function ChatMessages({ messages, isLoading, studentAvatar, messagesEndRef }: ChatMessagesProps) {
   return (
-    <div className="flex-1 space-y-4 mb-4 overflow-y-auto">
+    <div
+      className="flex-1 space-y-4 mb-4 overflow-y-auto"
+      role="log"
+      aria-live="polite"
+      aria-relevant="additions text"
+      aria-busy={isLoading}
+      aria-label="Wiadomości czatu"
+    >
       {messages.length === 0 && (
         <div className="text-center text-gray-500 mt-8">
           <p className="text-sm">Postaram się to wytłumaczyć w sposób, który będzie dla Ciebie zrozumiały</p>
@@ -64,7 +71,7 @@ export default function ChatMessages({ messages, isLoading, studentAvatar, messa
         </div>
       )}
 
-      <div ref={messagesEndRef} />
+      <div ref={messagesEndRef} aria-hidden="true" />
     </div>
   );
 }

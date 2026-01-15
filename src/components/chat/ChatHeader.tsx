@@ -7,7 +7,7 @@ type ChatHeaderProps = {
 
 export default function ChatHeader({ sessionName, onEnd }: ChatHeaderProps) {
   return (
-    <div className="flex justify-between items-center mb-6">
+    <header className="flex justify-between items-center mb-6">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900">Chat</h1>
         {sessionName && <p className="text-xs text-gray-500 mt-1">{sessionName}</p>}
@@ -17,6 +17,6 @@ export default function ChatHeader({ sessionName, onEnd }: ChatHeaderProps) {
           Koniec
         </Button>
       </div>
-    </div>
+    </header>
   );
 }

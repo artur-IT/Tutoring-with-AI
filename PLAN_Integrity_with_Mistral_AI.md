@@ -338,6 +338,8 @@ Dane z localStorage (z poprzedniego kroku):
 - Testuj instalację na mobile
 - Sprawdź cache offline
 - Weryfikuj manifest i Service Worker
+- Wynik (2026-01-15): Perf 78 / A11y 98 / Best 100 / SEO 100
+- 2026-01-15: poprawki A11y (skip link, etykiety pól, aria-live, semantyka list i regionów, brak zagnieżdżonych elementów interaktywnych)
 
 ---
 

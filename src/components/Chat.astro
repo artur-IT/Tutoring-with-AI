@@ -1,5 +1,4 @@
 ---
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Progress } from "./ui/progress";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -11,13 +10,16 @@ import SendIcon from "../assets/icons/send.svg";
   {/* Header */}
   <div class="flex justify-center mb-6 relative">
     <h1 class="text-3xl font-bold text-gray-900 text-center mb-8 mt-8">Chat</h1>
-    <a href="/" class="inline-block absolute top-0 right-0">
-      <Button variant="back">Koniec na dziś</Button>
+    <a
+      href="/"
+      class="inline-flex items-center cursor-pointer justify-center gap-2 whitespace-nowrap rounded-lg text-base font-medium transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 px-4 py-2 h-[40px] bg-white text-blue-600 hover:bg-blue-50 border border-blue-600 absolute top-0 right-0"
+    >
+      Koniec na dziś
     </a>
   </div>
 
   {/* Messages section */}
-  <div class="flex-1 space-y-4 mb-4 overflow-y-auto">
+  <div class="flex-1 space-y-4 mb-4 overflow-y-auto" role="log" aria-live="polite" aria-label="Wiadomości czatu">
     {/* Tutor message */}
     <div class="flex items-start gap-3">
       {/* Avatar */}
@@ -52,21 +54,22 @@ import SendIcon from "../assets/icons/send.svg";
       <button
         type="button"
         class="shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
-        aria-label="Add attachment"
+        aria-label="Dodaj załącznik"
       >
-        <PlusIcon />
+        <PlusIcon aria-hidden="true" focusable="false" />
       </button>
       {/* Input field */}
       <div class="flex-1">
-        <Input client:load type="text" placeholder="Message" />
+        <label for="chat-message" class="sr-only">Wiadomość</label>
+        <Input client:load id="chat-message" type="text" placeholder="Wpisz wiadomość" />
       </div>
       {/* Send button */}
       <button
         type="button"
         class="shrink-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors"
-        aria-label="Send message"
+        aria-label="Wyślij wiadomość"
       >
-        <SendIcon />
+        <SendIcon aria-hidden="true" focusable="false" />
       </button>
     </div>
   </div>
@@ -74,6 +77,6 @@ import SendIcon from "../assets/icons/send.svg";
   {/* Progress bar section */}
   <div class="mb-4">
     <p class="text-sm text-gray-400 italic mb-2">wykorzystany czas</p>
-    <Progress client:load value={35} className="h-2 [&>div]:bg-blue-600" />
+    <Progress client:load value={35} className="h-2 [&>div]:bg-blue-600" aria-label="Wykorzystany czas" />
   </div>
 </div>

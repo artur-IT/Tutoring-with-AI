@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import {
@@ -105,102 +105,120 @@ export default function History() {
       <h1 className="text-3xl font-bold text-gray-900 text-center mb-8 mt-8">Historia rozmów</h1>
 
       {/* Session list */}
-      <div className="flex-1 space-y-4 mb-8" suppressHydrationWarning>
+      <ul className="flex-1 space-y-4 mb-8" suppressHydrationWarning>
         {!isMounted ? (
-          <div className="text-center text-gray-500 py-12">
+          <li className="text-center text-gray-500 py-12">
             <p className="text-sm">Ładowanie...</p>
-          </div>
+          </li>
         ) : sessions.length === 0 ? (
-          <div className="text-center text-gray-500 py-12">
+          <li className="text-center text-gray-500 py-12">
             <p className="text-lg mb-2">📭 Brak historii rozmów</p>
             <p className="text-sm">Rozpocznij nową rozmowę, aby utworzyć historię</p>
-          </div>
+          </li>
         ) : (
-          sessions.map((session) => (
-            <Card
-              key={session.id}
-              onClick={() => handleSessionClick(session.id)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleSessionClick(session.id);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              className="cursor-pointer hover:shadow-lg transition-shadow"
-            >
-              <CardContent className="flex items-center gap-4 p-4 md:p-6">
-                {/* User avatar */}
-                <Avatar className="w-12 h-12 shrink-0 bg-blue-100">
-                  <AvatarFallback className="text-2xl bg-blue-100">
-                    {session.avatar ? (
-                      <span>{session.avatar}</span>
-                    ) : (
-                      <img src={UserIcon} alt="" width={24} height={24} className="w-6 h-6" />
-                    )}
-                  </AvatarFallback>
-                </Avatar>
+          sessions.map((session) => {
+            const titleId = `session-title-${session.id}`;
+            const descriptionId = `session-description-${session.id}`;
 
-                {/* Title and description */}
-                <div className="flex-1 min-w-0">
-                  <CardHeader className="p-0">
-                    <CardTitle className="text-base mb-1">{session.name}</CardTitle>
-                    <CardDescription className="line-clamp-2">{getSessionDescription(session)}</CardDescription>
-                  </CardHeader>
-                  <div className="flex gap-3 mt-2 text-xs text-gray-400">
-                    <span>💬 {session.messages.filter((m) => m.role !== "system").length} wiadomości</span>
-                    <span>🎫 {session.tokensUsed.toLocaleString()} tokenów</span>
-                  </div>
-                </div>
+            return (
+              <li key={session.id}>
+                <Card
+                  onClick={() => handleSessionClick(session.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleSessionClick(session.id);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-labelledby={titleId}
+                  aria-describedby={descriptionId}
+                  className="cursor-pointer hover:shadow-lg transition-shadow focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                >
+                  <CardContent className="flex items-center gap-4 p-4 md:p-6">
+                    {/* User avatar */}
+                    <Avatar className="w-12 h-12 shrink-0 bg-blue-100">
+                      <AvatarFallback className="text-2xl bg-blue-100">
+                        {session.avatar ? (
+                          <span>{session.avatar}</span>
+                        ) : (
+                          <img src={UserIcon} alt="" width={24} height={24} className="w-6 h-6" />
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
 
-                {/* Actions */}
-                <div className="shrink-0 flex items-center gap-2">
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <button
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-red-500 hover:text-red-700 p-2"
-                        aria-label="Usuń rozmowę"
-                      >
-                        🗑️
-                      </button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Usuń rozmowę</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Czy na pewno chcesz usunąć tę rozmowę? Tej operacji nie można cofnąć.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Anuluj</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteSession(session.id);
-                          }}
-                        >
-                          Usuń
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                  <img src={ChevronRightIcon} alt="" width={20} height={20} className="w-5 h-5 text-gray-600" />
-                </div>
-              </CardContent>
-            </Card>
-          ))
+                    {/* Title and description */}
+                    <div className="flex-1 min-w-0">
+                      <CardHeader className="p-0">
+                        <CardTitle id={titleId} className="text-base mb-1">
+                          {session.name}
+                        </CardTitle>
+                        <CardDescription id={descriptionId} className="line-clamp-2">
+                          {getSessionDescription(session)}
+                        </CardDescription>
+                      </CardHeader>
+                      <div className="flex gap-3 mt-2 text-xs text-gray-400">
+                        <span>💬 {session.messages.filter((m) => m.role !== "system").length} wiadomości</span>
+                        <span>🎫 {session.tokensUsed.toLocaleString()} tokenów</span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="shrink-0 flex items-center gap-2">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <button
+                            type="button"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-red-500 hover:text-red-700 p-2"
+                            aria-label="Usuń rozmowę"
+                          >
+                            🗑️
+                          </button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Usuń rozmowę</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Czy na pewno chcesz usunąć tę rozmowę? Tej operacji nie można cofnąć.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Anuluj</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteSession(session.id);
+                              }}
+                            >
+                              Usuń
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                      <img
+                        src={ChevronRightIcon}
+                        alt=""
+                        width={20}
+                        height={20}
+                        className="w-5 h-5 text-gray-600"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </li>
+            );
+          })
         )}
-      </div>
+      </ul>
 
       {/* Back button */}
       <div className="flex justify-center mb-6">
-        <a href="/" className="inline-block">
-          <Button variant="back">
-            <img src={ArrowLeftSimpleIcon} alt="" width={20} height={20} className="w-5 h-5" />
-            wróć
-          </Button>
+        <a href="/" className={buttonVariants({ variant: "back" })}>
+          <img src={ArrowLeftSimpleIcon} alt="" width={20} height={20} className="w-5 h-5" aria-hidden="true" />
+          wróć
         </a>
       </div>
     </div>
