@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
 import { getTopicsForSubject, type Subject } from "../lib/subjectTopics";
 import { useOnline } from "./hooks/useOnline";
+import { withOnlineProvider } from "./hooks/withOnlineProvider";
 
 const AVATAR_EMOJIS = ["🦊", "🐼", "🦁", "🐶", "🐱"] as const;
 
@@ -23,7 +24,7 @@ const clearCurrentSession = () => {
   }
 };
 
-export default function TutorsForm() {
+function TutorsForm() {
   const isOnline = useOnline();
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [selectedTopic, setSelectedTopic] = useState("");
@@ -190,3 +191,5 @@ export default function TutorsForm() {
     </form>
   );
 }
+
+export default withOnlineProvider(TutorsForm);

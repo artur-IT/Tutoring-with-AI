@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
 import { ViewTransitions } from "astro:transitions";
-import { OfflineIndicator } from "../components/OfflineIndicator";
+import { AppProviders } from "../components/AppProviders";
 
 interface Props {
   title?: string;
@@ -71,8 +71,8 @@ const canonicalUrl = Astro.url;
       <slot />
     </main>
 
-    <!-- Offline Indicator - React component that persists across navigation -->
-    <OfflineIndicator client:idle />
+    <!-- Global providers for React components -->
+    <AppProviders client:only="react" transition:persist />
   </body>
 </html>
 
