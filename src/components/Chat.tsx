@@ -8,8 +8,9 @@ import type { Message, StudentData, AIResponse, ChatSession, ChatHistory } from 
 import { sessionLimits, contentRestrictions } from "../agents/mathTutor/config";
 import { useDebounce } from "./hooks/useDebounce";
 import { useOnline } from "./hooks/useOnline";
+import { withOnlineProvider } from "./hooks/withOnlineProvider";
 
-export default function Chat() {
+function Chat() {
   const isOnline = useOnline();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -439,3 +440,5 @@ export default function Chat() {
     </div>
   );
 }
+
+export default withOnlineProvider(Chat);
