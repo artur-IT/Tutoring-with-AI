@@ -41,10 +41,10 @@ export default function ChatInput({
             rows={1}
             placeholder={
               isSessionEnded
-                ? "Sesja zakończona"
+                ? "Sesja została zakończona"
                 : !isOnline
-                  ? "Brak połączenia z internetem"
-                  : "Wpisz pytanie z matematyki..."
+                  ? "Brak połączenia z internetem - sprawdź swoją sieć"
+                  : "Zadaj pytanie... (np. Jak rozwiązać równanie kwadratowe?)"
             }
             value={input}
             onChange={(event) => onChange(event.target.value)}
