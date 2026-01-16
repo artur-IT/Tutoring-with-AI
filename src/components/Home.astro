@@ -2,10 +2,21 @@
 import NameInput from "./NameInput";
 ---
 
-<div class="min-h-screen bg-white flex flex-col items-center justify-center p-4 relative">
-  <div class="text-center my-10">
-    <h1 class="text-2xl text-black mb-2">Korepetytor AI</h1>
-    <p class="text-sm text-gray-500">Pomoc dla uczniów liceów i techników</p>
+<div
+  class="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col items-center justify-center p-4 relative overflow-hidden"
+>
+  <!-- Decorative background elements -->
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-20 right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 left-10 w-80 h-80 bg-accent/10 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="text-center my-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div class="mb-4 text-5xl animate-[wiggle_2s_ease-in-out_infinite]">🎓</div>
+    <h1 class="text-4xl md:text-5xl font-black text-foreground mb-4 tracking-tight">
+      Korepetytor <span class="text-primary">AI</span>
+    </h1>
+    <p class="text-lg md:text-xl text-muted-foreground font-medium">Pomoc dla uczniów liceów i techników</p>
   </div>
 
   <NameInput client:idle />
@@ -13,27 +24,29 @@ import NameInput from "./NameInput";
   <!-- Content that should be inert when modal is open -->
   <div id="home-content" class="hidden flex-col items-center justify-center">
     <!-- Welcome text centered -->
-    <div class="text-center my-10">
-      <h2 class="text-2xl text-black mb-2">
-        Witaj <span id="name-display" aria-live="polite"></span>!
+    <div class="text-center my-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+      <div class="mb-4 text-4xl">👋</div>
+      <h2 class="text-3xl md:text-4xl font-black text-foreground mb-6">
+        Witaj <span id="name-display" aria-live="polite" class="text-primary"></span>!
       </h2>
+      <p class="text-lg md:text-xl text-muted-foreground font-medium mb-8">Gotowy na naukę? Wybierz przedmiot!</p>
     </div>
 
-    <div class="mb-6">
+    <div class="flex flex-col gap-4 items-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
       <a
         href="/tutors"
-        class="inline-flex items-center cursor-pointer justify-center gap-2 whitespace-nowrap rounded-lg text-base font-medium transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+        class="w-56 inline-flex items-center cursor-pointer justify-center gap-3 whitespace-nowrap rounded-2xl text-lg font-bold transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 px-6 py-3 bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-1 shadow-lg hover:shadow-xl active:scale-95"
       >
-        Zaczynamy
+        <span class="text-2xl">🚀</span>
+        Rozpocznij naukę
       </a>
-    </div>
 
-    <div>
       <a
         href="/history-list"
-        class="inline-flex items-center cursor-pointer justify-center gap-2 whitespace-nowrap rounded-lg text-base font-medium transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 px-4 py-2 h-[40px] bg-white text-blue-600 hover:bg-blue-50 border border-blue-600"
+        class="w-56 inline-flex items-center cursor-pointer justify-center gap-3 whitespace-nowrap rounded-2xl text-base font-semibold transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 px-6 py-3 bg-background text-primary hover:bg-muted border-2 border-primary shadow-sm hover:shadow-md active:scale-95"
       >
-        Historia rozmów
+        <span class="text-xl">📚</span>
+        Twoje rozmowy
       </a>
     </div>
   </div>

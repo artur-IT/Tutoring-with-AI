@@ -3,12 +3,12 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const baseStyles =
-  "inline-flex items-center cursor-pointer justify-center gap-2 whitespace-nowrap rounded-lg text-base font-medium transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 px-4 py-2";
+  "inline-flex items-center cursor-pointer justify-center gap-2 whitespace-nowrap rounded-xl text-base font-semibold transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 px-6 py-3 active:scale-95 hover:shadow-lg";
 
 const variantStyles = {
-  ok: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm",
-  cancel: "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300",
-  back: "h-[40px] bg-white text-blue-600 hover:bg-blue-50 border border-blue-600",
+  ok: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:-translate-y-0.5",
+  cancel: "bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border shadow-sm",
+  back: "bg-background text-primary hover:bg-muted border-2 border-primary shadow-sm hover:shadow-md",
 } as const;
 
 type ButtonVariant = keyof typeof variantStyles;

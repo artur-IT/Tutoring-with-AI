@@ -37,15 +37,24 @@ export default function NameInput() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ok" aria-label="Otwórz formularz wprowadzania imienia" suppressHydrationWarning>
+        <Button
+          variant="ok"
+          aria-label="Otwórz formularz wprowadzania imienia"
+          suppressHydrationWarning
+          className="text-lg py-3 animate-in fade-in slide-in-from-bottom-4 duration-700"
+        >
+          <span className="text-2xl mr-2">👋</span>
           {!name ? "Podaj imię" : "Zmień imię"}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md animate-in fade-in zoom-in-95 duration-300">
         <form id={formId} onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Wprowadź swoje imię</DialogTitle>
-            <DialogDescription>Twoje imię będzie użyte w rozmowach z korepetytorem.</DialogDescription>
+            <div className="text-4xl text-center mb-2">✏️</div>
+            <DialogTitle className="text-2xl text-center">Wprowadź swoje imię</DialogTitle>
+            <DialogDescription className="text-center">
+              Twoje imię będzie użyte w rozmowach z korepetytorem.
+            </DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <label htmlFor={inputId} className="sr-only">
@@ -59,6 +68,7 @@ export default function NameInput() {
               onChange={handleInputChange}
               placeholder="Wpisz imię"
               spellCheck={false}
+              className="text-lg py-3"
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus={true}
             />
@@ -68,6 +78,7 @@ export default function NameInput() {
               Anuluj
             </Button>
             <Button type="submit" variant="ok" disabled={!name.trim()}>
+              <span className="text-xl mr-1">✓</span>
               Zapisz
             </Button>
           </DialogFooter>
