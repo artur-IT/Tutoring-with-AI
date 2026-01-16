@@ -100,20 +100,37 @@ export default function History() {
   const getSessionDescription = (session: ChatSession): string => session.topic || "Brak tematu";
 
   return (
-    <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto" suppressHydrationWarning>
+    <div
+      className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col p-4 md:p-6 max-w-3xl mx-auto"
+      suppressHydrationWarning
+    >
       {/* Header */}
-      <h1 className="text-3xl font-bold text-gray-900 text-center mb-8 mt-8">Historia rozmów</h1>
+      <div className="text-center mb-10 mt-8 animate-in fade-in slide-in-from-top-4 duration-700">
+        <div className="text-4xl mb-4 animate-[wiggle_2s_ease-in-out_infinite]">📖</div>
+        <h1 className="text-4xl md:text-5xl font-black text-foreground mb-2 tracking-tight">
+          Twoje <span className="text-primary">rozmowy</span>
+        </h1>
+        <p className="text-lg text-muted-foreground">Przejrzyj swoje sesje nauki</p>
+      </div>
 
       {/* Session list */}
       <ul className="flex-1 space-y-4 mb-8" suppressHydrationWarning>
         {!isMounted ? (
-          <li className="text-center text-gray-500 py-12">
-            <p className="text-sm">Ładowanie...</p>
+          <li className="text-center text-gray-600 py-16">
+            <p className="text-sm">Ładowanie twoich rozmów...</p>
           </li>
         ) : sessions.length === 0 ? (
-          <li className="text-center text-gray-500 py-12">
-            <p className="text-lg mb-2">📭 Brak historii rozmów</p>
-            <p className="text-sm">Rozpocznij nową rozmowę, aby utworzyć historię</p>
+          <li className="text-center py-20">
+            <div className="text-6xl mb-4" role="img" aria-label="Książka">
+              📚
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Gotowy na pierwszą lekcję?</h2>
+            <p className="text-sm text-gray-600 mb-6 max-w-md mx-auto">
+              Rozpocznij rozmowę z korepetytorem i zobacz jak łatwo można zrozumieć trudne tematy
+            </p>
+            <a href="/tutors" className={buttonVariants({ variant: "ok" })}>
+              Rozpocznij naukę
+            </a>
           </li>
         ) : (
           sessions.map((session) => {
@@ -134,7 +151,8 @@ export default function History() {
                   tabIndex={0}
                   aria-labelledby={titleId}
                   aria-describedby={descriptionId}
-                  className="cursor-pointer hover:shadow-lg transition-shadow focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                  className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 animate-in fade-in slide-in-from-bottom-2"
+                  style={{ animationDelay: `${sessions.indexOf(session) * 50}ms` }}
                 >
                   <CardContent className="flex items-center gap-4 p-4 md:p-6">
                     {/* User avatar */}
@@ -171,7 +189,7 @@ export default function History() {
                           <button
                             type="button"
                             onClick={(e) => e.stopPropagation()}
-                            className="text-red-500 hover:text-red-700 p-2"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600 p-2 min-w-[44px] min-h-[44px]"
                             aria-label="Usuń rozmowę"
                           >
                             🗑️
@@ -179,20 +197,20 @@ export default function History() {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Usuń rozmowę</AlertDialogTitle>
+                            <AlertDialogTitle>Usunąć tę rozmowę?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Czy na pewno chcesz usunąć tę rozmowę? Tej operacji nie można cofnąć.
+                              Ta rozmowa zostanie trwale usunięta. Nie będzie można jej przywrócić.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Anuluj</AlertDialogCancel>
+                            <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Zachowaj rozmowę</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleDeleteSession(session.id);
                               }}
                             >
-                              Usuń
+                              Usuń na zawsze
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -218,7 +236,7 @@ export default function History() {
       <div className="flex justify-center mb-6">
         <a href="/" className={buttonVariants({ variant: "back" })}>
           <img src={ArrowLeftSimpleIcon} alt="" width={20} height={20} className="w-5 h-5" aria-hidden="true" />
-          wróć
+          Strona główna
         </a>
       </div>
     </div>

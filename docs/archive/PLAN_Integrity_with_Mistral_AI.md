@@ -1,6 +1,12 @@
 # Plan integracji z Mistral AI 🎯
 
+> **⚠️ ARCHIWUM - Ten dokument został zastąpiony przez `ANALIZA_I_PLAN_WDROZENIA.md`**
+>
+> Plik ten pozostaje jako dokumentacja historyczna pierwotnego planu integracji.
+> Aktualny status projektu i plan wdrożenia znajduje się w głównym katalogu.
+
 Data utworzenia: 8 grudnia 2025
+Data archiwizacji: 15 stycznia 2026
 Projekt: Chat-with-Hero (Tutor with AI)
 
 ---

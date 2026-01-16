@@ -4,11 +4,15 @@ Interactive AI tutor for teenagers (13-19 years old). The app explains difficult
 
 ## ✨ Features
 
-- 🤖 Chat with AI tutor (Mistral)
-- 📐 Math support
-- 💬 Conversation history
+- 🤖 Chat with AI tutor (Mistral AI)
+- 📐 Math support (more subjects planned)
+- 💬 Conversation history (localStorage)
 - 🎯 Personalization based on student interests
-- ⏱️ Session limits for safety
+- ⏱️ Session limits (30 min, 50 messages, rate limiting)
+- 📱 PWA - works offline, installable as app
+- 🌐 Offline mode - read history without internet
+- ♿ Accessibility optimized (ARIA, semantic HTML)
+- 🚀 Lighthouse: Perf 78 / A11y 98 / SEO 100
 
 ## 🛠️ Tech Stack
 
@@ -51,6 +55,10 @@ src/
 ## 🧪 Testing
 
 ```bash
-npm run test        # Unit tests (Vitest)
-npm run test:e2e    # E2E tests (Playwright)
+npm run test        # Unit tests (Vitest + React Testing Library)
 ```
+
+**Test coverage:**
+
+- ✅ 13 unit tests (Chat, NameInput, useDebounce)
+- ✅ Manual testing for edge cases

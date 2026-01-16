@@ -14,62 +14,76 @@ export default function ChatStats({
   maxMessagesPerSession,
   timeRemaining,
   maxSessionDurationMinutes,
-  tokensUsed,
-  tokenLimit,
 }: ChatStatsProps) {
   const maxSessionSeconds = maxSessionDurationMinutes * 60;
+  const requestsPercent = remainingRequests / maxMessagesPerSession;
+  const timePercent = timeRemaining / maxSessionSeconds;
+
+  // Only show when resources are getting low (< 30%)
+  const requestsLow = requestsPercent < 0.3;
+  const timeLow = timePercent < 0.3;
+
+  // Don't show anything if both are healthy
+  if (!requestsLow && !timeLow) {
+    return null;
+  }
+
+  // Show celebration when session is almost complete
+  const isAlmostComplete = remainingRequests <= 5 && remainingRequests > 0;
+
   return (
-    <div className="mb-4 space-y-4">
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-sm text-gray-400 italic">pozostałe zapytania</p>
-          <p className="text-xs text-gray-500">
-            {remainingRequests} / {maxMessagesPerSession}
+    <div
+      className={`mb-4 p-4 rounded-2xl transition-all duration-300 ${
+        isAlmostComplete
+          ? "bg-primary/10 border-2 border-primary/30 animate-[pulse-slow_2s_ease-in-out_infinite]"
+          : "bg-amber-50 border border-amber-200"
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <span className="text-2xl" role="img" aria-label="Uwaga">
+          {isAlmostComplete ? "🎉" : "⏱️"}
+        </span>
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-foreground mb-2">
+            {isAlmostComplete ? "Świetna robota! Jeszcze trochę:" : "Pozostało:"}
           </p>
+          <div className="space-y-2 text-sm text-foreground">
+            {requestsLow && (
+              <div className="flex items-center justify-between">
+                <span className="font-medium">
+                  {remainingRequests}{" "}
+                  {remainingRequests === 1 ? "pytanie" : remainingRequests < 5 ? "pytania" : "pytań"}
+                </span>
+                <Progress
+                  value={requestsPercent * 100}
+                  aria-label="Pozostałe zapytania"
+                  aria-valuenow={remainingRequests}
+                  aria-valuemin={0}
+                  aria-valuemax={maxMessagesPerSession}
+                  className="w-24 h-2 ml-3"
+                />
+              </div>
+            )}
+            {timeLow && (
+              <div className="flex items-center justify-between">
+                <span className="font-medium">
+                  {Math.floor(timeRemaining / 60)} min {timeRemaining % 60} sek
+                </span>
+                <Progress
+                  value={timePercent * 100}
+                  aria-label="Pozostały czas sesji"
+                  aria-valuenow={Math.floor(timeRemaining / 60)}
+                  aria-valuemin={0}
+                  aria-valuemax={maxSessionDurationMinutes}
+                  className="w-24 h-2 ml-3"
+                />
+              </div>
+            )}
+          </div>
+          {(remainingRequests === 0 || timeRemaining === 0) && (
+            <p className="text-xs text-foreground/80 mt-2 font-medium">Sesja wkrótce się zakończy</p>
+          )}
         </div>
-        <Progress
-          value={(remainingRequests / maxMessagesPerSession) * 100}
-          aria-label="Pozostałe zapytania"
-          className={`h-2 ${remainingRequests / maxMessagesPerSession > 0.2 ? "[&>div]:bg-blue-600" : "[&>div]:bg-red-500"}`}
-        />
-        {remainingRequests === 0 && (
-          <p className="text-xs text-red-600 mt-1">⚠️ Osiągnięto limit zapytań dla tej sesji</p>
-        )}
-        {remainingRequests > 0 && remainingRequests <= maxMessagesPerSession * 0.2 && (
-          <p className="text-xs text-yellow-600 mt-1">⚠️ Zostało niewiele zapytań</p>
-        )}
-      </div>
-
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-sm text-gray-400 italic">czas sesji</p>
-          <p className="text-xs text-gray-500">
-            {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, "0")}
-          </p>
-        </div>
-        <Progress
-          value={(timeRemaining / maxSessionSeconds) * 100}
-          aria-label="Czas sesji"
-          className={`h-2 ${timeRemaining / maxSessionSeconds > 0.2 ? "[&>div]:bg-green-600" : "[&>div]:bg-red-500"}`}
-        />
-        {timeRemaining <= 0 && <p className="text-xs text-red-600 mt-1">⚠️ Czas sesji minął</p>}
-      </div>
-
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-sm text-gray-400 italic">wykorzystane tokeny</p>
-          <p className="text-xs text-gray-500">
-            {tokensUsed.toLocaleString()} / {tokenLimit.toLocaleString()}
-          </p>
-        </div>
-        <Progress
-          value={Math.min((tokensUsed / tokenLimit) * 100, 100)}
-          aria-label="Wykorzystane tokeny"
-          className={`h-2 ${tokensUsed / tokenLimit < 0.7 ? "[&>div]:bg-blue-600" : tokensUsed / tokenLimit < 0.9 ? "[&>div]:bg-yellow-500" : "[&>div]:bg-red-500"}`}
-        />
-        {tokensUsed >= tokenLimit && (
-          <p className="text-xs text-red-600 mt-1">⚠️ Osiągnięto limit tokenów dla tej sesji</p>
-        )}
       </div>
     </div>
   );
