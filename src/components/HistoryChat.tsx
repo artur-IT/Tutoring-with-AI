@@ -25,12 +25,12 @@ const renderMessage = (message: Message, avatar: string | undefined, index: numb
   if (message.role === "assistant") {
     return (
       <div key={`assistant-${index}`} className="flex items-start gap-3">
-        <Avatar className="w-10 h-10 shrink-0 bg-yellow-100">
-          <AvatarFallback className="text-2xl bg-yellow-100">👨‍🏫</AvatarFallback>
+        <Avatar className="w-10 h-10 shrink-0 bg-amber-100">
+          <AvatarFallback className="text-2xl bg-amber-100">👨‍🏫</AvatarFallback>
         </Avatar>
-        <div className="bg-yellow-200 rounded-2xl px-4 py-3 max-w-[80%]">
-          <p className="text-sm font-semibold text-gray-900 mb-1">Korepetytor</p>
-          <p className="text-sm text-gray-900 whitespace-pre-wrap">{cleanMathNotation(message.content)}</p>
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 max-w-[80%]">
+          <p className="text-sm font-semibold text-gray-950 mb-1">Korepetytor</p>
+          <p className="text-sm text-gray-950 whitespace-pre-wrap">{cleanMathNotation(message.content)}</p>
         </div>
       </div>
     );
@@ -70,7 +70,7 @@ export default function HistoryChat() {
   if (!isMounted) {
     return (
       <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
-        <div className="text-center text-gray-500 py-12">
+        <div className="text-center text-gray-600 py-16">
           <p className="text-sm">Ładowanie rozmowy...</p>
         </div>
       </div>
@@ -80,13 +80,14 @@ export default function HistoryChat() {
   if (!session) {
     return (
       <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
-        <div className="text-center text-gray-500 py-12">
-          <p className="text-lg mb-2">Nie znaleziono rozmowy</p>
-          <p className="text-sm">Wróć do historii i wybierz rozmowę ponownie</p>
-        </div>
-        <div className="flex justify-center mb-6">
-          <a href="/history-list" className={buttonVariants({ variant: "back" })}>
-            Wróć do historii
+        <div className="text-center py-16">
+          <div className="text-5xl mb-4" role="img" aria-label="Szukanie">
+            🔍
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Nie znaleziono rozmowy</h2>
+          <p className="text-sm text-gray-600 mb-6">Wróć do listy i wybierz rozmowę, którą chcesz przejrzeć</p>
+          <a href="/history-list" className={buttonVariants({ variant: "ok" })}>
+            Zobacz wszystkie rozmowy
           </a>
         </div>
       </div>
@@ -96,21 +97,24 @@ export default function HistoryChat() {
   return (
     <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
       <header className="flex justify-between items-center mb-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Historia rozmowy</h1>
-          {session.name && <p className="text-xs text-gray-500 mt-1">{session.name}</p>}
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold text-gray-900">Twoja rozmowa</h1>
+          {session.name && <p className="text-sm text-gray-600 mt-1">{session.name}</p>}
         </div>
         <div className="flex gap-2">
           <a href="/history-list" className={buttonVariants({ variant: "back" })}>
-            Wróć
+            Wszystkie rozmowy
           </a>
         </div>
       </header>
 
       <div className="flex-1 space-y-4 mb-4 overflow-y-auto" role="region" aria-label="Wiadomości historii">
         {session.messages.length === 0 && (
-          <div className="text-center text-gray-500 mt-8">
-            <p className="text-sm">Brak wiadomości w tej rozmowie</p>
+          <div className="text-center text-gray-600 mt-16">
+            <div className="text-5xl mb-4" role="img" aria-label="Pusta rozmowa">
+              💬
+            </div>
+            <p className="text-base text-gray-900">Ta rozmowa nie zawiera wiadomości</p>
           </div>
         )}
 

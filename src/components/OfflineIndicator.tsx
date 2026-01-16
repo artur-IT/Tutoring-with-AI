@@ -23,10 +23,10 @@ function OfflineIndicator() {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 max-w-[230px]">
+    <div className="fixed top-4 right-4 z-50 max-w-[280px] animate-in slide-in-from-top-2">
       <Alert variant="destructive" className="shadow-lg">
         <WifiOff className="h-4 w-4" />
-        <AlertDescription>Jesteś offline. Niektóre funkcje są niedostępne.</AlertDescription>
+        <AlertDescription>Brak połączenia. Sprawdź internet, aby kontynuować rozmowę.</AlertDescription>
       </Alert>
     </div>
   );

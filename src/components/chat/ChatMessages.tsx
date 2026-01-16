@@ -4,6 +4,18 @@ import { Skeleton } from "../ui/skeleton";
 import type { Message } from "../../agents/mathTutor/types";
 import { cleanMathNotation } from "./chatUtils";
 
+// Playful loading messages for teenagers - cycle through based on number of messages
+const LOADING_MESSAGES = [
+  "Myślę nad odpowiedzią...",
+  "Szukam najlepszego wyjaśnienia...",
+  "Przygotowuję przykłady...",
+  "Rozważam różne sposoby tłumaczenia...",
+  "Budzę neurony AI...",
+  "Konsultuję się z matematycznym duchem...",
+  "Układam odpowiedź specjalnie dla Ciebie...",
+  "Sprawdzam kilka podejść...",
+] as const;
+
 type ChatMessagesProps = {
   messages: Message[];
   isLoading: boolean;
@@ -15,12 +27,12 @@ const MessageBubble = ({ message, studentAvatar }: { message: Message; studentAv
   if (message.role === "assistant") {
     return (
       <div className="flex items-start gap-3">
-        <Avatar className="w-10 h-10 shrink-0 bg-yellow-100">
-          <AvatarFallback className="text-2xl bg-yellow-100">👨‍🏫</AvatarFallback>
+        <Avatar className="w-10 h-10 shrink-0 bg-amber-100">
+          <AvatarFallback className="text-2xl bg-amber-100">👨‍🏫</AvatarFallback>
         </Avatar>
-        <div className="bg-yellow-200 rounded-2xl px-4 py-3 max-w-[80%]">
-          <p className="text-sm font-semibold text-gray-900 mb-1">Korepetytor</p>
-          <p className="text-sm text-gray-900 whitespace-pre-wrap">{cleanMathNotation(message.content)}</p>
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 max-w-[80%]">
+          <p className="text-sm font-semibold text-gray-950 mb-1">Korepetytor</p>
+          <p className="text-sm text-gray-950 whitespace-pre-wrap">{cleanMathNotation(message.content)}</p>
         </div>
       </div>
     );
@@ -40,6 +52,9 @@ const MessageBubble = ({ message, studentAvatar }: { message: Message; studentAv
 };
 
 export default function ChatMessages({ messages, isLoading, studentAvatar, messagesEndRef }: ChatMessagesProps) {
+  // Cycle through loading messages based on message count for variety
+  const loadingMessage = LOADING_MESSAGES[messages.length % LOADING_MESSAGES.length];
+
   return (
     <div
       className="flex-1 space-y-4 mb-4 overflow-y-auto"
@@ -50,8 +65,14 @@ export default function ChatMessages({ messages, isLoading, studentAvatar, messa
       aria-label="Wiadomości czatu"
     >
       {messages.length === 0 && (
-        <div className="text-center text-gray-500 mt-8">
-          <p className="text-sm">Postaram się to wytłumaczyć w sposób, który będzie dla Ciebie zrozumiały</p>
+        <div className="text-center text-muted-foreground mt-12 animate-in fade-in duration-500">
+          <div className="text-5xl mb-4 animate-[wiggle_2s_ease-in-out_infinite]" role="img" aria-label="Korepetytor">
+            👨‍🏫
+          </div>
+          <p className="text-lg font-semibold text-foreground mb-2">Hej! Jestem gotowy pomóc Ci</p>
+          <p className="text-base text-muted-foreground">
+            Zaraz dostaniesz wyjaśnienie dostosowane do Twoich zainteresowań
+          </p>
         </div>
       )}
 
@@ -60,13 +81,18 @@ export default function ChatMessages({ messages, isLoading, studentAvatar, messa
       ))}
 
       {isLoading && (
-        <div className="flex items-start gap-3">
-          <Avatar className="w-10 h-10 shrink-0 bg-yellow-100">
-            <AvatarFallback className="text-2xl bg-yellow-100">👨‍🏫</AvatarFallback>
+        <div className="flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <Avatar className="w-12 h-12 shrink-0 bg-accent/20 animate-[pulse-slow_2s_ease-in-out_infinite]">
+            <AvatarFallback className="text-2xl bg-accent/20">👨‍🏫</AvatarFallback>
           </Avatar>
-          <div className="bg-yellow-200 rounded-2xl px-4 py-3 space-y-2">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-4 w-48" />
+          <div className="bg-accent/10 border border-accent/30 rounded-2xl px-4 py-3 space-y-2">
+            <p className="text-sm font-medium text-foreground animate-[pulse-slow_2s_ease-in-out_infinite]">
+              {loadingMessage}
+            </p>
+            <div className="flex gap-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-24" />
+            </div>
           </div>
         </div>
       )}

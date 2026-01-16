@@ -7,10 +7,7 @@ import { getTopicsForSubject, type Subject } from "../lib/subjectTopics";
 import { useOnline } from "./hooks/useOnline";
 import { withOnlineProvider } from "./hooks/withOnlineProvider";
 
-const AVATAR_EMOJIS = ["🦊", "🐼", "🦁", "🐶", "🐱"] as const;
-
-const getSubjectButtonStyles = (isSelected: boolean, isDisabled: boolean) =>
-  `py-3 px-6 text-base font-medium rounded-xl transition-all ${isSelected ? "bg-blue-600 text-white shadow-md" : "bg-blue-100 text-blue-700 hover:bg-blue-200"} ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`;
+const AVATAR_EMOJIS = ["🦊", "🐼", "🐶", "🐱"] as const;
 
 const clearCurrentSession = () => {
   const historyJson = localStorage.getItem("chatHistory");
@@ -86,35 +83,45 @@ function TutorsForm() {
     <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center gap-6">
       <fieldset className="flex flex-col gap-4 sm:flex-row">
         <legend className="sr-only">Wybierz przedmiot</legend>
-        <Button
+        <button
           type="button"
           onClick={handleMathClick}
           disabled={!isOnline}
           aria-pressed={selectedSubject === "matematyka"}
-          className={getSubjectButtonStyles(selectedSubject === "matematyka", !isOnline)}
+          className={`relative overflow-hidden py-4 px-8 text-lg font-bold rounded-2xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+            selectedSubject === "matematyka"
+              ? "bg-primary text-primary-foreground shadow-lg scale-105 hover:shadow-xl"
+              : "bg-muted hover:bg-accent/30 text-foreground hover:shadow-md hover:-translate-y-1"
+          }`}
         >
+          <span className="mr-2 text-2xl">📐</span>
           Matematyka
-        </Button>
-        <Button
+        </button>
+        <button
           type="button"
           onClick={handleEnglishClick}
           disabled={!isOnline}
           aria-pressed={selectedSubject === "angielski"}
-          className={getSubjectButtonStyles(selectedSubject === "angielski", !isOnline)}
+          className={`relative overflow-hidden py-4 px-8 text-lg font-bold rounded-2xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+            selectedSubject === "angielski"
+              ? "bg-primary text-primary-foreground shadow-lg scale-105 hover:shadow-xl"
+              : "bg-muted hover:bg-accent/30 text-foreground hover:shadow-md hover:-translate-y-1"
+          }`}
         >
+          <span className="mr-2 text-2xl">🇬🇧</span>
           Język angielski
-        </Button>
+        </button>
       </fieldset>
 
       {selectedSubject && (
         <>
           {/* Topic Selection Dropdown */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 w-full max-w-[350px]">
             <label id={topicLabelId} htmlFor="topic-select" className="text-sm text-gray-900">
               Wybierz temat:
             </label>
             <Select value={selectedTopic} onValueChange={handleTopicChange} required>
-              <SelectTrigger id="topic-select" className="w-[350px]" aria-labelledby={topicLabelId}>
+              <SelectTrigger id="topic-select" className="w-full" aria-labelledby={topicLabelId}>
                 <SelectValue placeholder="Wybierz temat" />
               </SelectTrigger>
               <SelectContent>
@@ -128,7 +135,7 @@ function TutorsForm() {
           </div>
 
           {/* Problem Description Input */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 w-full max-w-[350px]">
             <label htmlFor="problem-description" className="text-sm text-gray-900">
               Opisz szczegółowo swój problem:
             </label>
@@ -137,13 +144,14 @@ function TutorsForm() {
               type="text"
               value={problemDescription}
               onChange={handleProblemChange}
-              className="w-[350px] text-sm"
+              placeholder="np. Nie rozumiem logarytmów"
+              className="w-full text-sm"
               required
             />
           </div>
 
           {/* Interests Input */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 w-full max-w-[350px]">
             <label htmlFor="interests" className="text-sm text-gray-900">
               Twoje zainteresowania:
             </label>
@@ -152,24 +160,31 @@ function TutorsForm() {
               type="text"
               value={interests}
               onChange={handleInterestsChange}
-              placeholder="krótko np. piłka nożna, książki, filmy itp."
-              className="w-[350px] text-sm"
+              placeholder="np. piłka nożna, książki, filmy"
+              className="w-full text-sm"
               required
             />
           </div>
 
           {/* Avatar Selection */}
-          <div className="flex flex-col items-center gap-3 w-[350px]">
-            <p className="text-sm text-gray-900 self-start">Wybierz swój avatar:</p>
-            <div className="flex flex-wrap gap-2 justify-center" role="group" aria-label="Wybierz avatar">
+          <div className="flex flex-col items-center gap-4 w-full max-w-[350px]">
+            <p className="text-sm font-medium text-foreground self-start">Wybierz swój avatar:</p>
+            <div className="flex flex-wrap gap-3 justify-center" role="group" aria-label="Wybierz avatar">
               {AVATAR_EMOJIS.map((emoji) => (
                 <button
                   key={emoji}
                   type="button"
                   onClick={() => handleAvatarSelect(emoji)}
-                  className={`text-3xl p-2 rounded-lg transition-all hover:scale-110 ${selectedAvatar === emoji ? "bg-blue-100 ring-2 ring-blue-500 scale-110" : "bg-gray-50 hover:bg-gray-100"}`}
+                  className={`text-4xl p-3 min-w-[56px] min-h-[56px] rounded-2xl transition-all duration-200 hover:scale-125 hover:rotate-12 active:scale-95 active:rotate-0 ${
+                    selectedAvatar === emoji
+                      ? "bg-primary/10 ring-4 ring-primary scale-110 shadow-lg"
+                      : "bg-muted hover:bg-accent/20 hover:shadow-md"
+                  }`}
                   aria-label={`Wybierz avatar ${emoji}`}
                   aria-pressed={selectedAvatar === emoji}
+                  style={{
+                    animation: selectedAvatar === emoji ? "bounce 0.6s ease-in-out" : "none",
+                  }}
                 >
                   {emoji}
                 </button>
@@ -179,13 +194,14 @@ function TutorsForm() {
         </>
       )}
 
-      <div className="flex flex-col gap-4 mt-6">
-        <Button type="submit" disabled={!isFormValid} variant="ok">
-          Do nauki
+      <div className="flex flex-col gap-4 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+        <Button type="submit" disabled={!isFormValid} variant="ok" className="text-lg py-3">
+          <span className="text-2xl mr-2">🚀</span>
+          Rozpocznij lekcję
         </Button>
         <a href="/" className={buttonVariants({ variant: "back" })}>
           <img src={ArrowLeftSimpleIcon} alt="" width={20} height={16} className="w-5 h-4" aria-hidden="true" />
-          powrót
+          Strona główna
         </a>
       </div>
     </form>
