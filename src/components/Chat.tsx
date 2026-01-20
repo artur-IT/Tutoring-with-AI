@@ -9,6 +9,7 @@ import { sessionLimits, contentRestrictions } from "../agents/mathTutor/config";
 import { useDebounce } from "./hooks/useDebounce";
 import { useOnline } from "./hooks/useOnline";
 import { withOnlineProvider } from "./hooks/withOnlineProvider";
+import { validateAndSanitizeInput } from "../lib/contentFilter";
 
 function Chat() {
   const isOnline = useOnline();
@@ -287,6 +288,19 @@ function Chat() {
   const handleSendInternal = async () => {
     if (!input.trim() || isLoading || isSessionEnded) return;
 
+    // Validate and sanitize user input
+    const validation = validateAndSanitizeInput(input, {
+      maxLength: MAX_MESSAGE_LENGTH,
+      checkProfanity: true,
+      checkPromptInjection: true,
+      checkPersonalInfo: true,
+    });
+
+    if (!validation.isValid) {
+      setError(validation.error || "Nieprawidłowa wiadomość");
+      return;
+    }
+
     const userMessageCount = messages.filter((msg) => msg.role === "user").length;
     if (userMessageCount >= sessionLimits.maxMessagesPerSession) {
       setError(`Osiągnięto limit wiadomości (${sessionLimits.maxMessagesPerSession} pytań).`);
@@ -300,7 +314,7 @@ function Chat() {
 
     const userMessage: Message = {
       role: "user",
-      content: input.trim(),
+      content: validation.sanitized || input.trim(),
       timestamp: Date.now(),
     };
 
