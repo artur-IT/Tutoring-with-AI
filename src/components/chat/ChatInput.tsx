@@ -44,7 +44,7 @@ export default function ChatInput({
                 ? "Sesja została zakończona"
                 : !isOnline
                   ? "Brak połączenia z internetem - sprawdź swoją sieć"
-                  : "Zadaj pytanie... (np. Jak rozwiązać równanie kwadratowe?)"
+                  : "Zadaj pytanie..."
             }
             value={input}
             onChange={(event) => onChange(event.target.value)}

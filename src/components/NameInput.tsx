@@ -43,7 +43,6 @@ export default function NameInput() {
           suppressHydrationWarning
           className="text-lg py-3 animate-in fade-in slide-in-from-bottom-4 duration-700"
         >
-          <span className="text-2xl mr-2">👋</span>
           {!name ? "Podaj imię" : "Zmień imię"}
         </Button>
       </DialogTrigger>

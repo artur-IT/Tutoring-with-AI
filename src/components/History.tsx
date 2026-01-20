@@ -178,7 +178,6 @@ export default function History() {
                       </CardHeader>
                       <div className="flex gap-3 mt-2 text-xs text-gray-400">
                         <span>💬 {session.messages.filter((m) => m.role !== "system").length} wiadomości</span>
-                        <span>🎫 {session.tokensUsed.toLocaleString()} tokenów</span>
                       </div>
                     </div>
 
@@ -189,7 +188,7 @@ export default function History() {
                           <button
                             type="button"
                             onClick={(e) => e.stopPropagation()}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600 p-2 min-w-[44px] min-h-[44px]"
+                            className="hover:scale-130 transition-transform min-w-[64px] min-h-[64px]"
                             aria-label="Usuń rozmowę"
                           >
                             🗑️
