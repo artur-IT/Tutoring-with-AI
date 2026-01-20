@@ -69,7 +69,7 @@ export default function ChatMessages({ messages, isLoading, studentAvatar, messa
           <div className="text-5xl mb-4 animate-[wiggle_2s_ease-in-out_infinite]" role="img" aria-label="Korepetytor">
             👨‍🏫
           </div>
-          <p className="text-lg font-semibold text-foreground mb-2">Hej! Jestem gotowy pomóc Ci</p>
+          <p className="text-lg font-semibold text-foreground mb-2">Hej! Jestem gotowy.</p>
           <p className="text-base text-muted-foreground">
             Zaraz dostaniesz wyjaśnienie dostosowane do Twoich zainteresowań
           </p>

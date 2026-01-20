@@ -98,10 +98,10 @@ export default function HistoryChat() {
     <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
       <header className="flex justify-between items-center mb-6">
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-900">Twoja rozmowa</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Twoja rozmowa</h1>
           {session.name && <p className="text-sm text-gray-600 mt-1">{session.name}</p>}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1">
           <a href="/history-list" className={buttonVariants({ variant: "back" })}>
             Wszystkie rozmowy
           </a>

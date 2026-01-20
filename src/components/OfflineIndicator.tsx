@@ -26,7 +26,7 @@ function OfflineIndicator() {
     <div className="fixed top-4 right-4 z-50 max-w-[280px] animate-in slide-in-from-top-2">
       <Alert variant="destructive" className="shadow-lg">
         <WifiOff className="h-4 w-4" />
-        <AlertDescription>Brak połączenia. Sprawdź internet, aby kontynuować rozmowę.</AlertDescription>
+        <AlertDescription>Brak połączenia. Niektóre funkcje są niedostępne.</AlertDescription>
       </Alert>
     </div>
   );
