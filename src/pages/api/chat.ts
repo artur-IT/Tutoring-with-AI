@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { sendMessage } from "../../agents/mathTutor";
 import type { Message, StudentData } from "../../agents/mathTutor/types";
 import { sessionLimits } from "../../agents/mathTutor/config";
+import { validateAndSanitizeInput } from "../../lib/contentFilter";
 
 // Mark as server-rendered (required for POST endpoints)
 export const prerender = false;
@@ -100,6 +101,31 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    // Validate and sanitize message content
+    const validation = validateAndSanitizeInput(message, {
+      maxLength: 400,
+      checkProfanity: true,
+      checkPromptInjection: true,
+      checkPersonalInfo: true,
+    });
+
+    if (!validation.isValid) {
+      console.warn("⚠️ [API] Walidacja treści nie powiodła się:", validation.error);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: validation.error || "Nieprawidłowa treść wiadomości",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Use sanitized message
+    const sanitizedMessage = validation.sanitized || message;
+
     // Validate subject (currently only math is supported)
     if (subject && subject !== "matematyka") {
       console.warn("⚠️ [API] Walidacja nie powiodła się: nieprawidłowy przedmiot");
@@ -117,9 +143,9 @@ export const POST: APIRoute = async ({ request }) => {
 
     console.log("✅ [API] Walidacja przeszła, wywołuję mathTutor...");
 
-    // Call math tutor agent
+    // Call math tutor agent with sanitized message
     const response = await sendMessage(
-      message,
+      sanitizedMessage,
       history as Message[] | undefined,
       studentData as StudentData | undefined
     );

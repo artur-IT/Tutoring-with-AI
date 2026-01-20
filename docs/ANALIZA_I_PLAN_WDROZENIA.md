@@ -234,7 +234,6 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 
 - ❌ Filtrowanie treści (FEATURE 1.4) - **priorytet WYSOKI**
 - ❌ Dokumentacja testowania podstawowego flow (FEATURE 3.1) - **priorytet ŚREDNI**
-- ❌ Optymalizacja kosztów API (FEATURE 3.3) - **priorytet NISKI**
 
 ---
 
