@@ -416,7 +416,7 @@ function Chat() {
   }, [messages.length, currentSessionId, buildSession, upsertSession]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto relative">
+    <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto relative overflow-x-hidden">
       <ChatHeader sessionName={sessionName} onEnd={handleEndSession} />
 
       <ChatMessages

@@ -123,7 +123,8 @@ function TutorsForm() {
         <button
           type="button"
           onClick={handleEnglishClick}
-          disabled={!isOnline}
+          // disabled={!isOnline}
+          disabled={true}
           aria-pressed={selectedSubject === "angielski"}
           className={`relative overflow-hidden py-4 px-8 text-lg font-bold rounded-2xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
             selectedSubject === "angielski"
@@ -144,7 +145,11 @@ function TutorsForm() {
               Wybierz temat:
             </label>
             <Select value={selectedTopic} onValueChange={handleTopicChange} required>
-              <SelectTrigger id="topic-select" className="w-full" aria-labelledby={topicLabelId}>
+              <SelectTrigger
+                id="topic-select"
+                className="w-full border-solid border-2 border-[#006fea]"
+                aria-labelledby={topicLabelId}
+              >
                 <SelectValue placeholder="Wybierz temat" />
               </SelectTrigger>
               <SelectContent>
@@ -168,7 +173,7 @@ function TutorsForm() {
               value={problemDescription}
               onChange={handleProblemChange}
               placeholder="np. Nie rozumiem logarytmów"
-              className="w-full text-sm"
+              className="w-full text-sm border-solid border-2 border-[#006fea]"
               required
               maxLength={200}
             />
@@ -186,7 +191,7 @@ function TutorsForm() {
               value={interests}
               onChange={handleInterestsChange}
               placeholder="np. piłka nożna, książki, filmy"
-              className="w-full text-sm"
+              className="w-full text-sm border-solid border-2 border-[#006fea]"
               required
               maxLength={100}
             />
