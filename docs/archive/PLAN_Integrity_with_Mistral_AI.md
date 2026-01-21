@@ -9,6 +9,23 @@ Data utworzenia: 8 grudnia 2025
 Data archiwizacji: 15 stycznia 2026
 Projekt: Chat-with-Hero (Tutor with AI)
 
+## 📑 Spis treści
+
+- [Cel projektu](#cel-projektu)
+- [Tech stack](#tech-stack)
+- [ETAP 1: Przygotowanie i konfiguracja](#etap-1-przygotowanie-i-konfiguracja)
+- [ETAP 2: Struktura agentów](#etap-2-struktura-agentów-zgodnie-z-zasadami-projektu)
+- [ETAP 3: Backend - API endpoint](#etap-3-backend---api-endpoint)
+- [ETAP 4: Frontend - Interaktywny chat](#etap-4-frontend---interaktywny-chat)
+- [ETAP 5: Personalizacja i bezpieczeństwo](#etap-5-personalizacja-i-bezpieczeństwo)
+- [ETAP 6: Testowanie i optymalizacja](#etap-6-testowanie-i-optymalizacja)
+- [ETAP 7: Progressive Web App (PWA)](#etap-7-progressive-web-app-pwa)
+- [Kolejność wykonania](#kolejność-wykonania-krok-po-kroku)
+- [Najważniejsze zasady](#najważniejsze-zasady)
+- [Przydatne linki](#przydatne-linki)
+- [Notatki](#notatki)
+- [Następne kroki po MVP](#następne-kroki-po-mvp)
+
 ---
 
 ## Cel projektu

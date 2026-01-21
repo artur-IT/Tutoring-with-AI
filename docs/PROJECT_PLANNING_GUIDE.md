@@ -6,7 +6,7 @@
   - [1. Gdzie tworzą plan?](#1-gdzie-tworzą-plan)
 - [2. Jak dzielą projekt na zadania?](#2-jak-dzielą-projekt-na-zadania)
   - [Metoda 1: User Stories (dla aplikacji z użytkownikami)](#metoda-1-user-stories-dla-aplikacji-z-użytkownikami)
-  - [Metoda 2: Epiki → Features → Tasks](#metoda-2-epiki--features--tasks)
+  - [Metoda 2: Epiki → Features → Tasks](#metoda-2-epiki-features-tasks)
   - [Metoda 3: Według warstw architektury](#metoda-3-według-warstw-architektury)
 - [3. Jak szczegółowy powinien być plan?](#3-jak-szczegółowy-powinien-być-plan)
   - [Poziom 1: Wysoki poziom (dla całego projektu)](#poziom-1-wysoki-poziom-dla-całego-projektu)
@@ -21,8 +21,8 @@
   - [ETAP 5: Ulepszenia UI (1-2 godziny)](#etap-5-ulepszenia-ui-1-2-godziny)
   - [Podsumowanie](#podsumowanie)
 - [Best Practices planowania](#best-practices-planowania)
-  - [✅ DO (Rób to)](#-do-rób-to)
-  - [❌ DON'T (Nie rób tego)](#-dont-nie-rób-tego)
+  - [✅ DO (Rób to)](#do-rób-to)
+  - [❌ DON'T (Nie rób tego)](#dont-nie-rób-tego)
 - [Szablony do użycia](#szablony-do-użycia)
   - [Szablon etapu](#szablon-etapu)
   - [Szablon zadania](#szablon-zadania)
@@ -573,8 +573,8 @@ Prosta aplikacja do zarządzania zadaniami z możliwością dodawania, edytowani
 
 ### Podsumowanie
 
-**Czas całkowity:** ~6-10 godzin  
-**Poziom trudności:** Początkujący  
+**Czas całkowity:** ~6-10 godzin
+**Poziom trudności:** Początkujący
 **Technologie:** React, TypeScript, Tailwind CSS
 
 **Struktura zadań:**

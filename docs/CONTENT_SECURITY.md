@@ -1,5 +1,28 @@
 # Content Security - Dokumentacja zabezpieczeń
 
+## Spis treści
+
+- [Przegląd](#przegląd)
+- [Zaimplementowane zabezpieczenia](#zaimplementowane-zabezpieczenia)
+  - [1. Sanityzacja HTML (XSS Protection)](#1-sanityzacja-html-xss-protection)
+  - [2. Filtr wulgaryzmów](#2-filtr-wulgaryzmów)
+  - [3. Detekcja Prompt Injection](#3-detekcja-prompt-injection)
+  - [4. Detekcja danych osobowych](#4-detekcja-danych-osobowych)
+- [Limity długości](#limity-długości)
+- [Przepływ walidacji](#przepływ-walidacji)
+  - [Frontend (wiadomość czatu)](#frontend-wiadomość-czatu)
+  - [Backend (API endpoint)](#backend-api-endpoint)
+  - [Wyświetlanie wiadomości](#wyświetlanie-wiadomości)
+- [Testowanie zabezpieczeń](#testowanie-zabezpieczeń)
+- [Komunikaty błędów dla użytkownika](#komunikaty-błędów-dla-użytkownika)
+- [API funkcji filtrowania](#api-funkcji-filtrowania)
+- [Rozszerzanie zabezpieczeń](#rozszerzanie-zabezpieczeń)
+- [Ważne uwagi](#ważne-uwagi)
+- [Zależności](#zależności)
+- [Aktualizacja](#aktualizacja)
+
+---
+
 ## Przegląd
 
 Aplikacja **Tutor with AI** implementuje wielowarstwowe zabezpieczenia treści podawanych przez użytkownika, chroniąc przed:
@@ -8,7 +31,7 @@ Aplikacja **Tutor with AI** implementuje wielowarstwowe zabezpieczenia treści p
 - Prompt injection
 - Wyciekiem danych osobowych
 
-## 🛡️ Zaimplementowane zabezpieczenia
+## Zaimplementowane zabezpieczenia
 
 ### 1. Sanityzacja HTML (XSS Protection)
 
@@ -97,7 +120,7 @@ export const containsPersonalInfo = (text: string): boolean => {
 
 **UWAGA:** Sprawdzanie danych osobowych jest wyłączone w polach formularza (`TutorsForm.tsx`), ponieważ użytkownik może chcieć podać swoją ulubioną stronę internetową jako zainteresowanie.
 
-## 📊 Limity długości
+## Limity długości
 
 | Pole | Limit | Lokalizacja |
 |------|-------|-------------|
@@ -106,7 +129,7 @@ export const containsPersonalInfo = (text: string): boolean => {
 | Zainteresowania | 100 znaków | `TutorsForm.tsx` |
 | Imię użytkownika | 20 znaków | `NameInput.tsx` |
 
-## 🔄 Przepływ walidacji
+## Przepływ walidacji
 
 ### Frontend (wiadomość czatu):
 
@@ -138,7 +161,7 @@ export const containsPersonalInfo = (text: string): boolean => {
 3. Sanityzacja przed wyświetleniem: `sanitizeForDisplay()`
 4. Renderowanie bezpiecznej treści
 
-## 🧪 Testowanie zabezpieczeń
+## Testowanie zabezpieczeń
 
 ### Test 1: XSS Protection
 
@@ -182,17 +205,19 @@ Mój telefon to 123-456-789
 
 **Oczekiwany wynik:** Błąd "Wiadomość jest za długa (max 400 znaków)"
 
-## 🎯 Komunikaty błędów
+## Komunikaty błędów dla użytkownika
 
-| Błąd | Komunikat dla użytkownika |
-|------|---------------------------|
+Wszystkie komunikaty są po polsku i zrozumiałe dla nastolatków:
+
+| Błąd | Komunikat |
+|------|-----------|
 | Pusta wiadomość | "Wiadomość nie może być pusta" |
 | Za długa | "Wiadomość jest za długa (max X znaków)" |
 | Wulgaryzmy | "Twoja wiadomość zawiera niedozwolone słowa. Prosimy o uprzejmy język." |
 | Prompt injection | "Wykryto próbę manipulacji systemem. Prosimy o zadawanie normalnych pytań." |
 | Dane osobowe | "Nie podawaj danych osobowych, takich jak numery telefonu, emaile czy adresy." |
 
-## 📝 API funkcji filtrowania
+## API funkcji filtrowania
 
 ### `validateAndSanitizeInput(input, options)`
 
@@ -235,7 +260,7 @@ Walidacja pól formularza (bez sprawdzania danych osobowych).
 
 **Zwraca:** `ValidationResult`
 
-## 🔧 Rozszerzanie zabezpieczeń
+## Rozszerzanie zabezpieczeń
 
 ### Dodawanie nowych wulgaryzmów
 
@@ -260,7 +285,7 @@ const PROMPT_INJECTION_PATTERNS = [
 ] as const;
 ```
 
-## ⚠️ Ważne uwagi
+## Ważne uwagi
 
 1. **Sanityzacja HTML** jest zawsze wykonywana, niezależnie od opcji
 2. **Frontend i backend** wykonują te same sprawdzenia (defense in depth)
@@ -268,14 +293,14 @@ const PROMPT_INJECTION_PATTERNS = [
 4. **Dane osobowe** nie są sprawdzane w polach formularza (zainteresowania, problem)
 5. **HTML Escaping** działa identycznie w przeglądarce i Node.js - brak zależności od DOM API
 
-## 📦 Zależności
+## Zależności
 
 **Brak zewnętrznych zależności!**
 - Sanityzacja HTML używa wbudowanej funkcji `String.replace()`
 - Działa natywnie w Node.js i przeglądarce
 - Brak dodatkowych bibliotek do instalacji
 
-## 🔄 Aktualizacja
+## Aktualizacja
 
 **Data:** 2026-01-20
 **Wersja:** 1.0
