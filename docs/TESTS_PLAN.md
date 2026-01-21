@@ -1,6 +1,308 @@
-# Plan testów FEATURE 3.2 - Edge Cases
+# Plan testów - Tutor with AI
 
-## 📋 Cel testowania
+Ten dokument zawiera pełny plan testowania aplikacji, obejmujący:
+- **FEATURE 3.1** - Testowanie podstawowego flow (happy path)
+- **FEATURE 3.2** - Testowanie edge cases (przypadki brzegowe)
+
+## Spis treści
+
+### FEATURE 3.1: Testowanie podstawowego flow
+- [Cel testowania](#cel-testowania)
+- [Scenariusze do przetestowania](#scenariusze-do-przetestowania)
+  - [SCENARIUSZ 1: Proste pytanie](#scenariusz-1-proste-pytanie--odpowiedź)
+  - [SCENARIUSZ 2: Kontynuacja rozmowy](#scenariusz-2-kontynuacja-rozmowy-pamięć-kontekstu)
+  - [SCENARIUSZ 3: Personalizacja](#scenariusz-3-personalizacja-zainteresowania)
+  - [SCENARIUSZ 4: Długa konwersacja](#scenariusz-4-długa-konwersacja)
+  - [SCENARIUSZ 5: Zapisywanie i wczytywanie historii](#scenariusz-5-zapisywanie-i-wczytywanie-historii)
+  - [SCENARIUSZ 6: AI odmawia odpowiedzi](#scenariusz-6-ai-odmawia-odpowiedzi-na-pytania-spoza-przedmiotu)
+- [Formularz wyników testów](#formularz-wyników-testów)
+- [Kryteria akceptacji FEATURE 3.1](#kryteria-akceptacji-feature-31)
+
+### FEATURE 3.2: Edge Cases
+- [Cel testowania](#cel-testowania-1)
+- [Podział testów według narzędzi](#podział-testów-według-narzędzi)
+- [CZĘŚĆ 1: Testy jednostkowe (Vitest + RTL)](#część-1-testy-jednostkowe-i-komponentów-vitest--rtl)
+  - [TEST 1: Pusta wiadomość](#test-1-pusta-wiadomość-chattesttsx)
+  - [TEST 2: Błąd API](#test-2-błąd-api-chattesttsx)
+  - [TEST 3: Walidacja limitu wiadomości](#test-3-walidacja-limitu-wiadomości-chattesttsx)
+  - [TEST 4: Debouncing](#test-4-szybkie-klikanie-send-debouncing-usedebouncetestts)
+  - [TEST 5: Blokowanie przycisku](#test-5-blokowanie-przycisku-podczas-wysyłania-chattesttsx)
+  - [TEST 6: Walidacja imienia](#test-6-walidacja-imienia-użytkownika-nameinputtesttsx)
+  - [TEST 10: Licznik znaków](#test-10-licznik-znaków-chattesttsx)
+  - [TEST 11: Textarea wieloliniowa](#test-11-textarea-wieloliniowa-chattesttsx)
+- [CZĘŚĆ 2: Testy E2E (Playwright)](#część-2-testy-e2e-playwright)
+  - [TEST 7: Pytanie spoza przedmiotu](#test-7-pytanie-spoza-przedmiotu-playwright)
+  - [TEST 8: Brak internetu](#test-8-brak-internetu-offline-playwright)
+  - [TEST 9: Przekroczenie limitu zapytań](#test-9-przekroczenie-limitu-zapytań-playwright)
+- [Szczegółowy plan wykonania](#szczegółowy-plan-wykonania)
+- [Podsumowanie testów](#podsumowanie-testów)
+- [Kryteria akceptacji FEATURE 3.2](#kryteria-akceptacji-feature-32)
+- [Status implementacji](#status-implementacji)
+
+---
+
+# FEATURE 3.1: Testowanie podstawowego flow
+
+## Cel testowania
+
+Przetestowanie podstawowych scenariuszy użycia aplikacji (happy path), aby upewnić się, że:
+
+- Użytkownik może rozpocząć rozmowę z korepetytorem
+- AI odpowiada na pytania w sposób edukacyjny
+- AI pamięta kontekst rozmowy
+- Personalizacja (zainteresowania) działa poprawnie
+- Historia konwersacji jest zapisywana i dostępna
+
+---
+
+## Scenariusze do przetestowania
+
+### SCENARIUSZ 1: Proste pytanie → odpowiedź
+
+**Priorytet:** WYSOKI ⭐⭐⭐
+
+**User Story:** Jako uczeń chcę zadać proste pytanie z matematyki i otrzymać zrozumiałą odpowiedź.
+
+**Warunki początkowe:**
+- Aplikacja działa
+- Użytkownik jest na stronie głównej
+- Brak poprzedniej sesji
+
+**Kroki:**
+1. Kliknij "Rozpocznij naukę"
+2. Wybierz przedmiot "Matematyka"
+3. Wpisz problem (np. "Nie rozumiem ułamków")
+4. Wybierz zainteresowania (np. "Piłka nożna")
+5. Kliknij "Rozpocznij" → Rozpoczęcie sesji z korepetytorem
+6. Poczekaj na automatyczne powitanie od AI (2 sekundy)
+7. **Sprawdź:** AI wysyła wiadomość powitalną dostosowaną do problemu ucznia
+8. Wpisz pytanie: "Co to jest ułamek?"
+9. Kliknij "Wyślij"
+10. Poczekaj na odpowiedź AI
+
+**Oczekiwany rezultat:**
+- ✅ AI odpowiada w ciągu 2-5 sekund
+- ✅ Odpowiedź jest po polsku
+- ✅ Odpowiedź jest zrozumiała dla nastolatka
+- ✅ Odpowiedź dotyczy matematyki (ułamków)
+- ✅ Odpowiedź ma 2-5 zdań (krótka, zwięzła)
+- ✅ Brak błędów technicznych
+- ✅ Wiadomość użytkownika i odpowiedź AI są widoczne w czacie
+
+**Status:** ⏳ Do wykonania
+
+---
+
+### SCENARIUSZ 2: Kontynuacja rozmowy (pamięć kontekstu)
+
+**Priorytet:** WYSOKI ⭐⭐⭐
+
+**User Story:** Jako uczeń chcę zadać pytanie uzupełniające, aby AI zrozumiał kontekst poprzednich wiadomości.
+
+**Warunki początkowe:**
+- SCENARIUSZ 1 zakończony pomyślnie
+- Użytkownik jest w sesji czatu
+
+**Kroki:**
+1. (Kontynuacja SCENARIUSZA 1)
+2. Wpisz pytanie uzupełniające: "A jak dodać dwa ułamki?"
+3. Kliknij "Wyślij"
+4. Poczekaj na odpowiedź AI
+5. **Sprawdź:** AI rozumie że pytanie dotyczy ułamków z poprzedniej wiadomości
+6. Zadaj kolejne pytanie: "Daj mi przykład"
+7. Kliknij "Wyślij"
+8. Poczekaj na odpowiedź AI
+
+**Oczekiwany rezultat:**
+- ✅ AI rozumie kontekst (że mówimy o dodawaniu ułamków)
+- ✅ AI odpowiada bez pytania "o co chodzi?"
+- ✅ Odpowiedź zawiera przykład dodawania ułamków
+- ✅ Historia wiadomości jest widoczna w czacie (przewijanie działa)
+- ✅ Wszystkie wiadomości są poprawnie wyświetlone (użytkownik po prawej, AI po lewej)
+
+**Status:** ⏳ Do wykonania
+
+---
+
+### SCENARIUSZ 3: Personalizacja (zainteresowania)
+
+**Priorytet:** WYSOKI ⭐⭐⭐
+
+**User Story:** Jako uczeń chcę otrzymać wyjaśnienie dostosowane do moich zainteresowań, aby lepiej zrozumieć temat.
+
+**Warunki początkowe:**
+- Aplikacja działa
+- Użytkownik jest na stronie głównej
+
+**Kroki:**
+1. Kliknij "Rozpocznij naukę"
+2. Wybierz przedmiot "Matematyka"
+3. Wpisz problem: "Procenty"
+4. Wpisz zainteresowania: "Piłka nożna" (lub inne sportowe)
+5. Kliknij "Rozpocznij"
+6. Poczekaj na powitanie AI
+7. Zadaj pytanie: "Wyjaśnij mi procenty"
+8. Poczekaj na odpowiedź AI
+9. **Sprawdź:** Czy AI używa przykładów związanych z piłką nożną (statystyki meczów, procent celnych strzałów itp.)
+
+**Oczekiwany rezultat:**
+- ✅ AI dostosowuje przykłady do zainteresowań ucznia
+- ✅ Odpowiedź zawiera odniesienia do piłki nożnej (jeśli to możliwe)
+- ✅ Jeśli AI nie może użyć zainteresowań, wyjaśnia w prosty sposób
+- ✅ Personalizacja nie jest wymuszona (AI decyduje czy ma sens)
+
+**Status:** ⏳ Do wykonania
+
+---
+
+### SCENARIUSZ 4: Długa konwersacja
+
+**Priorytet:** ŚREDNI ⭐⭐
+
+**User Story:** Jako uczeń chcę prowadzić długą rozmowę (10+ wiadomości), aby dokładnie zrozumieć temat.
+
+**Warunki początkowe:**
+- SCENARIUSZ 2 zakończony pomyślnie
+- Użytkownik jest w sesji czatu
+
+**Kroki:**
+1. (Kontynuacja SCENARIUSZA 2 lub rozpocznij nową sesję)
+2. Zadaj 10 pytań z matematyki, np.:
+   - "Co to jest ułamek?"
+   - "Jak dodać 1/2 + 1/4?"
+   - "A jak mnożyć ułamki?"
+   - "Co to jest ułamek niewłaściwy?"
+   - "Jak zamienić ułamek na procent?"
+   - "Daj mi zadanie do rozwiązania"
+   - (rozwiąż zadanie)
+   - "Czy dobrze rozwiązałem?"
+   - "Wyjaśnij mi jeszcze raz procenty"
+   - "Dziękuję!"
+3. Obserwuj czy:
+   - AI odpowiada na wszystkie pytania
+   - Aplikacja nie zawiesza się
+   - Historia jest poprawnie wyświetlana
+
+**Oczekiwany rezultat:**
+- ✅ AI odpowiada na wszystkie 10 pytań
+- ✅ Aplikacja działa płynnie (brak zawieszenia)
+- ✅ Historia wiadomości jest kompletna
+- ✅ Przewijanie działa (automatyczne przewijanie do końca po nowej wiadomości)
+- ✅ Limit 15 wiadomości w historii API działa (starsze wiadomości nie są wysyłane do API, ale są widoczne w UI)
+- ✅ Liczniki sesji działają poprawnie:
+  - Pozostałe wiadomości: 50 → 40 (po 10 pytaniach)
+  - Timer: odlicza czas
+
+**Status:** ⏳ Do wykonania
+
+---
+
+### SCENARIUSZ 5: Zapisywanie i wczytywanie historii
+
+**Priorytet:** ŚREDNI ⭐⭐
+
+**User Story:** Jako uczeń chcę móc zakończyć sesję i wrócić do niej później, aby kontynuować naukę.
+
+**Warunki początkowe:**
+- SCENARIUSZ 4 zakończony pomyślnie
+- Użytkownik ma aktywną sesję z historią
+
+**Kroki:**
+1. (Kontynuacja SCENARIUSZA 4)
+2. Kliknij "Zakończ sesję" (przycisk X w prawym górnym rogu)
+3. Potwierdź zakończenie sesji
+4. **Sprawdź:** Użytkownik jest przekierowany na stronę główną
+5. Kliknij "Historia rozmów"
+6. **Sprawdź:** Widoczna jest lista sesji z datą, tematem i avatarem
+7. Kliknij na ostatnią sesję
+8. **Sprawdź:** Historia jest wczytana poprawnie
+9. Przewiń w górę i sprawdź czy wszystkie wiadomości są widoczne
+
+**Oczekiwany rezultat:**
+- ✅ Sesja jest zapisana w localStorage
+- ✅ Lista sesji jest widoczna na stronie głównej
+- ✅ Sesja ma poprawną nazwę (data + czas)
+- ✅ Temat i avatar są wyświetlone
+- ✅ Po kliknięciu na sesję, historia jest wczytana
+- ✅ Wszystkie wiadomości są widoczne (użytkownik + AI)
+- ✅ Nie można wysyłać nowych wiadomości (sesja zakończona)
+
+**Status:** ⏳ Do wykonania
+
+---
+
+### SCENARIUSZ 6: AI odmawia odpowiedzi na pytania spoza przedmiotu
+
+**Priorytet:** WYSOKI ⭐⭐⭐
+
+**User Story:** Jako uczeń chcę otrzymać informację że pytanie jest poza tematem, aby wiedzieć że AI pomoże tylko z matematyką.
+
+**Warunki początkowe:**
+- Aplikacja działa
+- Użytkownik jest w sesji z Math Tutor
+
+**Kroki:**
+1. Rozpocznij nową sesję (SCENARIUSZ 1, kroki 1-6)
+2. Zadaj pytanie spoza matematyki, np.:
+   - "Co to jest fotosynteza?"
+   - "Kto napisał 'Pan Tadeusz'?"
+   - "Jak ugotować makaron?"
+3. Poczekaj na odpowiedź AI
+4. **Sprawdź:** AI uprzejmie odmawia i sugeruje pytanie z matematyki
+
+**Oczekiwany rezultat:**
+- ✅ AI rozpoznaje że pytanie jest spoza matematyki
+- ✅ AI uprzejmie odmawia odpowiedzi
+- ✅ AI sugeruje zadanie pytania z matematyki
+- ✅ Ton odpowiedzi jest przyjazny (nie surowy)
+- ✅ Brak błędów technicznych
+
+**Status:** ⏳ Do wykonania
+
+---
+
+## Formularz wyników testów
+
+Po wykonaniu każdego scenariusza, zapisz wyniki w tabeli poniżej:
+
+### Tabela wyników testów manualnych
+
+| Scenariusz | Data testu | Tester | Status | Uwagi/Problemy |
+|------------|------------|--------|--------|----------------|
+| SCENARIUSZ 1: Proste pytanie | - | - | ⏳ | - |
+| SCENARIUSZ 2: Kontynuacja | - | - | ⏳ | - |
+| SCENARIUSZ 3: Personalizacja | - | - | ⏳ | - |
+| SCENARIUSZ 4: Długa konwersacja | - | - | ⏳ | - |
+| SCENARIUSZ 5: Historia | - | - | ⏳ | - |
+| SCENARIUSZ 6: Odmowa (off-topic) | - | - | ⏳ | - |
+
+**Legenda statusów:**
+- ⏳ Do wykonania
+- ✅ Przeszedł pomyślnie
+- ⚠️ Przeszedł z drobnymi problemami
+- ❌ Nie przeszedł
+
+---
+
+## Kryteria akceptacji FEATURE 3.1
+
+Aby uznać FEATURE 3.1 za ukończoną, wszystkie poniższe kryteria muszą być spełnione:
+
+- ✅ Wszystkie 6 scenariuszy są udokumentowane
+- ✅ Wszystkie 6 scenariuszy przechodzą pomyślnie (status ✅ lub ⚠️)
+- ✅ Wyniki są zapisane w tabeli powyżej
+- ✅ Zidentyfikowane problemy są udokumentowane
+- ✅ Aplikacja jest gotowa do wdrożenia (podstawowy flow działa)
+
+**Status FEATURE 3.1:** ⏳ Do wykonania
+
+---
+
+---
+
+# FEATURE 3.2: Edge Cases
+
+## Cel testowania
 
 Przetestowanie przypadków brzegowych (edge cases) aby upewnić się, że aplikacja:
 
@@ -10,7 +312,7 @@ Przetestowanie przypadków brzegowych (edge cases) aby upewnić się, że aplika
 
 ---
 
-## 🎨 Podział testów według narzędzi
+## Podział testów według narzędzi
 
 Zgodnie z regułami testowania (`.cursor/rules/testing.md`), testy są podzielone na:
 
@@ -19,7 +321,7 @@ Zgodnie z regułami testowania (`.cursor/rules/testing.md`), testy są podzielon
 
 ---
 
-## 🧪 CZĘŚĆ 1: Testy jednostkowe i komponentów (Vitest + RTL)
+## CZĘŚĆ 1: Testy jednostkowe i komponentów (Vitest + RTL)
 
 ### Lokalizacja plików testowych:
 
@@ -239,7 +541,7 @@ src/components/
 
 ---
 
-## 🎭 CZĘŚĆ 2: Testy E2E (Playwright)
+## CZĘŚĆ 2: Testy E2E (Playwright)
 
 ### Lokalizacja plików testowych:
 
@@ -328,7 +630,7 @@ tests/                        ← NOWY FOLDER
 
 ---
 
-## 📝 Szczegółowy plan wykonania
+## Szczegółowy plan wykonania
 
 ### FAZA 1: Przygotowanie
 
@@ -422,7 +724,7 @@ npx playwright install
 
 ---
 
-## 📊 Podsumowanie testów
+## Podsumowanie testów
 
 ### Testy Vitest + RTL (8 testów):
 
@@ -449,9 +751,9 @@ npx playwright install
 
 ---
 
-## ✅ Kryteria akceptacji FEATURE 3.2
+## Kryteria akceptacji FEATURE 3.2
 
-### Ukończone (FAZA 1 i 2):
+### Ukończone (FAZA 1 i 2)
 
 - ✅ Wszystkie 8 edge cases z planu są pokryte testami jednostkowymi
 - ✅ Testy jednostkowe przechodzą (`npm run test`) - 13/13 testów ✅
@@ -462,16 +764,16 @@ npx playwright install
 - ✅ TEST 10: Licznik znaków - zaimplementowane (2 testy)
 - ✅ TEST 11: Textarea wieloliniowa - zaimplementowane
 
-### Do ukończenia (FAZA 3 i 4 - E2E):
+### Do ukończenia (FAZA 3 i 4, E2E)
 
 - ❌ Testy E2E przechodzą (`npm run test:e2e`) - oczekuje na implementację
 - ❌ Wyniki są udokumentowane w `ANALIZA_I_PLAN_WDROZENIA.md` - oczekuje na ukończenie FAZY 3
 
 ---
 
-## 🎯 Rekomendacje - minimum testów
+## Rekomendacje: minimum testów
 
-### ✅ Ukończone testy jednostkowe:
+### Ukończone testy jednostkowe
 
 1. ✅ TEST 1: Pusta wiadomość - **Zaimplementowane i przechodzi**
 2. ✅ TEST 2: Błąd API - **Zaimplementowane i przechodzi**
@@ -482,7 +784,7 @@ npx playwright install
 7. ✅ TEST 10: Licznik znaków - **Zaimplementowane i przechodzi** (2 testy)
 8. ✅ TEST 11: Textarea wieloliniowa - **Zaimplementowane i przechodzi**
 
-### ⏳ Do zrobienia (testy E2E):
+### Do zrobienia (testy E2E)
 
 - ❌ TEST 7: Pytanie spoza przedmiotu (Playwright)
 - ❌ TEST 8: Brak internetu (Playwright) - zależny od FEATURE 2.1
@@ -490,7 +792,7 @@ npx playwright install
 
 ---
 
-## 📚 Powiązane dokumenty
+## Powiązane dokumenty
 
 - `ANALIZA_I_PLAN_WDROZENIA.md` - główny plan wdrożenia
 - `.cursor/rules/testing.md` - zasady testowania w projekcie
@@ -500,17 +802,17 @@ npx playwright install
 
 ---
 
-## 📊 Status implementacji
+## Status implementacji
 
 **Data utworzenia:** 7 stycznia 2026
 **Ostatnia aktualizacja:** 8 stycznia 2026
 
-### ✅ Ukończone fazy:
+### Ukończone fazy
 
 - ✅ **FAZA 1: Przygotowanie** - Konfiguracja Vitest, RTL i Playwright
 - ✅ **FAZA 2: Testy jednostkowe** - Wszystkie 8 testów jednostkowych zaimplementowane i przechodzące
 
-### 📈 Wyniki testów (FAZA 2 - UKOŃCZONA):
+### Wyniki testów (FAZA 2, UKOŃCZONA)
 
 **Testy Vitest + RTL:** ✅ 13/13 testów przechodzi (8 przypadków testowych)
 
@@ -527,7 +829,7 @@ npx playwright install
 
 **Czas wykonania:** ~5.1 sekundy
 
-### ⏳ Do zrobienia:
+### Do zrobienia
 
 - ❌ **FAZA 3: Testy E2E** - Playwright (TEST 7, 8, 9)
 - ❌ **FAZA 4: Dokumentacja** - Aktualizacja ANALIZA_I_PLAN_WDROZENIA.md
