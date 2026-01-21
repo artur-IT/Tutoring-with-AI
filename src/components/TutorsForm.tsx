@@ -6,6 +6,7 @@ import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
 import { getTopicsForSubject, type Subject } from "../lib/subjectTopics";
 import { useOnline } from "./hooks/useOnline";
 import { withOnlineProvider } from "./hooks/withOnlineProvider";
+import { validateFormInput } from "../lib/contentFilter";
 
 const AVATAR_EMOJIS = ["🦊", "🐼", "🐶", "🐱"] as const;
 
@@ -28,6 +29,7 @@ function TutorsForm() {
   const [problemDescription, setProblemDescription] = useState("");
   const [interests, setInterests] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
   const topicLabelId = useId();
 
   const handleSubjectSelect = useCallback((subject: Subject) => {
@@ -51,13 +53,29 @@ function TutorsForm() {
       e.preventDefault();
       if (!selectedSubject || !selectedTopic || !problemDescription.trim() || !selectedAvatar) return;
 
+      // Validate problem description
+      const problemValidation = validateFormInput(problemDescription, "Opis problemu", 200);
+      if (!problemValidation.isValid) {
+        setFormError(problemValidation.error || "Nieprawidłowy opis problemu");
+        return;
+      }
+
+      // Validate interests
+      const interestsValidation = validateFormInput(interests, "Zainteresowania", 100);
+      if (!interestsValidation.isValid) {
+        setFormError(interestsValidation.error || "Nieprawidłowe zainteresowania");
+        return;
+      }
+
+      setFormError(null);
+
       localStorage.setItem(
         "studentData",
         JSON.stringify({
           subject: selectedSubject,
           topic: selectedTopic,
-          problem: problemDescription.trim(),
-          interests,
+          problem: problemValidation.sanitized || problemDescription.trim(),
+          interests: interestsValidation.sanitized || interests,
           avatar: selectedAvatar,
         })
       );
@@ -81,6 +99,11 @@ function TutorsForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center gap-6">
+      {formError && (
+        <div className="w-full max-w-[350px] p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+          {formError}
+        </div>
+      )}
       <fieldset className="flex flex-col gap-4 sm:flex-row">
         <legend className="sr-only">Wybierz przedmiot</legend>
         <button
@@ -100,7 +123,8 @@ function TutorsForm() {
         <button
           type="button"
           onClick={handleEnglishClick}
-          disabled={!isOnline}
+          // disabled={!isOnline}
+          disabled={true}
           aria-pressed={selectedSubject === "angielski"}
           className={`relative overflow-hidden py-4 px-8 text-lg font-bold rounded-2xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
             selectedSubject === "angielski"
@@ -121,7 +145,11 @@ function TutorsForm() {
               Wybierz temat:
             </label>
             <Select value={selectedTopic} onValueChange={handleTopicChange} required>
-              <SelectTrigger id="topic-select" className="w-full" aria-labelledby={topicLabelId}>
+              <SelectTrigger
+                id="topic-select"
+                className="w-full border-solid border-2 border-[#006fea]"
+                aria-labelledby={topicLabelId}
+              >
                 <SelectValue placeholder="Wybierz temat" />
               </SelectTrigger>
               <SelectContent>
@@ -145,9 +173,11 @@ function TutorsForm() {
               value={problemDescription}
               onChange={handleProblemChange}
               placeholder="np. Nie rozumiem logarytmów"
-              className="w-full text-sm"
+              className="w-full text-sm border-solid border-2 border-[#006fea]"
               required
+              maxLength={200}
             />
+            <p className="text-xs text-gray-500 text-right">{problemDescription.length} / 200</p>
           </div>
 
           {/* Interests Input */}
@@ -161,9 +191,11 @@ function TutorsForm() {
               value={interests}
               onChange={handleInterestsChange}
               placeholder="np. piłka nożna, książki, filmy"
-              className="w-full text-sm"
+              className="w-full text-sm border-solid border-2 border-[#006fea]"
               required
+              maxLength={100}
             />
+            <p className="text-xs text-gray-500 text-right">{interests.length} / 100</p>
           </div>
 
           {/* Avatar Selection */}
