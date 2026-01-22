@@ -100,15 +100,11 @@ git commit -m "WIP: working on feature X"
 - **Posprzątaj branche** - usuń stare, zmergowane
 - **Zaktualizuj dokumentację** - jeśli coś się zmieniło
 
-## 💡 Pamiętaj
+```bash
 
-**Mała, regularna praca > duża sesja raz w tygodniu**
+```
 
-Lepiej 30 minut dziennie niż 5 godzin w weekend! 🚀
-
----
-
-## Szybka Ściągawka
+# Szybka Ściągawka
 
 ### Konwencja Nazewnictwa Branchy
 

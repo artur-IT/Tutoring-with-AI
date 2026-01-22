@@ -4,104 +4,62 @@ import type { Message, StudentData } from "../../agents/mathTutor/types";
 import { sessionLimits } from "../../agents/mathTutor/config";
 import { validateAndSanitizeInput } from "../../lib/contentFilter";
 
-// Mark as server-rendered (required for POST endpoints)
 export const prerender = false;
 
 // In-memory store for rate limiting (sessionId -> request count)
-// In production, consider using Redis or a database
 const sessionRequestCounts = new Map<string, { count: number; createdAt: number }>();
 
-// Clean up old sessions (older than 1 hour)
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
 const cleanupOldSessions = () => {
-  const oneHourAgo = Date.now() - 60 * 60 * 1000;
-  for (const [sessionId, data] of sessionRequestCounts.entries()) {
-    if (data.createdAt < oneHourAgo) {
-      sessionRequestCounts.delete(sessionId);
-    }
+  const oneHourAgo = Date.now() - ONE_HOUR_MS;
+  for (const [sessionId, data] of sessionRequestCounts) {
+    if (data.createdAt < oneHourAgo) sessionRequestCounts.delete(sessionId);
   }
 };
 
-// POST /api/chat
-// Handles chat requests from frontend
+const jsonResponse = (data: object, status = 200) =>
+  new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json" } });
+
+const errorResponse = (error: string, status = 400) => jsonResponse({ success: false, error }, status);
+
+// POST /api/chat - handles chat requests
 export const POST: APIRoute = async ({ request }) => {
   console.log("\n🟢 [API] === Nowe żądanie do /api/chat ===");
+
   try {
-    // Parse request body
     const text = await request.text();
     console.log("📥 [API] Raw body:", text);
 
     if (!text) {
       console.warn("⚠️ [API] Empty request body");
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Pusta treść żądania",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return errorResponse("Pusta treść żądania");
     }
 
-    const body = JSON.parse(text);
-    const { message, history, studentData, subject, sessionId } = body;
+    const { message, history, studentData, subject, sessionId } = JSON.parse(text);
 
-    console.log("📥 [API] Otrzymano:");
-    console.log("  - Message:", message);
-    console.log("  - History length:", history?.length || 0);
-    console.log("  - Student data:", studentData);
-    console.log("  - Subject:", subject);
-    console.log("  - Session ID:", sessionId);
+    console.log("📥 [API] Otrzymano:", { message, historyLength: history?.length ?? 0, studentData, subject, sessionId });
 
-    // Rate limiting: check request count per session
+    // Rate limiting
     if (sessionId) {
       cleanupOldSessions();
       const sessionData = sessionRequestCounts.get(sessionId);
-      const requestCount = sessionData ? sessionData.count + 1 : 1;
+      const requestCount = (sessionData?.count ?? 0) + 1;
 
       if (requestCount > sessionLimits.maxMessagesPerSession) {
         console.warn(`⚠️ [API] Limit zapytań przekroczony dla sesji ${sessionId}: ${requestCount}`);
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: "Osiągnięto limit zapytań dla tej sesji. Proszę rozpocząć nową sesję.",
-            limitExceeded: true,
-          }),
-          {
-            status: 429, // Too Many Requests
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        return jsonResponse({ success: false, error: "Osiągnięto limit zapytań dla tej sesji. Proszę rozpocząć nową sesję.", limitExceeded: true }, 429);
       }
 
-      // Update request count
-      sessionRequestCounts.set(sessionId, {
-        count: requestCount,
-        createdAt: sessionData?.createdAt || Date.now(),
-      });
-
-      console.log(
-        `📊 [API] Liczba zapytań dla sesji ${sessionId}: ${requestCount}/${sessionLimits.maxMessagesPerSession}`
-      );
+      sessionRequestCounts.set(sessionId, { count: requestCount, createdAt: sessionData?.createdAt ?? Date.now() });
+      console.log(`📊 [API] Liczba zapytań dla sesji ${sessionId}: ${requestCount}/${sessionLimits.maxMessagesPerSession}`);
     }
 
-    // Validate required fields
     if (!message || typeof message !== "string") {
       console.warn("⚠️ [API] Walidacja nie powiodła się: brak wiadomości");
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Wiadomość jest wymagana",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return errorResponse("Wiadomość jest wymagana");
     }
 
-    // Validate and sanitize message content
     const validation = validateAndSanitizeInput(message, {
       maxLength: 400,
       checkProfanity: true,
@@ -111,39 +69,18 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!validation.isValid) {
       console.warn("⚠️ [API] Walidacja treści nie powiodła się:", validation.error);
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: validation.error || "Nieprawidłowa treść wiadomości",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return errorResponse(validation.error ?? "Nieprawidłowa treść wiadomości");
     }
 
-    // Use sanitized message
-    const sanitizedMessage = validation.sanitized || message;
+    const sanitizedMessage = validation.sanitized ?? message;
 
-    // Validate subject (currently only math is supported)
     if (subject && subject !== "matematyka") {
       console.warn("⚠️ [API] Walidacja nie powiodła się: nieprawidłowy przedmiot");
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Obecnie obsługujemy tylko matematykę",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return errorResponse("Obecnie obsługujemy tylko matematykę");
     }
 
     console.log("✅ [API] Walidacja przeszła, wywołuję mathTutor...");
 
-    // Call math tutor agent with sanitized message and sessionId for token tracking
     const response = await sendMessage(
       sanitizedMessage,
       history as Message[] | undefined,
@@ -159,40 +96,15 @@ export const POST: APIRoute = async ({ request }) => {
       metadata: response.metadata,
     });
 
-    // Add rate limiting info to response
-    let remainingRequests = sessionLimits.maxMessagesPerSession;
-    if (sessionId) {
-      const sessionData = sessionRequestCounts.get(sessionId);
-      if (sessionData) {
-        remainingRequests = Math.max(0, sessionLimits.maxMessagesPerSession - sessionData.count);
-      }
-    }
+    const sessionData = sessionId ? sessionRequestCounts.get(sessionId) : null;
+    const remainingRequests = Math.max(0, sessionLimits.maxMessagesPerSession - (sessionData?.count ?? 0));
 
-    const responseWithRateLimit = {
-      ...response,
-      rateLimit: {
-        remaining: remainingRequests,
-        limit: sessionLimits.maxMessagesPerSession,
-      },
-    };
-
-    // Return response
-    return new Response(JSON.stringify(responseWithRateLimit), {
-      status: response.success ? 200 : 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse(
+      { ...response, rateLimit: { remaining: remainingRequests, limit: sessionLimits.maxMessagesPerSession } },
+      response.success ? 200 : 500
+    );
   } catch (error) {
     console.error("❌ [API] Error:", error);
-
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: "Wystąpił błąd serwera",
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return errorResponse("Wystąpił błąd serwera", 500);
   }
 };

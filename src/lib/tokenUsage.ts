@@ -1,15 +1,7 @@
-/**
- * Token Usage Tracking Service
- *
- * Tracks API token usage per month to monitor costs.
- * Currently uses in-memory storage with file backup.
- * Can be migrated to Supabase database later.
- */
-
+// Token Usage Tracking Service - tracks API token usage per month
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-// Usage data structure
 interface TokenUsageEntry {
   timestamp: number;
   inputTokens: number;
@@ -20,7 +12,7 @@ interface TokenUsageEntry {
 }
 
 interface MonthlyUsage {
-  month: string; // Format: "2026-01"
+  month: string;
   totalInputTokens: number;
   totalOutputTokens: number;
   totalTokens: number;
@@ -34,35 +26,19 @@ interface UsageData {
 }
 
 // Configuration
-const TOKEN_LIMIT_PER_MONTH = 950_000_000; // 950 million (buffer from 1 billion)
-const WARNING_THRESHOLD = 0.8; // Show warning at 80%
+const TOKEN_LIMIT_PER_MONTH = 950_000_000;
+const WARNING_THRESHOLD = 0.8;
 
-// In-memory cache
 let usageCache: UsageData | null = null;
-
-// File path for persistence (in project root, can be gitignored)
 const DATA_FILE = path.join(process.cwd(), "data", "token-usage.json");
 
-/**
- * Get current month key in format "YYYY-MM"
- */
 const getCurrentMonth = (): string => {
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  return `${year}-${month}`;
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 };
 
-/**
- * Initialize empty usage data
- */
-const createEmptyUsageData = (): UsageData => ({
-  months: {},
-});
+const createEmptyUsageData = (): UsageData => ({ months: {} });
 
-/**
- * Create empty monthly usage
- */
 const createEmptyMonthlyUsage = (month: string): MonthlyUsage => ({
   month,
   totalInputTokens: 0,
@@ -73,25 +49,13 @@ const createEmptyMonthlyUsage = (month: string): MonthlyUsage => ({
   lastUpdated: Date.now(),
 });
 
-/**
- * Ensure data directory exists
- */
 const ensureDataDirectory = async (): Promise<void> => {
   const dir = path.dirname(DATA_FILE);
-  try {
-    await fs.access(dir);
-  } catch {
-    await fs.mkdir(dir, { recursive: true });
-  }
+  await fs.access(dir).catch(() => fs.mkdir(dir, { recursive: true }));
 };
 
-/**
- * Load usage data from file
- */
 const loadUsageData = async (): Promise<UsageData> => {
-  if (usageCache) {
-    return usageCache;
-  }
+  if (usageCache) return usageCache;
 
   try {
     await ensureDataDirectory();
@@ -99,15 +63,11 @@ const loadUsageData = async (): Promise<UsageData> => {
     usageCache = JSON.parse(data) as UsageData;
     return usageCache;
   } catch {
-    // File doesn't exist or is invalid, create new data
     usageCache = createEmptyUsageData();
     return usageCache;
   }
 };
 
-/**
- * Save usage data to file
- */
 const saveUsageData = async (data: UsageData): Promise<void> => {
   try {
     await ensureDataDirectory();
@@ -118,9 +78,6 @@ const saveUsageData = async (data: UsageData): Promise<void> => {
   }
 };
 
-/**
- * Log token usage for a request
- */
 export const logTokenUsage = async (params: {
   inputTokens: number;
   outputTokens: number;
@@ -130,67 +87,33 @@ export const logTokenUsage = async (params: {
 }): Promise<void> => {
   const { inputTokens, outputTokens, totalTokens, model, sessionId } = params;
   const month = getCurrentMonth();
-
   const data = await loadUsageData();
 
-  // Initialize month if needed
-  if (!data.months[month]) {
-    data.months[month] = createEmptyMonthlyUsage(month);
-  }
-
+  data.months[month] ??= createEmptyMonthlyUsage(month);
   const monthData = data.months[month];
 
-  // Add entry
-  const entry: TokenUsageEntry = {
-    timestamp: Date.now(),
-    inputTokens,
-    outputTokens,
-    totalTokens,
-    model,
-    sessionId,
-  };
-
-  monthData.entries.push(entry);
-
-  // Update totals
+  monthData.entries.push({ timestamp: Date.now(), inputTokens, outputTokens, totalTokens, model, sessionId });
   monthData.totalInputTokens += inputTokens;
   monthData.totalOutputTokens += outputTokens;
   monthData.totalTokens += totalTokens;
   monthData.requestCount += 1;
   monthData.lastUpdated = Date.now();
 
-  // Save to file
   await saveUsageData(data);
 
-  const logMsg = `Logged: ${totalTokens} tokens (in: ${inputTokens}, out: ${outputTokens})`;
-  const monthlyMsg = `Monthly: ${monthData.totalTokens.toLocaleString()} / ${TOKEN_LIMIT_PER_MONTH.toLocaleString()}`;
-  console.log(`📊 [TokenUsage] ${logMsg}`);
-  console.log(`📊 [TokenUsage] ${monthlyMsg}`);
+  console.log(`📊 [TokenUsage] Logged: ${totalTokens} tokens (in: ${inputTokens}, out: ${outputTokens})`);
+  console.log(
+    `📊 [TokenUsage] Monthly: ${monthData.totalTokens.toLocaleString()} / ${TOKEN_LIMIT_PER_MONTH.toLocaleString()}`
+  );
 };
 
-/**
- * Get current month usage statistics
- */
-export const getCurrentMonthUsage = async (): Promise<{
-  month: string;
-  totalTokens: number;
-  totalInputTokens: number;
-  totalOutputTokens: number;
-  requestCount: number;
-  limit: number;
-  remaining: number;
-  percentUsed: number;
-  isWarning: boolean;
-  isLimitReached: boolean;
-}> => {
+export const getCurrentMonthUsage = async () => {
   const month = getCurrentMonth();
   const data = await loadUsageData();
-  const monthData = data.months[month] || createEmptyMonthlyUsage(month);
+  const monthData = data.months[month] ?? createEmptyMonthlyUsage(month);
 
   const remaining = Math.max(0, TOKEN_LIMIT_PER_MONTH - monthData.totalTokens);
   const percentUsed = (monthData.totalTokens / TOKEN_LIMIT_PER_MONTH) * 100;
-  const isWarning = percentUsed >= WARNING_THRESHOLD * 100;
-  const isLimitReached = monthData.totalTokens >= TOKEN_LIMIT_PER_MONTH;
 
   return {
     month,
@@ -201,32 +124,19 @@ export const getCurrentMonthUsage = async (): Promise<{
     limit: TOKEN_LIMIT_PER_MONTH,
     remaining,
     percentUsed: Math.round(percentUsed * 100) / 100,
-    isWarning,
-    isLimitReached,
+    isWarning: percentUsed >= WARNING_THRESHOLD * 100,
+    isLimitReached: monthData.totalTokens >= TOKEN_LIMIT_PER_MONTH,
   };
 };
 
-/**
- * Check if monthly token limit is reached
- */
-export const isMonthlyLimitReached = async (): Promise<boolean> => {
-  const usage = await getCurrentMonthUsage();
-  return usage.isLimitReached;
-};
+export const isMonthlyLimitReached = async (): Promise<boolean> => (await getCurrentMonthUsage()).isLimitReached;
 
-/**
- * Get days until month reset
- */
 export const getDaysUntilReset = (): number => {
   const now = new Date();
   const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  const diffTime = nextMonth.getTime() - now.getTime();
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.ceil((nextMonth.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 };
 
-/**
- * Format usage for display
- */
 export const formatUsageMessage = async (): Promise<string> => {
   const usage = await getCurrentMonthUsage();
   const daysLeft = getDaysUntilReset();
@@ -234,16 +144,10 @@ export const formatUsageMessage = async (): Promise<string> => {
   if (usage.isLimitReached) {
     return `Miesięczny limit tokenów został osiągnięty. Aplikacja wznowi działanie za ${daysLeft} dni (1. dnia nowego miesiąca).`;
   }
-
   if (usage.isWarning) {
     return `Uwaga: Wykorzystano ${usage.percentUsed.toFixed(1)}% miesięcznego limitu tokenów. Pozostało ${usage.remaining.toLocaleString()} tokenów.`;
   }
-
   return `Wykorzystano ${usage.percentUsed.toFixed(1)}% miesięcznego limitu (${usage.totalTokens.toLocaleString()} / ${usage.limit.toLocaleString()} tokenów).`;
 };
 
-// Export configuration for external use
-export const TOKEN_CONFIG = {
-  LIMIT_PER_MONTH: TOKEN_LIMIT_PER_MONTH,
-  WARNING_THRESHOLD,
-};
+export const TOKEN_CONFIG = { LIMIT_PER_MONTH: TOKEN_LIMIT_PER_MONTH, WARNING_THRESHOLD } as const;
