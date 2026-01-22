@@ -267,14 +267,14 @@ Po wykonaniu każdego scenariusza, zapisz wyniki w tabeli poniżej:
 
 ### Tabela wyników testów manualnych
 
-| Scenariusz | Data testu | Tester | Status | Uwagi/Problemy |
-|------------|------------|--------|--------|----------------|
-| SCENARIUSZ 1: Proste pytanie | - | - | ⏳ | - |
-| SCENARIUSZ 2: Kontynuacja | - | - | ⏳ | - |
-| SCENARIUSZ 3: Personalizacja | - | - | ⏳ | - |
-| SCENARIUSZ 4: Długa konwersacja | - | - | ⏳ | - |
-| SCENARIUSZ 5: Historia | - | - | ⏳ | - |
-| SCENARIUSZ 6: Odmowa (off-topic) | - | - | ⏳ | - |
+| Scenariusz | Data testu |  Status | Uwagi/Problemy |
+|------------|------------|--------|----------------|
+| SCENARIUSZ 1: Proste pytanie | 22.01.2026 |  ✅ | - |
+| SCENARIUSZ 2: Kontynuacja | - |  ⏳ | - |
+| SCENARIUSZ 3: Personalizacja | - |  ⏳ | - |
+| SCENARIUSZ 4: Długa konwersacja | - |  ⏳ | - |
+| SCENARIUSZ 5: Historia | - |  ⏳ | - |
+| SCENARIUSZ 6: Odmowa (off-topic) | - |  ⏳ | - |
 
 **Legenda statusów:**
 - ⏳ Do wykonania

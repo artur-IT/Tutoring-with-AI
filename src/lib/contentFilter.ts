@@ -74,13 +74,14 @@ export const sanitizeHTML = (input: string): string => {
   if (!input) return "";
 
   // Escape HTML special characters
+  // Note: React automatically escapes content, but we do this for consistency
+  // We don't escape / as it's not needed for XSS protection and causes display issues
   const escaped = input
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;")
-    .replace(/\//g, "&#x2F;");
+    .replace(/'/g, "&#x27;");
 
   return escaped;
 };
@@ -188,9 +189,14 @@ export const validateAndSanitizeInput = (
 /**
  * Quick sanitize for display purposes
  * Use this when displaying user content in the UI
+ * Note: React automatically escapes content, so we don't need to escape HTML entities
+ * This prevents double-escaping which would show codes like &amp; instead of &
  */
 export const sanitizeForDisplay = (input: string): string => {
-  return sanitizeHTML(input);
+  if (!input) return "";
+  // React automatically escapes HTML, so we just return the text as-is
+  // This ensures mathematical symbols and special characters display correctly
+  return input;
 };
 
 /**
