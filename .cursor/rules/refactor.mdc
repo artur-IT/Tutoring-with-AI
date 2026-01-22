@@ -9,4 +9,4 @@ alwaysApply: false
 - css wykorzystujący rozwiązania z roku 2025 i 5 lat wstecz
 - zastosuj tagi html 5 z roku 2025 i 5 lat wstecz
 - zastosuj funkcjonalności z React 19.2
-<!-- - usuń niepotrzebne i oczywiste komentarze, zostaw tylko te, które są potrzebne do zrozumienia kodu i z nazwami sekcji kodu. -->
+- usuń zbyt oczywiste komentarze, zostaw tylko te, które są potrzebne do zrozumienia kodu i z nazwami sekcji kodu.

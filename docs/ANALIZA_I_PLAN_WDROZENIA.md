@@ -186,7 +186,9 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 
 ## Aktualny status projektu
 
-**Postęp ogólny:** ~75% ukończone (MVP+ gotowe!)
+**Postęp ogólny:** ~92% ukończone (MVP+ gotowe i zabezpieczone!)
+
+**Ostatnia weryfikacja:** 22 stycznia 2026
 
 ### Ukończone funkcjonalności
 
@@ -195,6 +197,7 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 - ✅ Rate limiting (50 zapytań na sesję) - pełna implementacja
 - ✅ Timer sesji (30 minut) - automatyczne zakończenie
 - ✅ Limit wiadomości (50 pytań) - automatyczne sprawdzanie
+- ✅ **Miesięczny limit tokenów (950M/miesiąc)** - pełna implementacja z logowaniem i sprawdzaniem
 - ✅ Blokowanie przycisku podczas wysyłania
 - ✅ Debouncing (opóźnienie 500ms) - zapobieganie wielokrotnemu wysyłaniu
 - ✅ Walidacja długości wiadomości (400 znaków) z wizualnym feedbackiem
@@ -230,15 +233,17 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 
 **Testowanie:**
 
-- ✅ Testy jednostkowe (46/46 ✅) - Vitest + React Testing Library:
-  - Chat.test.tsx (9 testów)
-  - NameInput.test.tsx (2 testy)
-  - useDebounce.test.ts (2 testy)
-  - contentFilter.test.ts (33 testy) - zabezpieczenia treści
+- ✅ Testy jednostkowe (48/48 ✅) - Vitest + React Testing Library:
+  - Chat.test.tsx (7 testów) - wszystkie przechodzą
+  - NameInput.test.tsx (3 testy) - wszystkie przechodzą
+  - useDebounce.test.ts (3 testy) - wszystkie przechodzą
+  - contentFilter.test.ts (35 testów) - zabezpieczenia treści
 
 ### Historia weryfikacji i aktualizacji
 
-- **20 stycznia 2026** - Ukończono FEATURE 1.4 (Filtrowanie treści) - sanityzacja HTML, filtr wulgaryzmów, prompt injection, dane osobowe (33 testy ✅)
+- **22 stycznia 2026** - **[WERYFIKACJA]** Sprawdzono wszystkie testy - 48/48 przechodzi ✅, naprawiono 2 testy w Chat.test.tsx (placeholder text)
+- **22 stycznia 2026** - **[WERYFIKACJA]** Potwierdzono implementację miesięcznych limitów tokenów (950M/miesiąc) - pełna integracja w mathTutor/index.ts
+- **20 stycznia 2026** - Ukończono FEATURE 1.4 (Filtrowanie treści) - sanityzacja HTML, filtr wulgaryzmów, prompt injection, dane osobowe (35 testów ✅)
 - **20 stycznia 2026** - Utworzono dokumentację testów FEATURE 3.1 w `docs/TESTS_PLAN.md` - 6 scenariuszy podstawowego flow
 - **15 stycznia 2026** - **[AUDYT]** Pełna weryfikacja kodu vs dokumentacja - zaktualizowano status
 - **15 stycznia 2026** - Poprawki SEO + lekka optymalizacja wydajności, Lighthouse: Perf 78 / SEO 100
@@ -362,49 +367,62 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 
 #### FEATURE 3.3: Optymalizacja kosztów i wydajności
 
+**Status:** Częściowo zaimplementowane - monitoring działa, optymalizacja do zrobienia
+
+**Zaimplementowane:**
+- ✅ **Monitorowanie użycia tokenów** - pełna implementacja w `src/lib/tokenUsage.ts`
+  - Logowanie każdego użycia (input/output/total tokens)
+  - Miesięczne limity (950M tokenów/miesiąc)
+  - API endpoint `/api/token-status` do sprawdzania statusu
+  - Sprawdzanie limitu przed każdym wywołaniem API (`isMonthlyLimitReached`)
+  - Automatyczne blokowanie gdy limit osiągnięty
+
 **User Stories:**
 
-1. Jako administrator chcę monitorować użycie API żeby kontrolować koszty
-2. Jako użytkownik chcę mieć szybkie odpowiedzi żeby nie tracić czasu
+1. Jako administrator chcę monitorować użycie API żeby kontrolować koszty - ✅ **ZROBIONE**
+2. Jako użytkownik chcę mieć szybkie odpowiedzi żeby nie tracić czasu - ⏳ **DO ZROBIENIA**
 
 **Tasks:**
+
+- [x] Task: Monitorowanie użycia API - ✅ **UKOŃCZONE**
+  - **Opis:** Logowanie użycia tokenów i kosztów w konsoli
+  - **Pliki:** `src/lib/tokenUsage.ts`, `src/agents/mathTutor/index.ts`, `src/pages/api/token-status.ts`
+  - **Status:** Pełna implementacja z miesięcznymi limitami
 
 - [ ] Task: Analiza użycia tokenów
   - **Opis:** Sprawdzenie ile tokenów jest używanych w typowej sesji
   - **Pliki:** Dokumentacja optymalizacji (nowy plik `OPTIMIZATION.md`)
+  - **Priorytet:** NISKI
 
 - [ ] Task: Optymalizacja długości historii
   - **Opis:** Sprawdzenie czy limit 10-15 wiadomości jest optymalny
   - **Pliki:** `src/agents/mathTutor/index.ts`, dokumentacja
   - **Zależności:** Wymaga ukończenia analizy tokenów
+  - **Priorytet:** NISKI
 
 - [ ] Task: Optymalizacja promptu systemowego
   - **Opis:** Skrócenie promptu systemowego bez utraty jakości
   - **Pliki:** `src/agents/mathTutor/prompts.ts`
   - **Zależności:** Wymaga ukończenia analizy tokenów
-
-- [ ] Task: Monitorowanie użycia API
-  - **Opis:** Logowanie użycia tokenów i kosztów w konsoli (lub dashboard)
-  - **Pliki:** `src/pages/api/chat.ts`, `src/agents/mathTutor/index.ts`
-  - **Zależności:** Wymaga ukończenia optymalizacji
+  - **Priorytet:** NISKI
 
 **Kryteria akceptacji:**
 
-- ✅ Analiza użycia tokenów jest udokumentowana
-- ✅ Historia jest ograniczona do optymalnej liczby wiadomości
-- ✅ Prompt systemowy jest zoptymalizowany
-- ✅ Użycie API jest monitorowane
-- ✅ Koszty są kontrolowane i przewidywalne
+- ✅ Użycie API jest monitorowane - **UKOŃCZONE**
+- ✅ Koszty są kontrolowane i przewidywalne - **UKOŃCZONE** (miesięczne limity)
+- ⏳ Analiza użycia tokenów jest udokumentowana - **DO ZROBIENIA**
+- ⏳ Historia jest ograniczona do optymalnej liczby wiadomości - **DO ZROBIENIA**
+- ⏳ Prompt systemowy jest zoptymalizowany - **DO ZROBIENIA**
 
 ---
 
 ## Status projektu
 
-**Postęp:** ~90% ukończone - **MVP+ gotowe i zabezpieczone!**
+**Postęp:** ~92% ukończone - **MVP+ gotowe i zabezpieczone!**
 
-- ✅ **EPIK 1 (Bezpieczeństwo):** 100% - ukończone (+ zabezpieczenia treści)
+- ✅ **EPIK 1 (Bezpieczeństwo):** 100% - ukończone (+ zabezpieczenia treści + miesięczne limity tokenów)
 - ✅ **EPIK 2 (Offline + PWA):** 100% - ukończone
-- ⚠️ **EPIK 3 (Testowanie):** 66% - unit testy ✅, dokumentacja flow ⏳, optymalizacja ❌
+- ⚠️ **EPIK 3 (Testowanie):** 75% - unit testy ✅ (48/48), dokumentacja flow ⏳, optymalizacja ❌
 
 ---
 
@@ -430,7 +448,6 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 **Czas:** ~1-2 godziny
 
 ---
-
 
 ## Osiągnięcia
 

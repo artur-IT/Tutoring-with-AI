@@ -66,40 +66,29 @@ import NameInput from "./NameInput";
 <script>
   /* eslint-disable prettier/prettier */
 
-  // Function to show welcome section when name is available
-  const showWelcomeSection = (userName: string) => {
-    const nameDisplay = document.getElementById("name-display");
-    const homeContent = document.getElementById("home-content");
+  const $ = (id: string) => document.getElementById(id);
 
-    if (nameDisplay) {
-      nameDisplay.textContent = userName;
-    }
-    if (homeContent) {
-      homeContent.classList.remove("hidden");
-      homeContent.classList.add("flex", "flex-col");
-    }
+  const showWelcomeSection = (userName: string) => {
+    const nameDisplay = $("name-display");
+    const homeContent = $("home-content");
+    if (nameDisplay) nameDisplay.textContent = userName;
+    if (homeContent) homeContent.classList.replace("hidden", "flex");
   };
 
-  // Function to check token status and block app if limit reached
   const checkTokenStatus = async () => {
     try {
       const response = await fetch("/api/token-status");
       const data = await response.json();
-
-      if (data.success && data.isBlocked) {
-        showBlockedMessage(data.message);
-      }
+      if (data.success && data.isBlocked) showBlockedMessage(data.message);
     } catch (error) {
       console.error("Error checking token status:", error);
-      // Don't block app on error - allow usage
     }
   };
 
-  // Function to show blocked message and disable start button
   const showBlockedMessage = (message: string) => {
-    const blockedMessage = document.getElementById("blocked-message");
-    const blockedMessageText = document.getElementById("blocked-message-text");
-    const startButton = document.getElementById("start-button") as HTMLAnchorElement;
+    const blockedMessage = $("blocked-message");
+    const blockedMessageText = $("blocked-message-text");
+    const startButton = $("start-button") as HTMLAnchorElement | null;
 
     if (blockedMessage && blockedMessageText) {
       blockedMessageText.textContent = message;
@@ -107,67 +96,34 @@ import NameInput from "./NameInput";
     }
 
     if (startButton) {
-      // Disable the button
       startButton.removeAttribute("href");
       startButton.setAttribute("aria-disabled", "true");
-      startButton.classList.remove(
-        "bg-primary",
-        "hover:bg-primary/90",
-        "hover:-translate-y-1",
-        "hover:shadow-xl",
-        "active:scale-95",
-        "cursor-pointer"
-      );
+      startButton.classList.remove("bg-primary", "hover:bg-primary/90", "hover:-translate-y-1", "hover:shadow-xl", "active:scale-95", "cursor-pointer");
       startButton.classList.add("bg-muted", "text-muted-foreground", "cursor-not-allowed", "opacity-60");
       startButton.onclick = (e) => e.preventDefault();
     }
   };
 
-  // Function to initialize home page
   const initHome = () => {
     const storedName = localStorage.getItem("userName");
-
-    // Check if name exists on page load
-    if (storedName) {
-      showWelcomeSection(storedName);
-    }
-
-    // Check token status
+    if (storedName) showWelcomeSection(storedName);
     checkTokenStatus();
   };
 
-  const runWhenIdle = (callback) => {
-    if ("requestIdleCallback" in window) {
-      window.requestIdleCallback(callback, { timeout: 2000 });
-      return;
-    }
-    setTimeout(callback, 1);
-  };
+  const runWhenIdle = (callback: IdleRequestCallback) =>
+    "requestIdleCallback" in window ? window.requestIdleCallback(callback, { timeout: 2000 }) : setTimeout(callback, 1);
 
-  // Run on initial load (defer to idle to reduce main-thread work)
   runWhenIdle(initHome);
-
-  // Re-run after View Transitions navigation
   document.addEventListener("astro:page-load", () => runWhenIdle(initHome));
 
-  // Listen for name updates from NameInput component
   window.addEventListener("nameUpdated", (event) => {
-    const customEvent = event as CustomEvent;
-    if (customEvent.detail?.name) {
-      showWelcomeSection(customEvent.detail.name);
-    }
+    const { name } = (event as CustomEvent).detail ?? {};
+    if (name) showWelcomeSection(name);
   });
 
-  // Listen for modal state changes to set inert attribute
   window.addEventListener("nameInputModalState", (event) => {
-    const customEvent = event as CustomEvent;
-    const homeContent = document.getElementById("home-content");
-    if (homeContent && customEvent.detail) {
-      if (customEvent.detail.isOpen) {
-        homeContent.setAttribute("inert", "");
-      } else {
-        homeContent.removeAttribute("inert");
-      }
-    }
+    const homeContent = $("home-content");
+    const { isOpen } = (event as CustomEvent).detail ?? {};
+    if (homeContent) homeContent.toggleAttribute("inert", isOpen);
   });
 </script>
