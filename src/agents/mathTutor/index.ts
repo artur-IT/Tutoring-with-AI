@@ -2,6 +2,7 @@ import { Mistral } from "@mistralai/mistralai";
 import { mathTutorConfig, contentRestrictions } from "./config";
 import { getSystemPrompt } from "./prompts";
 import type { Message, AIResponse, StudentData } from "./types";
+import { logTokenUsage, isMonthlyLimitReached, getCurrentMonthUsage, getDaysUntilReset } from "../../lib/tokenUsage";
 
 // Initialize Mistral client
 // API key should be in environment variable MISTRAL_API_KEY
@@ -92,7 +93,8 @@ const formatHistory = (history: Message[], studentData?: StudentData): Message[]
 export const sendMessage = async (
   userMessage: string,
   history: Message[] = [],
-  studentData?: StudentData
+  studentData?: StudentData,
+  sessionId?: string
 ): Promise<AIResponse> => {
   console.log("\n🔵 [MathTutor] === Wywołanie sendMessage ===");
   console.log("📝 [MathTutor] User message:", userMessage);
@@ -102,6 +104,20 @@ export const sendMessage = async (
   const startTime = Date.now();
 
   try {
+    // Check monthly token limit
+    console.log("🔍 [MathTutor] Sprawdzanie limitu tokenów...");
+    const limitReached = await isMonthlyLimitReached();
+    if (limitReached) {
+      const daysLeft = getDaysUntilReset();
+      console.warn("⚠️ [MathTutor] Miesięczny limit tokenów osiągnięty!");
+      return {
+        success: false,
+        error: `Miesięczny limit tokenów został osiągnięty. Aplikacja wznowi działanie za ${daysLeft} dni (1. dnia nowego miesiąca).`,
+        limitExceeded: true,
+      };
+    }
+    console.log("✅ [MathTutor] Limit tokenów OK");
+
     // Validate user message
     console.log("🔍 [MathTutor] Walidacja wiadomości...");
     const validation = validateMessage(userMessage);
@@ -173,9 +189,26 @@ export const sendMessage = async (
     // Check if AI response indicates topic mismatch and conversation should end
     const shouldRedirect = checkIfTopicMismatch(responseText);
 
+    // Log token usage
+    const inputTokens = chatResponse.usage?.promptTokens ?? 0;
+    const outputTokens = chatResponse.usage?.completionTokens ?? 0;
+    const totalTokens = chatResponse.usage?.totalTokens ?? 0;
+
+    await logTokenUsage({
+      inputTokens,
+      outputTokens,
+      totalTokens,
+      model: mathTutorConfig.model,
+      sessionId,
+    });
+
+    // Get updated usage stats
+    const usageStats = await getCurrentMonthUsage();
+
     console.log("✅ [MathTutor] Sukces!");
     console.log("⏱️ [MathTutor] Czas:", duration, "ms");
-    console.log("🎫 [MathTutor] Tokeny:", chatResponse.usage?.totalTokens);
+    console.log("🎫 [MathTutor] Tokeny:", totalTokens, `(in: ${inputTokens}, out: ${outputTokens})`);
+    console.log("📊 [MathTutor] Miesięczne zużycie:", `${usageStats.percentUsed.toFixed(2)}%`);
     console.log("💬 [MathTutor] Odpowiedź (preview):", responseText.substring(0, 100) + "...");
     if (shouldRedirect) {
       console.log("🔄 [MathTutor] Wykryto niezgodność tematu - przekierowanie do wyboru tematu");
@@ -187,8 +220,16 @@ export const sendMessage = async (
       shouldRedirect,
       metadata: {
         model: mathTutorConfig.model,
-        tokens: chatResponse.usage?.totalTokens,
+        tokens: totalTokens,
+        inputTokens,
+        outputTokens,
         duration,
+      },
+      tokenUsage: {
+        monthlyTotal: usageStats.totalTokens,
+        monthlyLimit: usageStats.limit,
+        percentUsed: usageStats.percentUsed,
+        isWarning: usageStats.isWarning,
       },
     };
   } catch (error) {

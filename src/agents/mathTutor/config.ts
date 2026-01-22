@@ -29,8 +29,8 @@ export const contentRestrictions = {
   // Maximum message length from user (characters)
   maxMessageLength: 400,
 
-  // Maximum conversation history to send to API (to save costs)
-  maxHistoryMessages: 15,
+  // Maximum conversation history to send to API (for better context)
+  maxHistoryMessages: 20,
 
   // Timeout for API requests (milliseconds)
   apiTimeout: 30000, // 30 seconds
@@ -44,11 +44,11 @@ export const contentRestrictions = {
 
 // Session limits
 export const sessionLimits = {
-  // Maximum session duration in minutes
-  maxSessionDuration: 30,
+  // Maximum session duration in minutes (typical tutoring session length)
+  maxSessionDuration: 45,
 
-  // Maximum number of messages per session
-  maxMessagesPerSession: 50,
+  // Maximum number of messages per session (allows deeper conversations)
+  maxMessagesPerSession: 80,
 
   // Warning threshold (percentage of limit)
   warningThreshold: 0.8, // Show warning at 80% of limit

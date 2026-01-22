@@ -43,12 +43,20 @@ export interface AIResponse {
   limitExceeded?: boolean; // If true, rate limit was exceeded
   metadata?: {
     tokens?: number;
+    inputTokens?: number;
+    outputTokens?: number;
     model?: string;
     duration?: number;
   };
   rateLimit?: {
     remaining: number; // Number of remaining requests in this session
     limit: number; // Maximum number of requests per session
+  };
+  tokenUsage?: {
+    monthlyTotal: number; // Total tokens used this month
+    monthlyLimit: number; // Monthly token limit
+    percentUsed: number; // Percentage of limit used
+    isWarning: boolean; // True if approaching limit (80%+)
   };
 }
 
