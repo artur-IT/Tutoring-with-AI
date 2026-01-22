@@ -32,9 +32,8 @@ describe("NameInput Component - TEST 6: Walidacja imienia", () => {
     // Check that submit button is disabled when input is empty
     expect(submitButton).toBeDisabled();
 
-    // Type name - use getAllByLabelText and get the input element (not the dialog title)
-    const inputs = screen.getAllByLabelText(/wprowadź swoje imię/i);
-    const input = inputs.find((el) => el.tagName === "INPUT") || inputs[0];
+    // Type name - use placeholder or label
+    const input = screen.getByPlaceholderText(/wpisz imię/i);
     await userEvent.type(input, "Test Name");
 
     // Check that submit button is enabled when input has text
@@ -55,9 +54,8 @@ describe("NameInput Component - TEST 6: Walidacja imienia", () => {
       expect(screen.getByRole("dialog")).toBeInTheDocument();
     });
 
-    // Find input and submit button - use getAllByLabelText and get the input element
-    const inputs = screen.getAllByLabelText(/wprowadź swoje imię/i);
-    const input = inputs.find((el) => el.tagName === "INPUT") || inputs[0];
+    // Find input and submit button
+    const input = screen.getByPlaceholderText(/wpisz imię/i);
     const submitButton = screen.getByRole("button", { name: /zapisz/i });
 
     // Type only spaces

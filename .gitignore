@@ -24,6 +24,9 @@ pnpm-debug.log*
 .env
 .env.production
 
+# Token usage data (local tracking)
+data/
+
 # macOS-specific files
 .DS_Store
 

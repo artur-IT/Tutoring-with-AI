@@ -3,7 +3,7 @@ import NameInput from "./NameInput";
 ---
 
 <div
-  class="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col items-center justify-center p-4 relative overflow-hidden"
+  class="min-h-screen bg-linear-to-br from-background via-background to-accent/5 flex flex-col items-center justify-center p-4 relative overflow-hidden"
 >
   <!-- Decorative background elements -->
   <div class="absolute inset-0 -z-10 overflow-hidden">
@@ -32,8 +32,19 @@ import NameInput from "./NameInput";
       <p class="text-lg md:text-xl text-muted-foreground font-medium mb-8">Gotowy na naukę?</p>
     </div>
 
+    <!-- Blocked message (hidden by default) -->
+    <div
+      id="blocked-message"
+      class="hidden w-full max-w-md mx-auto mb-6 p-4 rounded-2xl bg-destructive/10 border-2 border-destructive/30 text-center animate-in fade-in duration-500"
+    >
+      <div class="text-3xl mb-2">🔒</div>
+      <h3 class="text-lg font-bold text-destructive mb-2">Aplikacja tymczasowo niedostępna</h3>
+      <p id="blocked-message-text" class="text-sm text-muted-foreground"></p>
+    </div>
+
     <div class="flex flex-col gap-4 items-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
       <a
+        id="start-button"
         href="/tutors"
         class="w-46 inline-flex items-center cursor-pointer justify-center gap-3 whitespace-nowrap rounded-2xl text-lg font-bold transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 p-3 bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-1 shadow-lg hover:shadow-xl active:scale-95"
       >
@@ -55,62 +66,64 @@ import NameInput from "./NameInput";
 <script>
   /* eslint-disable prettier/prettier */
 
-  // Function to show welcome section when name is available
-  const showWelcomeSection = (userName: string) => {
-    const nameDisplay = document.getElementById("name-display");
-    const homeContent = document.getElementById("home-content");
+  const $ = (id: string) => document.getElementById(id);
 
-    if (nameDisplay) {
-      nameDisplay.textContent = userName;
-    }
-    if (homeContent) {
-      homeContent.classList.remove("hidden");
-      homeContent.classList.add("flex", "flex-col");
+  const showWelcomeSection = (userName: string) => {
+    const nameDisplay = $("name-display");
+    const homeContent = $("home-content");
+    if (nameDisplay) nameDisplay.textContent = userName;
+    if (homeContent) homeContent.classList.replace("hidden", "flex");
+  };
+
+  const checkTokenStatus = async () => {
+    try {
+      const response = await fetch("/api/token-status");
+      const data = await response.json();
+      if (data.success && data.isBlocked) showBlockedMessage(data.message);
+    } catch (error) {
+      console.error("Error checking token status:", error);
     }
   };
 
-  // Function to initialize home page
+  const showBlockedMessage = (message: string) => {
+    const blockedMessage = $("blocked-message");
+    const blockedMessageText = $("blocked-message-text");
+    const startButton = $("start-button") as HTMLAnchorElement | null;
+
+    if (blockedMessage && blockedMessageText) {
+      blockedMessageText.textContent = message;
+      blockedMessage.classList.remove("hidden");
+    }
+
+    if (startButton) {
+      startButton.removeAttribute("href");
+      startButton.setAttribute("aria-disabled", "true");
+      startButton.classList.remove("bg-primary", "hover:bg-primary/90", "hover:-translate-y-1", "hover:shadow-xl", "active:scale-95", "cursor-pointer");
+      startButton.classList.add("bg-muted", "text-muted-foreground", "cursor-not-allowed", "opacity-60");
+      startButton.onclick = (e) => e.preventDefault();
+    }
+  };
+
   const initHome = () => {
     const storedName = localStorage.getItem("userName");
-
-    // Check if name exists on page load
-    if (storedName) {
-      showWelcomeSection(storedName);
-    }
+    if (storedName) showWelcomeSection(storedName);
+    checkTokenStatus();
   };
 
-  const runWhenIdle = (callback) => {
-    if ("requestIdleCallback" in window) {
-      window.requestIdleCallback(callback, { timeout: 2000 });
-      return;
-    }
-    setTimeout(callback, 1);
-  };
+  const runWhenIdle = (callback: IdleRequestCallback) =>
+    "requestIdleCallback" in window ? window.requestIdleCallback(callback, { timeout: 2000 }) : setTimeout(callback, 1);
 
-  // Run on initial load (defer to idle to reduce main-thread work)
   runWhenIdle(initHome);
-
-  // Re-run after View Transitions navigation
   document.addEventListener("astro:page-load", () => runWhenIdle(initHome));
 
-  // Listen for name updates from NameInput component
   window.addEventListener("nameUpdated", (event) => {
-    const customEvent = event as CustomEvent;
-    if (customEvent.detail?.name) {
-      showWelcomeSection(customEvent.detail.name);
-    }
+    const { name } = (event as CustomEvent).detail ?? {};
+    if (name) showWelcomeSection(name);
   });
 
-  // Listen for modal state changes to set inert attribute
   window.addEventListener("nameInputModalState", (event) => {
-    const customEvent = event as CustomEvent;
-    const homeContent = document.getElementById("home-content");
-    if (homeContent && customEvent.detail) {
-      if (customEvent.detail.isOpen) {
-        homeContent.setAttribute("inert", "");
-      } else {
-        homeContent.removeAttribute("inert");
-      }
-    }
+    const homeContent = $("home-content");
+    const { isOpen } = (event as CustomEvent).detail ?? {};
+    if (homeContent) homeContent.toggleAttribute("inert", isOpen);
   });
 </script>
