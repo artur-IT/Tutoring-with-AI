@@ -253,7 +253,7 @@ Przetestowanie podstawowych scenariuszy użycia aplikacji (happy path), aby upew
 **Oczekiwany rezultat:**
 - ✅ AI rozpoznaje że pytanie jest spoza matematyki
 - ✅ AI uprzejmie odmawia odpowiedzi
-- ✅ AI sugeruje zadanie pytania z matematyki
+- ✅ AI sugeruje kończy rozmowę
 - ✅ Ton odpowiedzi jest przyjazny (nie surowy)
 - ✅ Brak błędów technicznych
 
@@ -272,9 +272,9 @@ Po wykonaniu każdego scenariusza, zapisz wyniki w tabeli poniżej:
 | SCENARIUSZ 1: Proste pytanie | 22.01.2026 |  ✅ | - |
 | SCENARIUSZ 2: Kontynuacja | 22.01.2026 |  ✅ | - |
 | SCENARIUSZ 3: Personalizacja | 22.01.2026 |  ✅ | - |
-| SCENARIUSZ 4: Długa konwersacja | - |  ⏳ | - |
-| SCENARIUSZ 5: Historia | - |  ⏳ | - |
-| SCENARIUSZ 6: Odmowa (off-topic) | - |  ⏳ | - |
+| SCENARIUSZ 4: Długa konwersacja | 22.01.2026 | ✅  | - |
+| SCENARIUSZ 5: Historia | 22.01.2026 |  ✅ | - |
+| SCENARIUSZ 6: Odmowa (off-topic) | 22.01.2026 |  ✅ | - |
 
 **Legenda statusów:**
 - ⏳ Do wykonania
@@ -837,3 +837,19 @@ npx playwright install
 ---
 
 **Status:** ✅ FAZA 1 i 2 ukończone, FAZA 3 oczekuje na implementację
+
+---
+
+## Znane problemy i naprawy
+
+### Naprawione (22 stycznia 2026)
+
+- ✅ **Problem z wyświetlaniem znaków specjalnych** - Naprawiono escape'owanie znaków matematycznych (`/`, `\`, `*`, `+`, `-`, `=`, `^`, `_`, `$`) w `sanitizeForDisplay`. React automatycznie escape'uje zawartość, więc podwójne escape'owanie powodowało wyświetlanie kodów HTML zamiast znaków.
+- ✅ **Problem z wyświetlaniem ułamków** - Naprawiono funkcję `cleanMathNotation`, która usuwała kreskę ułamkową z ułamków typu `1/2`. Usunięto regex `/\/([^/]+)\//g`, który usuwał wzorce LaTeX, ale również normalne ułamki.
+- ✅ **Problem z pętlą pierwszego powitania** - Naprawiono problem, gdzie pierwsza wiadomość od AI pojawiała się i znikała w pętli. Dodano `initialGreetingSentRef` do zapobiegania wielokrotnym wywołaniom `sendInitialGreeting`.
+- ✅ **Filtrowanie historii** - Dodano warunek, aby nie zapisywać sesji z tylko 1 wiadomością (tylko powitanie od AI). Zmieniono wszystkie warunki z `messages.length > 0` na `messages.length > 1` w funkcjach zapisujących sesje.
+
+**Pliki zmienione:**
+- `src/lib/contentFilter.ts` - usunięto escape'owanie `/` i zmieniono `sanitizeForDisplay` aby nie escape'owała znaków
+- `src/components/chat/chatUtils.ts` - usunięto regex dla `/expression/` w `cleanMathNotation`
+- `src/components/Chat.tsx` - dodano `initialGreetingSentRef` i zmieniono warunki zapisywania sesji

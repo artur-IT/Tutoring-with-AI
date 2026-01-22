@@ -1,7 +1,7 @@
 # Analiza planu integracji i propozycja wdrożenia 🎯
 
 Data utworzenia: 8 grudnia 2025
-Ostatnia aktualizacja: 20 stycznia 2026
+Ostatnia aktualizacja: 22 stycznia 2026
 Projekt: Chat-with-Hero (Tutor with AI)
 
 > **📝 Uwaga:** Ten dokument zastąpił i rozszerzył `PLAN_Integrity_with_Mistral_AI.md`.
@@ -189,6 +189,7 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 **Postęp ogólny:** ~92% ukończone (MVP+ gotowe i zabezpieczone!)
 
 **Ostatnia weryfikacja:** 22 stycznia 2026
+**Ostatnia aktualizacja:** 22 stycznia 2026
 
 ### Ukończone funkcjonalności
 
@@ -230,6 +231,8 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 - ✅ SEO podstawowe (meta description, canonical, OG, Twitter, lang=pl)
 - ✅ Accessibility (skip link, etykiety ARIA, aria-live, semantyka HTML)
 - ✅ Odciążenie startu (client:idle, requestIdleCallback, width/height ikon)
+- ✅ **Poprawne wyświetlanie znaków matematycznych** - ułamki (1/2), operatory (+, -, *, /), symbole (^, _, $) wyświetlają się poprawnie
+- ✅ **Filtrowanie historii** - sesje z tylko 1 wiadomością (tylko powitanie) nie są zapisywane w historii
 
 **Testowanie:**
 
@@ -241,6 +244,10 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 
 ### Historia weryfikacji i aktualizacji
 
+- **22 stycznia 2026** - **[NAPRAWA]** Naprawiono wyświetlanie znaków specjalnych matematycznych - usunięto niepotrzebne escape'owanie w `sanitizeForDisplay`, znaki jak `/`, `\`, `*`, `+`, `-`, `=`, `^`, `_`, `$` wyświetlają się poprawnie
+- **22 stycznia 2026** - **[NAPRAWA]** Naprawiono wyświetlanie ułamków - usunięto regex w `cleanMathNotation`, który usuwał kreskę ułamkową, ułamki jak `1/2`, `3/4` wyświetlają się poprawnie
+- **22 stycznia 2026** - **[NAPRAWA]** Naprawiono problem z pętlą pierwszego powitania - dodano `initialGreetingSentRef` do zapobiegania wielokrotnym wywołaniom `sendInitialGreeting`
+- **22 stycznia 2026** - **[NAPRAWA]** Dodano filtrowanie historii - sesje z tylko 1 wiadomością (tylko powitanie od AI) nie są zapisywane w historii rozmów
 - **22 stycznia 2026** - **[WERYFIKACJA]** Sprawdzono wszystkie testy - 48/48 przechodzi ✅, naprawiono 2 testy w Chat.test.tsx (placeholder text)
 - **22 stycznia 2026** - **[WERYFIKACJA]** Potwierdzono implementację miesięcznych limitów tokenów (950M/miesiąc) - pełna integracja w mathTutor/index.ts
 - **20 stycznia 2026** - Ukończono FEATURE 1.4 (Filtrowanie treści) - sanityzacja HTML, filtr wulgaryzmów, prompt injection, dane osobowe (35 testów ✅)
@@ -340,26 +347,17 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 1. Jako developer chcę mieć pewność że podstawowe scenariusze działają poprawnie żeby móc wdrożyć aplikację
 2. Jako użytkownik chcę mieć pewność że aplikacja działa stabilnie żeby móc na niej polegać
 
-**Udokumentowane scenariusze testowe (6):**
-
-- ✅ SCENARIUSZ 1: Proste pytanie → odpowiedź (priorytet WYSOKI)
-- ✅ SCENARIUSZ 2: Kontynuacja rozmowy - pamięć kontekstu (priorytet WYSOKI)
-- ✅ SCENARIUSZ 3: Personalizacja - zainteresowania (priorytet WYSOKI)
-- ✅ SCENARIUSZ 4: Długa konwersacja - 10+ wiadomości (priorytet ŚREDNI)
-- ✅ SCENARIUSZ 5: Zapisywanie i wczytywanie historii (priorytet ŚREDNI)
-- ✅ SCENARIUSZ 6: AI odmawia odpowiedzi na pytania spoza przedmiotu (priorytet WYSOKI)
-
-**Pliki:**
-- `docs/TESTS_PLAN.md` - pełna dokumentacja scenariuszy testowych (FEATURE 3.1 + 3.2)
+**Dokumentacja:**
+- `docs/TESTS_PLAN.md` - pełna dokumentacja z 6 scenariuszami testowymi (FEATURE 3.1) oraz testami edge cases (FEATURE 3.2)
 
 **Do wykonania:**
-- ⏳ Wykonać testy manualne zgodnie ze scenariuszami
+- ⏳ Wykonać testy manualne zgodnie ze scenariuszami w `TESTS_PLAN.md`
 - ⏳ Zapisać wyniki w tabeli w `TESTS_PLAN.md`
 - ⏳ Udokumentować zidentyfikowane problemy
 
 **Kryteria akceptacji:**
 
-- ✅ Wszystkie scenariusze testowe są udokumentowane
+- ✅ Wszystkie scenariusze testowe są udokumentowane w `TESTS_PLAN.md`
 - ⏳ Wszystkie scenariusze testowe przechodzą pomyślnie
 - ⏳ Wyniki testów są zapisane w dokumentacji
 
@@ -433,19 +431,14 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 **Status:** Dokumentacja gotowa, oczekuje na wykonanie
 
 **Co zrobić:**
-1. Wykonać 6 scenariuszy testowych z `docs/TESTS_PLAN.md`:
-   - SCENARIUSZ 1: Proste pytanie → odpowiedź
-   - SCENARIUSZ 2: Kontynuacja rozmowy
-   - SCENARIUSZ 3: Personalizacja (zainteresowania)
-   - SCENARIUSZ 4: Długa konwersacja (10+ wiadomości)
-   - SCENARIUSZ 5: Historia (zapis i wczytanie)
-   - SCENARIUSZ 6: AI odmawia (pytania off-topic)
-
+1. Wykonać 6 scenariuszy testowych z `docs/TESTS_PLAN.md` (szczegóły w sekcji FEATURE 3.1)
 2. Zapisać wyniki w tabeli w `docs/TESTS_PLAN.md`
 3. Udokumentować problemy (jeśli wystąpią)
 4. Zaktualizować status w `ANALIZA_I_PLAN_WDROZENIA.md`
 
 **Czas:** ~1-2 godziny
+
+> **📝 Uwaga:** Szczegółowe opisy wszystkich scenariuszy znajdują się w `docs/TESTS_PLAN.md` w sekcji FEATURE 3.1
 
 ---
 
