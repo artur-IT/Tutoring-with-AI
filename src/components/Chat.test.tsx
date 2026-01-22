@@ -63,12 +63,12 @@ describe("Chat Component - Edge Cases", () => {
 
       // Wait for component to initialize
       await waitFor(() => {
-        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+        expect(screen.queryByPlaceholderText(/zadaj pytanie/i)).toBeInTheDocument();
       });
 
       // Find input and send button
-      const input = screen.getByPlaceholderText(/wpisz pytanie/i);
-      const sendButton = screen.getByLabelText(/send message/i);
+      const input = screen.getByPlaceholderText(/zadaj pytanie/i);
+      const sendButton = screen.getByLabelText(/wyślij wiadomość/i);
 
       // Check that button is disabled when input is empty
       expect(input).toHaveValue("");
@@ -118,12 +118,12 @@ describe("Chat Component - Edge Cases", () => {
 
       // Wait for component to initialize
       await waitFor(() => {
-        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+        expect(screen.queryByPlaceholderText(/zadaj pytanie/i)).toBeInTheDocument();
       });
 
       // Find input and send button
-      const input = screen.getByPlaceholderText(/wpisz pytanie/i);
-      const sendButton = screen.getByLabelText(/send message/i);
+      const input = screen.getByPlaceholderText(/zadaj pytanie/i);
+      const sendButton = screen.getByLabelText(/wyślij wiadomość/i);
 
       // Type and send message
       await userEvent.type(input, "Test question");
@@ -167,12 +167,12 @@ describe("Chat Component - Edge Cases", () => {
 
       // Wait for component to initialize
       await waitFor(() => {
-        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+        expect(screen.queryByPlaceholderText(/zadaj pytanie/i)).toBeInTheDocument();
       });
 
       // Find input and send button
-      const input = screen.getByPlaceholderText(/wpisz pytanie/i);
-      const sendButton = screen.getByLabelText(/send message/i);
+      const input = screen.getByPlaceholderText(/zadaj pytanie/i);
+      const sendButton = screen.getByLabelText(/wyślij wiadomość/i);
 
       // Type message
       await userEvent.type(input, "Test question");
@@ -230,11 +230,11 @@ describe("Chat Component - Edge Cases", () => {
       render(<Chat />);
 
       await waitFor(() => {
-        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+        expect(screen.queryByPlaceholderText(/zadaj pytanie/i)).toBeInTheDocument();
       });
 
-      const textarea = screen.getByPlaceholderText(/wpisz pytanie/i);
-      const sendButton = screen.getByLabelText(/send message/i);
+      const textarea = screen.getByPlaceholderText(/zadaj pytanie/i);
+      const sendButton = screen.getByLabelText(/wyślij wiadomość/i);
 
       // Test with short message - should be enabled
       await userEvent.type(textarea, "Short message");
@@ -273,13 +273,13 @@ describe("Chat Component - Edge Cases", () => {
       render(<Chat />);
 
       await waitFor(() => {
-        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+        expect(screen.queryByPlaceholderText(/zadaj pytanie/i)).toBeInTheDocument();
       });
 
       // Initial state - should show "0 / 400"
       expect(screen.getByText("0 / 400")).toBeInTheDocument();
 
-      const textarea = screen.getByPlaceholderText(/wpisz pytanie/i);
+      const textarea = screen.getByPlaceholderText(/zadaj pytanie/i);
 
       // Type few characters
       await userEvent.type(textarea, "Hi");
@@ -302,11 +302,11 @@ describe("Chat Component - Edge Cases", () => {
       render(<Chat />);
 
       await waitFor(() => {
-        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+        expect(screen.queryByPlaceholderText(/zadaj pytanie/i)).toBeInTheDocument();
       });
 
-      const textarea = screen.getByPlaceholderText(/wpisz pytanie/i);
-      const sendButton = screen.getByLabelText(/send message/i);
+      const textarea = screen.getByPlaceholderText(/zadaj pytanie/i);
+      const sendButton = screen.getByLabelText(/wyślij wiadomość/i);
 
       // Directly set value to test validation without slow typing
       const text400 = "a".repeat(400);
@@ -344,10 +344,10 @@ describe("Chat Component - Edge Cases", () => {
       render(<Chat />);
 
       await waitFor(() => {
-        expect(screen.queryByPlaceholderText(/wpisz pytanie/i)).toBeInTheDocument();
+        expect(screen.queryByPlaceholderText(/zadaj pytanie/i)).toBeInTheDocument();
       });
 
-      const textarea = screen.getByPlaceholderText(/wpisz pytanie/i) as HTMLTextAreaElement;
+      const textarea = screen.getByPlaceholderText(/zadaj pytanie/i) as HTMLTextAreaElement;
 
       // Type "Line 1"
       await user.type(textarea, "Line 1");
