@@ -22,13 +22,14 @@ function Chat() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [sessionName, setSessionName] = useState<string>("");
   const [shouldSaveSession, setShouldSaveSession] = useState(true);
-  const [remainingRequests, setRemainingRequests] = useState(sessionLimits.maxMessagesPerSession);
+  const [remainingRequests, setRemainingRequests] = useState<number>(sessionLimits.maxMessagesPerSession);
   const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
   const [timeRemaining, setTimeRemaining] = useState(sessionLimits.maxSessionDuration * 60);
   const [isSessionEnded, setIsSessionEnded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const initialGreetingSentRef = useRef(false);
 
   const TOKEN_LIMIT = 128_000;
   const MAX_MESSAGE_LENGTH = contentRestrictions.maxMessageLength;
@@ -84,6 +85,7 @@ function Chat() {
     setSessionStartTime(startTime);
     setTimeRemaining(sessionLimits.maxSessionDuration * 60);
     setIsSessionEnded(false);
+    initialGreetingSentRef.current = false; // Reset flag for new session
 
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
 
@@ -95,7 +97,8 @@ function Chat() {
   }, []);
 
   const saveCurrentSession = useCallback(() => {
-    if (!currentSessionId || messages.length === 0 || !shouldSaveSession) return;
+    // Don't save sessions with only 1 message (just the initial greeting)
+    if (!currentSessionId || messages.length <= 1 || !shouldSaveSession) return;
     const session = buildSession();
     if (!session) return;
     const history = getHistory();
@@ -145,7 +148,8 @@ function Chat() {
 
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
 
-      if (currentSessionId && messages.length > 0 && shouldSaveSession) {
+      // Don't save sessions with only 1 message (just the initial greeting)
+      if (currentSessionId && messages.length > 1 && shouldSaveSession) {
         const session = buildSession();
         if (session) {
           const history = getHistory();
@@ -194,14 +198,16 @@ function Chat() {
   }, [messages, isSessionEnded, endSessionDueToLimit]);
 
   useEffect(() => {
-    if (currentSessionId && messages.length > 0 && shouldSaveSession && !isSessionEnded) {
+    // Don't save sessions with only 1 message (just the initial greeting)
+    if (currentSessionId && messages.length > 1 && shouldSaveSession && !isSessionEnded) {
       saveCurrentSession();
     }
   }, [messages, tokensUsed, currentSessionId, sessionName, shouldSaveSession, saveCurrentSession, isSessionEnded]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (currentSessionId && messages.length > 0 && shouldSaveSession && !isSessionEnded) {
+      // Don't save sessions with only 1 message (just the initial greeting)
+      if (currentSessionId && messages.length > 1 && shouldSaveSession && !isSessionEnded) {
         const session = buildSession();
         if (!session) return;
         const history = getHistory();
@@ -217,6 +223,10 @@ function Chat() {
 
   // Send initial greeting message
   const sendInitialGreeting = useCallback(async () => {
+    // Prevent multiple calls
+    if (initialGreetingSentRef.current) return;
+    initialGreetingSentRef.current = true;
+
     setIsLoading(true);
     setError(null);
 
@@ -256,29 +266,29 @@ function Chat() {
         if (data.metadata?.tokens) setTokensUsed(data.metadata.tokens);
 
         if (data.shouldRedirect) {
-          if (messages.length === 0) {
-            setShouldSaveSession(false);
-            removeCurrentSessionFromHistory();
-          } else {
-            saveCurrentSession();
-          }
+          setShouldSaveSession(false);
+          removeCurrentSessionFromHistory();
           localStorage.removeItem("studentData");
           setTimeout(() => window.location.replace("/tutors"), 8000);
         }
       } else {
         console.error("Błąd w automatycznym powitaniu:", data.error);
         setError(data.error || "Wystąpił błąd podczas rozpoczynania rozmowy");
+        // Reset flag on error so user can retry
+        initialGreetingSentRef.current = false;
       }
     } catch (err) {
       console.error("Initial greeting error:", err);
       setError("Nie można połączyć się z serwerem");
+      // Reset flag on error so user can retry
+      initialGreetingSentRef.current = false;
     } finally {
       setIsLoading(false);
     }
-  }, [studentData, currentSessionId, messages.length, removeCurrentSessionFromHistory, saveCurrentSession]);
+  }, [studentData, currentSessionId, removeCurrentSessionFromHistory]);
 
   useEffect(() => {
-    if (messages.length === 0 && studentData && !isLoading && currentSessionId) {
+    if (messages.length === 0 && studentData && !isLoading && currentSessionId && !initialGreetingSentRef.current) {
       const timer = setTimeout(() => sendInitialGreeting(), 2000);
       return () => clearTimeout(timer);
     }
@@ -368,7 +378,8 @@ function Chat() {
         if (data.shouldRedirect) {
           if (userMessagesBeforeNew > 0 && messagesBeforeNew > 0 && currentSessionId) {
             const messagesToSave = messages.slice(0, -2);
-            if (messagesToSave.length > 0) {
+            // Don't save sessions with only 1 message (just the initial greeting)
+            if (messagesToSave.length > 1) {
               const session = buildSession(messagesToSave, tokensUsed - (data.metadata?.tokens || 0));
               if (session) {
                 const history = getHistory();
@@ -376,6 +387,9 @@ function Chat() {
                 history.currentSessionId = currentSessionId;
                 saveHistory(history);
               }
+            } else {
+              setShouldSaveSession(false);
+              removeCurrentSessionFromHistory();
             }
           } else {
             setShouldSaveSession(false);
@@ -399,7 +413,8 @@ function Chat() {
   const handleSend = useDebounce(handleSendInternal, 500);
 
   const handleEndSession = useCallback(() => {
-    if (messages.length > 0 && currentSessionId) {
+    // Don't save sessions with only 1 message (just the initial greeting)
+    if (messages.length > 1 && currentSessionId) {
       const session = buildSession();
       if (session) {
         const history = getHistory();

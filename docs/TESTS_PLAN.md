@@ -270,8 +270,8 @@ Po wykonaniu każdego scenariusza, zapisz wyniki w tabeli poniżej:
 | Scenariusz | Data testu |  Status | Uwagi/Problemy |
 |------------|------------|--------|----------------|
 | SCENARIUSZ 1: Proste pytanie | 22.01.2026 |  ✅ | - |
-| SCENARIUSZ 2: Kontynuacja | - |  ⏳ | - |
-| SCENARIUSZ 3: Personalizacja | - |  ⏳ | - |
+| SCENARIUSZ 2: Kontynuacja | 22.01.2026 |  ✅ | - |
+| SCENARIUSZ 3: Personalizacja | 22.01.2026 |  ✅ | - |
 | SCENARIUSZ 4: Długa konwersacja | - |  ⏳ | - |
 | SCENARIUSZ 5: Historia | - |  ⏳ | - |
 | SCENARIUSZ 6: Odmowa (off-topic) | - |  ⏳ | - |
