@@ -143,11 +143,12 @@ export const POST: APIRoute = async ({ request }) => {
 
     console.log("✅ [API] Walidacja przeszła, wywołuję mathTutor...");
 
-    // Call math tutor agent with sanitized message
+    // Call math tutor agent with sanitized message and sessionId for token tracking
     const response = await sendMessage(
       sanitizedMessage,
       history as Message[] | undefined,
-      studentData as StudentData | undefined
+      studentData as StudentData | undefined,
+      sessionId as string | undefined
     );
 
     console.log("📤 [API] Odpowiedź z mathTutor:", {

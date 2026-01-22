@@ -3,7 +3,7 @@ import NameInput from "./NameInput";
 ---
 
 <div
-  class="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col items-center justify-center p-4 relative overflow-hidden"
+  class="min-h-screen bg-linear-to-br from-background via-background to-accent/5 flex flex-col items-center justify-center p-4 relative overflow-hidden"
 >
   <!-- Decorative background elements -->
   <div class="absolute inset-0 -z-10 overflow-hidden">
@@ -32,8 +32,19 @@ import NameInput from "./NameInput";
       <p class="text-lg md:text-xl text-muted-foreground font-medium mb-8">Gotowy na naukę?</p>
     </div>
 
+    <!-- Blocked message (hidden by default) -->
+    <div
+      id="blocked-message"
+      class="hidden w-full max-w-md mx-auto mb-6 p-4 rounded-2xl bg-destructive/10 border-2 border-destructive/30 text-center animate-in fade-in duration-500"
+    >
+      <div class="text-3xl mb-2">🔒</div>
+      <h3 class="text-lg font-bold text-destructive mb-2">Aplikacja tymczasowo niedostępna</h3>
+      <p id="blocked-message-text" class="text-sm text-muted-foreground"></p>
+    </div>
+
     <div class="flex flex-col gap-4 items-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
       <a
+        id="start-button"
         href="/tutors"
         class="w-46 inline-flex items-center cursor-pointer justify-center gap-3 whitespace-nowrap rounded-2xl text-lg font-bold transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 p-3 bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-1 shadow-lg hover:shadow-xl active:scale-95"
       >
@@ -69,6 +80,49 @@ import NameInput from "./NameInput";
     }
   };
 
+  // Function to check token status and block app if limit reached
+  const checkTokenStatus = async () => {
+    try {
+      const response = await fetch("/api/token-status");
+      const data = await response.json();
+
+      if (data.success && data.isBlocked) {
+        showBlockedMessage(data.message);
+      }
+    } catch (error) {
+      console.error("Error checking token status:", error);
+      // Don't block app on error - allow usage
+    }
+  };
+
+  // Function to show blocked message and disable start button
+  const showBlockedMessage = (message: string) => {
+    const blockedMessage = document.getElementById("blocked-message");
+    const blockedMessageText = document.getElementById("blocked-message-text");
+    const startButton = document.getElementById("start-button") as HTMLAnchorElement;
+
+    if (blockedMessage && blockedMessageText) {
+      blockedMessageText.textContent = message;
+      blockedMessage.classList.remove("hidden");
+    }
+
+    if (startButton) {
+      // Disable the button
+      startButton.removeAttribute("href");
+      startButton.setAttribute("aria-disabled", "true");
+      startButton.classList.remove(
+        "bg-primary",
+        "hover:bg-primary/90",
+        "hover:-translate-y-1",
+        "hover:shadow-xl",
+        "active:scale-95",
+        "cursor-pointer"
+      );
+      startButton.classList.add("bg-muted", "text-muted-foreground", "cursor-not-allowed", "opacity-60");
+      startButton.onclick = (e) => e.preventDefault();
+    }
+  };
+
   // Function to initialize home page
   const initHome = () => {
     const storedName = localStorage.getItem("userName");
@@ -77,6 +131,9 @@ import NameInput from "./NameInput";
     if (storedName) {
       showWelcomeSection(storedName);
     }
+
+    // Check token status
+    checkTokenStatus();
   };
 
   const runWhenIdle = (callback) => {
