@@ -2,13 +2,8 @@ import { useEffect, useState } from "react";
 import { buttonVariants } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import type { ChatHistory, ChatSession, Message } from "../agents/mathTutor/types";
-
-const cleanMathNotation = (text: string): string =>
-  text
-    .replace(/\/([^/]+)\//g, "$1")
-    .replace(/\\?\\\(([^)]+)\\\)/g, "$1")
-    .replace(/\\?\\\[([^\]]+)\\\]/g, "$1")
-    .replace(/\$([^$]+)\$/g, "$1");
+import { cleanMathNotation } from "./chat/chatUtils";
+import { sanitizeForDisplay } from "../lib/contentFilter";
 
 const getHistory = (): ChatHistory => {
   if (typeof window === "undefined") return { sessions: [], currentSessionId: null };
@@ -22,6 +17,9 @@ const findSession = (history: ChatHistory): ChatSession | null => {
 };
 
 const renderMessage = (message: Message, avatar: string | undefined, index: number) => {
+  // Sanitize all message content before displaying
+  const sanitizedContent = sanitizeForDisplay(message.content);
+
   if (message.role === "assistant") {
     return (
       <div key={`assistant-${index}`} className="flex items-start gap-3">
@@ -30,7 +28,7 @@ const renderMessage = (message: Message, avatar: string | undefined, index: numb
         </Avatar>
         <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 max-w-[80%]">
           <p className="text-sm font-semibold text-gray-950 mb-1">Korepetytor</p>
-          <p className="text-sm text-gray-950 whitespace-pre-wrap">{cleanMathNotation(message.content)}</p>
+          <p className="text-sm text-gray-950 whitespace-pre-wrap">{cleanMathNotation(sanitizedContent)}</p>
         </div>
       </div>
     );
@@ -41,7 +39,7 @@ const renderMessage = (message: Message, avatar: string | undefined, index: numb
       <div key={`user-${index}`} className="flex items-start gap-3 justify-end">
         <div className="bg-blue-600 rounded-2xl px-4 py-3 max-w-[80%]">
           <p className="text-sm font-semibold text-white mb-1">Ty</p>
-          <p className="text-sm text-white whitespace-pre-wrap">{message.content}</p>
+          <p className="text-sm text-white whitespace-pre-wrap">{sanitizedContent}</p>
         </div>
         <Avatar className="w-10 h-10 shrink-0 bg-blue-100">
           <AvatarFallback className="text-2xl bg-blue-100">{avatar || "🦊"}</AvatarFallback>
