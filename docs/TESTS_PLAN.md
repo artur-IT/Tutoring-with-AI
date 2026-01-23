@@ -294,7 +294,7 @@ Aby uznać FEATURE 3.1 za ukończoną, wszystkie poniższe kryteria muszą być 
 - ✅ Zidentyfikowane problemy są udokumentowane
 - ✅ Aplikacja jest gotowa do wdrożenia (podstawowy flow działa)
 
-**Status FEATURE 3.1:** ⏳ Do wykonania
+**Status FEATURE 3.1:** ✅ Ukończone (22 stycznia 2026)
 
 ---
 
@@ -805,7 +805,7 @@ npx playwright install
 ## Status implementacji
 
 **Data utworzenia:** 7 stycznia 2026
-**Ostatnia aktualizacja:** 8 stycznia 2026
+**Ostatnia aktualizacja:** 23 stycznia 2026
 
 ### Ukończone fazy
 
@@ -843,6 +843,11 @@ npx playwright install
 ## Znane problemy i naprawy
 
 ### Naprawione (22 stycznia 2026)
+
+**Podsumowanie tygodnia (19-23 stycznia 2026):**
+- ✅ Naprawiono 4 krytyczne problemy UX (znaki matematyczne, ułamki, pętla powitania, filtrowanie historii)
+- ✅ Wszystkie testy jednostkowe przechodzą (48/48 ✅)
+- ✅ Aplikacja jest stabilna i gotowa do testów manualnych (FEATURE 3.1)
 
 - ✅ **Problem z wyświetlaniem znaków specjalnych** - Naprawiono escape'owanie znaków matematycznych (`/`, `\`, `*`, `+`, `-`, `=`, `^`, `_`, `$`) w `sanitizeForDisplay`. React automatycznie escape'uje zawartość, więc podwójne escape'owanie powodowało wyświetlanie kodów HTML zamiast znaków.
 - ✅ **Problem z wyświetlaniem ułamków** - Naprawiono funkcję `cleanMathNotation`, która usuwała kreskę ułamkową z ułamków typu `1/2`. Usunięto regex `/\/([^/]+)\//g`, który usuwał wzorce LaTeX, ale również normalne ułamki.
