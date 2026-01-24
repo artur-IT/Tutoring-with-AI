@@ -2,10 +2,13 @@
   "name": "tutor-with-ai",
   "type": "module",
   "version": "0.0.1",
+  "homepage": "https://artur-it.github.io/Tutoring-with-AI/",
   "scripts": {
     "dev": "astro dev --host",
     "build": "astro check && astro build",
     "preview": "astro preview",
+    "predeploy" : "npm run build",
+    "deploy" : "gh-pages -d dist",
     "astro": "astro",
     "check": "eslint . && prettier --check . && astro check",
     "test": "vitest",
