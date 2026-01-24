@@ -101,11 +101,11 @@ export default function History() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col p-4 md:p-6 max-w-3xl mx-auto"
+      className="min-h-screen bg-linear-to-br from-background via-background to-accent/5 flex flex-col p-4 md:p-6 max-w-3xl mx-auto"
       suppressHydrationWarning
     >
       {/* Header */}
-      <div className="text-center mb-10 mt-8 animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="text-center mb-10 mt-4 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="text-4xl mb-4 animate-[wiggle_2s_ease-in-out_infinite]">📖</div>
         <h1 className="text-4xl md:text-5xl font-black text-foreground mb-2 tracking-tight">
           Twoje <span className="text-primary">rozmowy</span>
@@ -182,7 +182,7 @@ export default function History() {
                     </div>
 
                     {/* Actions */}
-                    <div className="shrink-0 flex items-center gap-2">
+                    <div className="shrink-0 flex items-center">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <button
@@ -232,7 +232,7 @@ export default function History() {
       </ul>
 
       {/* Back button */}
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center">
         <a href="/" className={buttonVariants({ variant: "back" })}>
           <img src={ArrowLeftSimpleIcon} alt="" width={20} height={20} className="w-5 h-5" aria-hidden="true" />
           Strona główna
