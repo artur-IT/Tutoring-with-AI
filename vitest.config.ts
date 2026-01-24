@@ -4,6 +4,7 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
+  base: "/Tutoring-with-AI/",
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
