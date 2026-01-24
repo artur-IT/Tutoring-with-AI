@@ -30,7 +30,7 @@ export default function ChatInput({
 
   return (
     <div className="bg-white rounded-xl shadow-md p-3 mb-4">
-      <div className="flex items-center gap-2">
+      <div className="flex gap-2">
         <div className="flex-1">
           <label htmlFor={textareaId} className="sr-only">
             Treść wiadomości
