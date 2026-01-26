@@ -97,7 +97,7 @@ export default function HistoryChat() {
   };
 
   return (
-    <div className="history-chat-print min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
+    <div className="history-chat-print h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto overflow-y-auto">
       <header className="flex justify-between items-center mb-6">
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-gray-900">Twoja rozmowa</h1>

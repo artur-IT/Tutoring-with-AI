@@ -22,7 +22,7 @@ const canonicalUrl = Astro.url;
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
     <meta property="og:title" content={title} />
@@ -73,7 +73,7 @@ const canonicalUrl = Astro.url;
     >
       Przejdź do treści
     </a>
-    <main id="main-content" class="min-h-screen">
+    <main id="main-content" class="h-screen overflow-hidden">
       <slot />
     </main>
 
@@ -88,5 +88,14 @@ const canonicalUrl = Astro.url;
     margin: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden;
+  }
+  
+  /* Use dynamic viewport height for better mobile support */
+  @supports (height: 100dvh) {
+    html,
+    body {
+      height: 100dvh;
+    }
   }
 </style>

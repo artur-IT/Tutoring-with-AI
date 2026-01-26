@@ -101,7 +101,7 @@ export default function History() {
 
   return (
     <div
-      className="min-h-screen bg-linear-to-br from-background via-background to-accent/5 flex flex-col p-4 md:p-6 max-w-3xl mx-auto"
+      className="h-screen bg-linear-to-br from-background via-background to-accent/5 flex flex-col p-4 md:p-6 max-w-3xl mx-auto overflow-y-auto"
       suppressHydrationWarning
     >
       {/* Header */}
