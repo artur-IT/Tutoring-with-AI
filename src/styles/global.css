@@ -135,6 +135,29 @@
     .h-screen {
       height: 100dvh;
     }
+    
+    .min-h-screen {
+      min-height: 100dvh;
+    }
+  }
+
+  /* Dynamic viewport height utilities for mobile */
+  .h-dvh {
+    height: 100vh;
+  }
+  
+  .min-h-dvh {
+    min-height: 100vh;
+  }
+
+  @supports (height: 100dvh) {
+    .h-dvh {
+      height: 100dvh;
+    }
+    
+    .min-h-dvh {
+      min-height: 100dvh;
+    }
   }
 
   /* Safe area support for mobile devices with notches */

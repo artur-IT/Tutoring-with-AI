@@ -69,7 +69,7 @@ export default function HistoryChat() {
 
   if (!isMounted) {
     return (
-      <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
+      <div className="min-h-dvh bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
         <div className="text-center text-gray-600 py-16">
           <p className="text-sm">Ładowanie rozmowy...</p>
         </div>
@@ -79,7 +79,7 @@ export default function HistoryChat() {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
+      <div className="min-h-dvh bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
         <div className="text-center py-16">
           <div className="text-5xl mb-4" role="img" aria-label="Szukanie">
             🔍
@@ -99,7 +99,7 @@ export default function HistoryChat() {
   };
 
   return (
-    <div className="history-chat-print h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto overflow-y-auto">
+    <div className="history-chat-print min-h-dvh bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto overflow-y-auto">
       <header className="flex justify-between items-center mb-6">
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-gray-900">Twoja rozmowa</h1>
