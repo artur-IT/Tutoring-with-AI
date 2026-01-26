@@ -23,6 +23,13 @@ export function PwaInstallButton() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
+  // Check if we're in dev mode (localhost or 127.0.0.1)
+  const isDevMode =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname.includes("localhost"));
+
   useEffect(() => {
     // Check if we're on the home page
     const checkHomePage = () => {
@@ -66,11 +73,38 @@ export function PwaInstallButton() {
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     window.addEventListener("appinstalled", handleAppInstalled);
 
+    // In dev mode, simulate the install prompt for testing
+    if (isDevMode) {
+      // Create a mock event for testing
+      const mockEvent = {
+        preventDefault: () => {},
+        prompt: async () => {
+          console.log("?? DEV MODE: Install prompt would be shown here");
+          // Simulate user accepting after a delay
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        },
+        userChoice: Promise.resolve({ outcome: "accepted" as const, platform: "web" }),
+      } as BeforeInstallPromptEvent;
+
+      // Show button after a short delay in dev mode
+      const timer = setTimeout(() => {
+        setDeferredPrompt(mockEvent);
+        setIsVisible(true);
+        console.log("?? DEV MODE: PWA Install button is visible for testing");
+      }, 1000);
+
+      return () => {
+        window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+        window.removeEventListener("appinstalled", handleAppInstalled);
+        clearTimeout(timer);
+      };
+    }
+
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
       window.removeEventListener("appinstalled", handleAppInstalled);
     };
-  }, [isDismissed, isHomePage]);
+  }, [isDismissed, isHomePage, isDevMode]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -86,6 +120,9 @@ export function PwaInstallButton() {
         setIsVisible(false);
         setIsDismissed(true);
         localStorage.setItem("pwa-install-dismissed", "true");
+        if (isDevMode) {
+          console.log("?? DEV MODE: Installation accepted (simulated)");
+        }
       }
     } catch (error) {
       console.error("Error showing install prompt:", error);
@@ -104,18 +141,20 @@ export function PwaInstallButton() {
     <button
       onClick={handleInstallClick}
       className={cn(
-        "inline-flex items-center justify-center gap-2",
-        "rounded-xl text-base font-semibold transition-all",
+        "fixed top-4 right-4 z-50",
+        "inline-flex items-center justify-center gap-1.5",
+        "rounded-lg text-xs font-medium transition-all",
         "bg-background text-primary hover:bg-muted",
-        "border-2 border-primary shadow-sm hover:shadow-md",
-        "px-6 py-3 active:scale-95",
-        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        "border border-primary shadow-sm hover:shadow-md",
+        "px-3 py-1.5 active:scale-95",
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "print:hidden"
       )}
-      aria-label="Zainstaluj aplikację"
+      aria-label="Zainstaluj aplikacj?"
       type="button"
     >
-      <DownloadIcon className="w-5 h-5" aria-hidden="true" />
-      <span>Zainstaluj aplikację</span>
+      <DownloadIcon className="w-3.5 h-3.5" aria-hidden="true" />
+      <span>Zainstaluj</span>
     </button>
   );
 }

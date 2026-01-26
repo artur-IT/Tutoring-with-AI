@@ -12,6 +12,9 @@ import { PwaInstallButton } from "./PwaInstallButton";
     <div class="absolute bottom-20 left-10 w-80 h-80 bg-accent/10 rounded-full blur-3xl"></div>
   </div>
 
+  <!-- PWA Install Button (only visible when app is installable) -->
+  <PwaInstallButton client:load />
+
   <div class="text-center mt-2 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
     <div class="mb-4 text-5xl animate-[wiggle_2s_ease-in-out_infinite]">🎓</div>
     <h1 class="text-4xl md:text-5xl font-black text-foreground mb-4 tracking-tight">
@@ -60,9 +63,6 @@ import { PwaInstallButton } from "./PwaInstallButton";
         <span class="text-xl">📚</span>
         Twoje rozmowy
       </a>
-
-      <!-- PWA Install Button (only visible when app is installable) -->
-      <PwaInstallButton client:load />
     </div>
   </div>
 </div>
