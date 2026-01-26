@@ -38,7 +38,13 @@ export const POST: APIRoute = async ({ request }) => {
 
     const { message, history, studentData, subject, sessionId } = JSON.parse(text);
 
-    console.log("📥 [API] Otrzymano:", { message, historyLength: history?.length ?? 0, studentData, subject, sessionId });
+    console.log("📥 [API] Otrzymano:", {
+      message,
+      historyLength: history?.length ?? 0,
+      studentData,
+      subject,
+      sessionId,
+    });
 
     // Rate limiting
     if (sessionId) {
@@ -48,11 +54,20 @@ export const POST: APIRoute = async ({ request }) => {
 
       if (requestCount > sessionLimits.maxMessagesPerSession) {
         console.warn(`⚠️ [API] Limit zapytań przekroczony dla sesji ${sessionId}: ${requestCount}`);
-        return jsonResponse({ success: false, error: "Osiągnięto limit zapytań dla tej sesji. Proszę rozpocząć nową sesję.", limitExceeded: true }, 429);
+        return jsonResponse(
+          {
+            success: false,
+            error: "Osiągnięto limit zapytań dla tej sesji. Proszę rozpocząć nową sesję.",
+            limitExceeded: true,
+          },
+          429
+        );
       }
 
       sessionRequestCounts.set(sessionId, { count: requestCount, createdAt: sessionData?.createdAt ?? Date.now() });
-      console.log(`📊 [API] Liczba zapytań dla sesji ${sessionId}: ${requestCount}/${sessionLimits.maxMessagesPerSession}`);
+      console.log(
+        `📊 [API] Liczba zapytań dla sesji ${sessionId}: ${requestCount}/${sessionLimits.maxMessagesPerSession}`
+      );
     }
 
     if (!message || typeof message !== "string") {

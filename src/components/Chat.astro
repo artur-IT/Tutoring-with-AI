@@ -2,7 +2,6 @@
 import { Input } from "./ui/input";
 import { Progress } from "./ui/progress";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import PlusIcon from "../assets/icons/plus.svg";
 import SendIcon from "../assets/icons/send.svg";
 ---
 
@@ -49,15 +48,7 @@ import SendIcon from "../assets/icons/send.svg";
 
   {/* Input section */}
   <div class="bg-white rounded-xl shadow-md p-3 mb-4">
-    <div class="flex items-center gap-2">
-      {/* Plus icon button */}
-      <button
-        type="button"
-        class="shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center hover:bg-blue-100 transition-colors"
-        aria-label="Dodaj załącznik"
-      >
-        <PlusIcon aria-hidden="true" focusable="false" />
-      </button>
+    <div class="flex gap-2">
       {/* Input field */}
       <div class="flex-1">
         <label for="chat-message" class="sr-only">Wiadomość</label>

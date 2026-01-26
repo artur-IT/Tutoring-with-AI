@@ -1,17 +1,16 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 
 const STORAGE_KEY = "userName";
 const EVENT_NAME = "nameUpdated";
 
+function getInitialName(): string {
+  if (typeof window === "undefined") return "";
+  return localStorage.getItem(STORAGE_KEY) || "";
+}
+
 /* Custom hook for managing user name in localStorage */
 export function useUserName() {
-  const [name, setName] = useState<string>("");
-
-  // Load name from localStorage after mount (client-side only)
-  useEffect(() => {
-    const storedName = localStorage.getItem(STORAGE_KEY) || "";
-    setName(storedName);
-  }, []);
+  const [name, setName] = useState<string>(getInitialName);
 
   const saveName = useCallback((newName: string): boolean => {
     const trimmedName = newName.trim();
