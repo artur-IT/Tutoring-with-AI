@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Printer } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import type { ChatHistory, ChatSession, Message } from "../agents/mathTutor/types";
@@ -97,30 +99,28 @@ export default function HistoryChat() {
   };
 
   return (
-    <div className="history-chat-print h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
-      <header className="flex justify-between items-start gap-2 mb-4 shrink-0">
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Twoja rozmowa</h1>
-          {session.name && <p className="text-xs md:text-sm text-gray-600 mt-1 truncate">{session.name}</p>}
+    <div className="history-chat-print h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto overflow-y-auto">
+      <header className="flex justify-between items-center mb-6">
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold text-gray-900">Twoja rozmowa</h1>
+          {session.name && <p className="text-sm text-gray-600 mt-1">{session.name}</p>}
         </div>
-        <div className="flex gap-1 print:hidden shrink-0">
-          <a href="/history-list" className={buttonVariants({ variant: "back", className: "text-xs md:text-sm px-2 md:px-4 py-1.5 md:py-2" })}>
-            <span className="hidden sm:inline">Wszystkie rozmowy</span>
-            <span className="sm:hidden">Lista</span>
+        <div className="flex gap-2 print:hidden">
+          <a href="/history-list" className={cn(buttonVariants({ variant: "back" }), "text-sm px-3 py-2")}>
+            Wszystkie rozmowy
           </a>
           <button
             type="button"
             onClick={handlePrint}
-            className={buttonVariants({ variant: "outline", className: "text-xs md:text-sm px-2 md:px-4 py-1.5 md:py-2" })}
+            className={cn(buttonVariants({ variant: "outline" }), "p-2 min-w-[40px]")}
             aria-label="Drukuj rozmowę"
           >
-            <span className="hidden sm:inline">Drukuj</span>
-            <span className="sm:hidden">🖨️</span>
+            <Printer className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
       </header>
 
-      <div className="flex-1 space-y-4 mb-4 overflow-y-auto min-h-0" role="region" aria-label="Wiadomości historii">
+      <div className="flex-1 space-y-4 mb-4 overflow-y-auto" role="region" aria-label="Wiadomości historii">
         {session.messages.length === 0 && (
           <div className="text-center text-gray-600 mt-16">
             <div className="text-5xl mb-4" role="img" aria-label="Pusta rozmowa">
