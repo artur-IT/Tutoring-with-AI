@@ -92,17 +92,29 @@ export default function HistoryChat() {
     );
   }
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
-    <div className="min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
+    <div className="history-chat-print min-h-screen bg-white flex flex-col p-4 md:p-6 max-w-3xl mx-auto">
       <header className="flex justify-between items-center mb-6">
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-gray-900">Twoja rozmowa</h1>
           {session.name && <p className="text-sm text-gray-600 mt-1">{session.name}</p>}
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 print:hidden">
           <a href="/history-list" className={buttonVariants({ variant: "back" })}>
             Wszystkie rozmowy
           </a>
+          <button
+            type="button"
+            onClick={handlePrint}
+            className={buttonVariants({ variant: "outline" })}
+            aria-label="Drukuj rozmowę"
+          >
+            Drukuj
+          </button>
         </div>
       </header>
 
@@ -118,6 +130,10 @@ export default function HistoryChat() {
 
         {session.messages.map((message, index) => renderMessage(message, session.avatar, index))}
       </div>
+
+      <footer className="hidden print:block text-sm text-gray-500 mt-8 pt-4 border-t border-gray-200">
+        Wydrukowano: {new Date().toLocaleString("pl-PL", { dateStyle: "long", timeStyle: "short" })}
+      </footer>
     </div>
   );
 }
