@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -101,11 +102,11 @@ export default function History() {
 
   return (
     <div
-      className="h-screen bg-linear-to-br from-background via-background to-accent/5 flex flex-col p-4 md:p-6 max-w-3xl mx-auto"
+      className="h-screen bg-linear-to-br from-background via-background to-accent/5 flex flex-col p-4 md:p-6 max-w-3xl mx-auto overflow-y-auto"
       suppressHydrationWarning
     >
       {/* Header */}
-      <div className="text-center mb-6 mt-4 shrink-0 animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="text-center mb-10 mt-4 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="text-4xl mb-4 animate-[wiggle_2s_ease-in-out_infinite]">📖</div>
         <h1 className="text-4xl md:text-5xl font-black text-foreground mb-2 tracking-tight">
           Twoje <span className="text-primary">rozmowy</span>
@@ -113,8 +114,8 @@ export default function History() {
         <p className="text-lg text-muted-foreground">Przejrzyj swoje sesje nauki</p>
       </div>
 
-      {/* Session list - scrollable */}
-      <ul className="flex-1 space-y-4 mb-4 overflow-y-auto min-h-0" suppressHydrationWarning>
+      {/* Session list */}
+      <ul className="flex-1 space-y-4 mb-8" suppressHydrationWarning>
         {!isMounted ? (
           <li className="text-center text-gray-600 py-16">
             <p className="text-sm">Ładowanie twoich rozmów...</p>
@@ -231,9 +232,12 @@ export default function History() {
         )}
       </ul>
 
-      {/* Back button - always visible at bottom */}
-      <div className="flex justify-center shrink-0 pt-4 pb-2">
-        <a href="/" className={buttonVariants({ variant: "back" })}>
+      {/* Back button */}
+      <div className="flex justify-center pb-4">
+        <a
+          href="/"
+          className={cn(buttonVariants({ variant: "back" }), "text-sm px-4 py-2 md:text-base md:px-6 md:py-3")}
+        >
           <img src={ArrowLeftSimpleIcon} alt="" width={20} height={20} className="w-5 h-5" aria-hidden="true" />
           Strona główna
         </a>
