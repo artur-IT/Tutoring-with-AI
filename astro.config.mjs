@@ -4,7 +4,7 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
-import node from "@astrojs/node";
+import vercel from "@astrojs/vercel";
 import AstroPWA from "@vite-pwa/astro";
 
 // https://astro.build/config
@@ -177,10 +177,6 @@ export default defineConfig({
     // Disable ESLint in dev mode for faster startup
     clearScreen: false,
   },
-  // Only use adapter in production
-  ...(import.meta.env.PROD && {
-    adapter: node({
-      mode: "standalone",
-    }),
-  }),
+  // Vercel-only: serverless output for deployment; dev server ignores adapter
+  ...(import.meta.env.PROD && { adapter: vercel() }),
 });
