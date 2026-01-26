@@ -3,11 +3,11 @@ import TutorsForm from "./TutorsForm";
 ---
 
 <div
-  class="h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col items-center justify-center p-4 md:p-6 overflow-y-auto"
+  class="h-screen bg-linear-to-br from-background via-background to-primary/5 flex flex-col p-4 md:p-6 overflow-y-auto"
 >
-  <div class="w-full max-w-3xl">
+  <div class="w-full max-w-3xl mx-auto flex flex-col min-h-full">
     <!-- Header -->
-    <div class="text-center mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+    <div class="text-center mb-8 mt-4 shrink-0 animate-in fade-in slide-in-from-top-4 duration-700">
       <div class="text-4xl mb-4 animate-[wiggle_2s_ease-in-out_infinite]">📚</div>
       <h1 class="text-4xl md:text-5xl font-black text-foreground mb-4 tracking-tight">
         Wybierz <span class="text-primary">przedmiot</span>
@@ -16,7 +16,7 @@ import TutorsForm from "./TutorsForm";
     </div>
 
     <!-- Tutors Form Component -->
-    <div class="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+    <div class="flex-1 flex items-center justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 min-h-0">
       <TutorsForm client:idle />
     </div>
   </div>
