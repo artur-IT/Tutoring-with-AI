@@ -29,7 +29,9 @@ package-lock.json
 pnpm-lock.yaml
 yarn.lock
 
-# Documentation that should not be formatted
+# Documentation and tooling (not part of app source)
+.cursor/
+docs/
 CHANGELOG.md
 LICENSE
 

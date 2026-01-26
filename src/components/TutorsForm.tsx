@@ -147,7 +147,7 @@ function TutorsForm() {
             <Select value={selectedTopic} onValueChange={handleTopicChange} required>
               <SelectTrigger
                 id="topic-select"
-                className="w-full border-solid border-2 border-[#006fea]"
+                className="w-full border-solid border-2 border-[#006fea] h-12"
                 aria-labelledby={topicLabelId}
               >
                 <SelectValue placeholder="Wybierz temat" />
@@ -173,7 +173,7 @@ function TutorsForm() {
               value={problemDescription}
               onChange={handleProblemChange}
               placeholder="np. Nie rozumiem logarytmów"
-              className="w-full text-sm border-solid border-2 border-[#006fea]"
+              className="w-full text-sm border-solid border-2 border-[#006fea] h-12"
               required
               maxLength={200}
             />
@@ -191,7 +191,7 @@ function TutorsForm() {
               value={interests}
               onChange={handleInterestsChange}
               placeholder="np. piłka nożna, książki, filmy"
-              className="w-full text-sm border-solid border-2 border-[#006fea]"
+              className="w-full text-sm border-solid border-2 border-[#006fea] h-12"
               required
               maxLength={100}
             />
