@@ -103,6 +103,7 @@ export default function History() {
   return (
     <div
       className="h-screen bg-linear-to-br from-background via-background to-accent/5 flex flex-col p-4 md:p-6 max-w-3xl mx-auto overflow-y-auto"
+      style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))" }}
       suppressHydrationWarning
     >
       {/* Header */}
@@ -115,7 +116,7 @@ export default function History() {
       </div>
 
       {/* Session list */}
-      <ul className="flex-1 space-y-4 mb-8" suppressHydrationWarning>
+      <ul className="flex-1 space-y-4 mb-12" suppressHydrationWarning>
         {!isMounted ? (
           <li className="text-center text-gray-600 py-16">
             <p className="text-sm">Ładowanie twoich rozmów...</p>
@@ -233,7 +234,7 @@ export default function History() {
       </ul>
 
       {/* Back button */}
-      <div className="flex justify-center pb-4">
+      <div className="flex justify-center pb-6 pb-safe shrink-0">
         <a
           href="/"
           className={cn(buttonVariants({ variant: "back" }), "text-sm px-4 py-2 md:text-base md:px-6 md:py-3")}
