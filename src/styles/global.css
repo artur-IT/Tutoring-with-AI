@@ -163,3 +163,11 @@
     }
   }
 }
+
+/* Preserve message bubble colors when printing history chat */
+@media print {
+  .history-chat-print * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
