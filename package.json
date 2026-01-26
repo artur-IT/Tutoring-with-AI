@@ -3,6 +3,9 @@
   "type": "module",
   "version": "0.0.1",
   "homepage": "https://artur-it.github.io/Tutoring-with-AI/",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "astro dev --host",
     "build": "astro check && astro build",
