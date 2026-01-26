@@ -1,5 +1,6 @@
 ---
 import NameInput from "./NameInput";
+import { PwaInstallButton } from "./PwaInstallButton";
 ---
 
 <div
@@ -59,6 +60,9 @@ import NameInput from "./NameInput";
         <span class="text-xl">📚</span>
         Twoje rozmowy
       </a>
+
+      <!-- PWA Install Button (only visible when app is installable) -->
+      <PwaInstallButton client:load />
     </div>
   </div>
 </div>
