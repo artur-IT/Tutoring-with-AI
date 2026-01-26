@@ -136,6 +136,11 @@
     }
   }
 
+  /* Safe area support for mobile devices with notches */
+  .pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
+  }
+
   /* Delight animations */
   @keyframes bounce {
     0%,
