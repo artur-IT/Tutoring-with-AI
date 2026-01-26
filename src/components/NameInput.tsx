@@ -39,7 +39,7 @@ export default function NameInput() {
       <DialogTrigger asChild>
         <Button
           variant="ok"
-          aria-label="Otwórz formularz wprowadzania imienia"
+          aria-label={!name ? "Otwórz formularz wprowadzania imienia" : "Zmień swoje imię"}
           suppressHydrationWarning
           className="text-lg py-3 animate-in fade-in slide-in-from-bottom-4 duration-700"
         >
