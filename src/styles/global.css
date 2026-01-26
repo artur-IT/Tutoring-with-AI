@@ -126,7 +126,8 @@
       system-ui,
       -apple-system,
       sans-serif;
-    font-feature-settings: "cv11" 1; /* Friendly a */
+    font-feature-settings: "cv11" 1;
+    /* Friendly a */
   }
 
   /* Better mobile viewport height support */
@@ -143,33 +144,40 @@
 
   /* Delight animations */
   @keyframes bounce {
+
     0%,
     100% {
       transform: scale(1);
     }
+
     50% {
       transform: scale(1.1);
     }
   }
 
   @keyframes wiggle {
+
     0%,
     100% {
       transform: rotate(0deg);
     }
+
     25% {
       transform: rotate(-5deg);
     }
+
     75% {
       transform: rotate(5deg);
     }
   }
 
   @keyframes pulse-slow {
+
     0%,
     100% {
       opacity: 1;
     }
+
     50% {
       opacity: 0.7;
     }

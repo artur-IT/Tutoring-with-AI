@@ -73,7 +73,7 @@ const canonicalUrl = Astro.url;
     >
       Przejdź do treści
     </a>
-    <main id="main-content" class="h-screen overflow-hidden">
+    <main id="main-content" class="min-h-screen">
       <slot />
     </main>
 
@@ -87,15 +87,14 @@ const canonicalUrl = Astro.url;
   body {
     margin: 0;
     width: 100%;
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
   }
 
   /* Use dynamic viewport height for better mobile support */
   @supports (height: 100dvh) {
     html,
     body {
-      height: 100dvh;
+      min-height: 100dvh;
     }
   }
 </style>
