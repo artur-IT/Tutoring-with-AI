@@ -98,7 +98,7 @@ function TutorsForm() {
   const handleEnglishClick = useCallback(() => handleSubjectSelect("angielski"), [handleSubjectSelect]);
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-6 w-full max-w-[350px] py-4">
       {formError && (
         <div className="w-full max-w-[350px] p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
           {formError}
