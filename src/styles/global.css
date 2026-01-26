@@ -129,6 +129,13 @@
     font-feature-settings: "cv11" 1; /* Friendly a */
   }
 
+  /* Better mobile viewport height support */
+  @supports (height: 100dvh) {
+    .h-screen {
+      height: 100dvh;
+    }
+  }
+
   /* Delight animations */
   @keyframes bounce {
     0%,
