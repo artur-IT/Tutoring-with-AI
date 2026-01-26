@@ -43,6 +43,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^14.6.1",
+    "@types/eslint-plugin-jsx-a11y": "^6.10.1",
     "@vite-pwa/astro": "^1.2.0",
     "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^9.39.1",

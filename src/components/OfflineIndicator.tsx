@@ -12,9 +12,10 @@ function OfflineIndicator() {
   const isOnline = useOnline();
   const [isMounted, setIsMounted] = useState(false);
 
-  // Ensure component only renders after client-side hydration
+  // Ensure component only renders after client-side hydration (deferred to avoid sync setState in effect)
   useEffect(() => {
-    setIsMounted(true);
+    const id = requestAnimationFrame(() => setIsMounted(true));
+    return () => cancelAnimationFrame(id);
   }, []);
 
   // Don't render during SSR or if online

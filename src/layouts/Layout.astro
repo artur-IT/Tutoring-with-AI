@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import { AppProviders } from "../components/AppProviders";
 
 interface Props {
@@ -46,7 +46,7 @@ const canonicalUrl = Astro.url;
     />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
-    <ViewTransitions />
+    <ClientRouter />
     <script
       is:inline
       set:html={isProduction

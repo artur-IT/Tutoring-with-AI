@@ -211,7 +211,7 @@ export const validateFormInput = (input: string, fieldName: string, maxLength: n
   });
 
   if (!result.isValid) {
-    return result;
+    return result.error ? { ...result, error: `${fieldName}: ${result.error}` } : result;
   }
 
   return {
