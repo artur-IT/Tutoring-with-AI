@@ -18,8 +18,8 @@ import UserIcon from "../assets/icons/user.svg?url";
 import ChevronRightIcon from "../assets/icons/chevron-right.svg?url";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
 import type { ChatHistory, ChatSession } from "../agents/mathTutor/types";
+import { getHistory, saveHistory } from "../lib/chatHistory";
 
-// Load sessions helper function
 const loadSessionsFromStorage = (): ChatSession[] => {
   if (typeof window === "undefined") return [];
   const historyJson = localStorage.getItem("chatHistory");
@@ -33,29 +33,15 @@ const loadSessionsFromStorage = (): ChatSession[] => {
   }
 };
 
-// Helper to get history from localStorage
-const getHistory = (): ChatHistory => {
-  if (typeof window === "undefined") return { sessions: [], currentSessionId: null };
-  const historyJson = localStorage.getItem("chatHistory");
-  return historyJson ? JSON.parse(historyJson) : { sessions: [], currentSessionId: null };
-};
-
-// Helper to save history to localStorage
-const saveHistory = (history: ChatHistory) => {
-  if (typeof window === "undefined") return;
-  localStorage.setItem("chatHistory", JSON.stringify(history));
-};
+const FADE_OUT_DURATION = 400; // ms
 
 export default function History() {
   // Initialize with empty array to prevent hydration mismatch
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const [deletingSessionId, setDeletingSessionId] = useState<string | null>(null);
 
-  // Load sessions after component mounts (client-side only)
-  // This prevents hydration mismatch by loading data after initial render
-  // Note: This is intentional use of useEffect to load from localStorage (same pattern as Chat.tsx)
   useEffect(() => {
-    // Use setTimeout to avoid linter warning (same pattern as useOnline.ts)
     const timeoutId = setTimeout(() => {
       setIsMounted(true);
       const loaded = loadSessionsFromStorage();
@@ -71,6 +57,9 @@ export default function History() {
   }, []);
 
   const handleSessionClick = (sessionId: string) => {
+    // Don't navigate if session is being deleted
+    if (deletingSessionId === sessionId) return;
+
     try {
       const history = getHistory();
       history.currentSessionId = sessionId;
@@ -82,20 +71,28 @@ export default function History() {
   };
 
   const handleDeleteSession = (sessionId: string) => {
-    try {
-      const history = getHistory();
-      history.sessions = history.sessions.filter((s) => s.id !== sessionId);
-      // If we're deleting the current session, clear it but stay on history page
-      if (history.currentSessionId === sessionId) {
-        history.currentSessionId = null;
+    // Start fade-out animation
+    setDeletingSessionId(sessionId);
+
+    // Wait for animation to complete, then remove from state
+    setTimeout(() => {
+      try {
+        const history = getHistory();
+        history.sessions = history.sessions.filter((s) => s.id !== sessionId);
+        // If we're deleting the current session, clear it but stay on history page
+        if (history.currentSessionId === sessionId) {
+          history.currentSessionId = null;
+        }
+        saveHistory(history);
+        // Update local state to reflect the deletion
+        setSessions(history.sessions.sort((a, b) => b.lastMessageAt - a.lastMessageAt));
+        setDeletingSessionId(null);
+        console.log("🗑️ [History.tsx] Sesja usunięta, pozostajemy na stronie historii");
+      } catch (e) {
+        console.error("Error deleting session:", e);
+        setDeletingSessionId(null);
       }
-      saveHistory(history);
-      // Update local state to reflect the deletion
-      setSessions(history.sessions.sort((a, b) => b.lastMessageAt - a.lastMessageAt));
-      console.log("🗑️ [History.tsx] Sesja usunięta, pozostajemy na stronie historii");
-    } catch (e) {
-      console.error("Error deleting session:", e);
-    }
+    }, FADE_OUT_DURATION);
   };
 
   const getSessionDescription = (session: ChatSession): string => session.topic || "Brak tematu";
@@ -140,7 +137,13 @@ export default function History() {
             const descriptionId = `session-description-${session.id}`;
 
             return (
-              <li key={session.id}>
+              <li
+                key={session.id}
+                className={cn(
+                  "transition-all duration-400 ease-out",
+                  deletingSessionId === session.id && "opacity-0 scale-95 -translate-x-4"
+                )}
+              >
                 <Card
                   onClick={() => handleSessionClick(session.id)}
                   onKeyDown={(e) => {
@@ -150,10 +153,13 @@ export default function History() {
                     }
                   }}
                   role="button"
-                  tabIndex={0}
+                  tabIndex={deletingSessionId === session.id ? -1 : 0}
                   aria-labelledby={titleId}
                   aria-describedby={descriptionId}
-                  className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 animate-in fade-in slide-in-from-bottom-2"
+                  className={cn(
+                    "group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 animate-in fade-in slide-in-from-bottom-2",
+                    deletingSessionId === session.id && "pointer-events-none"
+                  )}
                   style={{ animationDelay: `${sessions.indexOf(session) * 50}ms` }}
                 >
                   <CardContent className="flex items-center gap-4 p-4 md:p-6">

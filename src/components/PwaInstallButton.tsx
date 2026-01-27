@@ -3,14 +3,12 @@ import { DownloadIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function PwaInstallButton() {
-  // Check if we're on the home page
   const [isHomePage, setIsHomePage] = useState(() => {
     if (typeof window === "undefined") return false;
     const pathname = window.location.pathname;
     return pathname === "/" || pathname === "/index.html";
   });
 
-  // Initialize dismissed state from localStorage
   const [isDismissed, setIsDismissed] = useState(() => {
     if (typeof window === "undefined") return false;
     const dismissed = localStorage.getItem("pwa-install-dismissed");
@@ -23,7 +21,6 @@ export function PwaInstallButton() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Check if we're in dev mode (localhost or 127.0.0.1)
   const isDevMode =
     typeof window !== "undefined" &&
     (window.location.hostname === "localhost" ||
@@ -31,7 +28,6 @@ export function PwaInstallButton() {
       window.location.hostname.includes("localhost"));
 
   useEffect(() => {
-    // Check if we're on the home page
     const checkHomePage = () => {
       const pathname = window.location.pathname;
       setIsHomePage(pathname === "/" || pathname === "/index.html");
@@ -39,7 +35,6 @@ export function PwaInstallButton() {
 
     checkHomePage();
 
-    // Listen for navigation changes (Astro transitions)
     const handleLocationChange = () => {
       checkHomePage();
     };
@@ -57,9 +52,7 @@ export function PwaInstallButton() {
     if (isDismissed || !isHomePage) return;
 
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
-      // Prevent the default mini-infobar from appearing
       e.preventDefault();
-      // Save the event so it can be triggered later
       setDeferredPrompt(e);
       setIsVisible(true);
     };
@@ -73,9 +66,7 @@ export function PwaInstallButton() {
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     window.addEventListener("appinstalled", handleAppInstalled);
 
-    // In dev mode, simulate the install prompt for testing
     if (isDevMode) {
-      // Create a mock event for testing
       const mockEvent = {
         preventDefault: () => {},
         prompt: async () => {
@@ -86,7 +77,6 @@ export function PwaInstallButton() {
         userChoice: Promise.resolve({ outcome: "accepted" as const, platform: "web" }),
       } as BeforeInstallPromptEvent;
 
-      // Show button after a short delay in dev mode
       const timer = setTimeout(() => {
         setDeferredPrompt(mockEvent);
         setIsVisible(true);
@@ -110,10 +100,7 @@ export function PwaInstallButton() {
     if (!deferredPrompt) return;
 
     try {
-      // Show the install prompt
       await deferredPrompt.prompt();
-
-      // Wait for the user to respond to the prompt
       const { outcome } = await deferredPrompt.userChoice;
 
       if (outcome === "accepted") {
@@ -127,12 +114,10 @@ export function PwaInstallButton() {
     } catch (error) {
       console.error("Error showing install prompt:", error);
     } finally {
-      // Clear the deferredPrompt so it can only be used once
       setDeferredPrompt(null);
     }
   };
 
-  // Don't render if not on home page, dismissed, or not visible
   if (!isHomePage || isDismissed || !isVisible || !deferredPrompt) {
     return null;
   }
