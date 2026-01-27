@@ -102,17 +102,17 @@ export default function History() {
 
   return (
     <div
-      className="min-h-dvh bg-linear-to-br from-background via-background to-accent/5 flex flex-col p-4 md:p-6 max-w-3xl mx-auto overflow-y-auto"
+      className="min-h-dvh bg-background flex flex-col p-4 md:p-6 max-w-3xl mx-auto overflow-y-auto"
       style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))" }}
       suppressHydrationWarning
     >
       {/* Header */}
       <div className="text-center mb-10 mt-4 animate-in fade-in slide-in-from-top-4 duration-700">
-        <div className="text-4xl mb-4 animate-[wiggle_2s_ease-in-out_infinite]">📖</div>
-        <h1 className="text-4xl md:text-5xl font-black text-foreground mb-2 tracking-tight">
+        <div className="text-4xl mb-4">📖</div>
+        <h1 className="text-3xl font-bold text-foreground mb-2 tracking-tight">
           Twoje <span className="text-primary">rozmowy</span>
         </h1>
-        <p className="text-lg text-muted-foreground">Przejrzyj swoje sesje nauki</p>
+        <p className="text-base text-muted-foreground">Przejrzyj swoje sesje nauki</p>
       </div>
 
       {/* Session list */}

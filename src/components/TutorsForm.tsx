@@ -8,7 +8,7 @@ import { useOnline } from "./hooks/useOnline";
 import { withOnlineProvider } from "./hooks/withOnlineProvider";
 import { validateFormInput } from "../lib/contentFilter";
 
-const AVATAR_EMOJIS = ["🦊", "🐼", "🐶", "🐱"] as const;
+const AVATAR_EMOJIS = ["👩", "🥷", "🧙‍♂️", "👸"] as const;
 
 const clearCurrentSession = () => {
   const historyJson = localStorage.getItem("chatHistory");
@@ -207,16 +207,13 @@ function TutorsForm() {
                   key={emoji}
                   type="button"
                   onClick={() => handleAvatarSelect(emoji)}
-                  className={`text-4xl p-3 min-w-[56px] min-h-[56px] rounded-2xl transition-all duration-200 hover:scale-125 hover:rotate-12 active:scale-95 active:rotate-0 ${
+                  className={`text-4xl p-3 min-w-[56px] min-h-[56px] rounded-2xl transition-all duration-200 hover:scale-110 active:scale-95 ${
                     selectedAvatar === emoji
                       ? "bg-primary/10 ring-4 ring-primary scale-110 shadow-lg"
                       : "bg-muted hover:bg-accent/20 hover:shadow-md"
                   }`}
                   aria-label={`Wybierz avatar ${emoji}`}
                   aria-pressed={selectedAvatar === emoji}
-                  style={{
-                    animation: selectedAvatar === emoji ? "bounce 0.6s ease-in-out" : "none",
-                  }}
                 >
                   {emoji}
                 </button>
@@ -228,7 +225,6 @@ function TutorsForm() {
 
       <div className="flex flex-col gap-4 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
         <Button type="submit" disabled={!isFormValid} variant="ok" className="text-lg py-3">
-          <span className="text-2xl mr-2">🚀</span>
           Rozpocznij lekcję
         </Button>
         <a href="/" className={buttonVariants({ variant: "back" })}>

@@ -3,9 +3,7 @@ import NameInput from "./NameInput";
 import { PwaInstallButton } from "./PwaInstallButton";
 ---
 
-<div
-  class="min-h-dvh bg-linear-to-br from-background via-background to-accent/5 flex flex-col items-center justify-center p-4 py-8 md:py-12 relative"
->
+<div class="min-h-dvh bg-background flex flex-col items-center justify-center p-4 py-8 md:py-12 relative">
   <!-- Decorative background elements -->
   <div class="absolute inset-0 -z-10 overflow-hidden">
     <div class="absolute top-20 right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
@@ -16,13 +14,11 @@ import { PwaInstallButton } from "./PwaInstallButton";
   <PwaInstallButton client:load />
 
   <div class="text-center mt-2 mb-8 md:mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <div class="mb-4 text-5xl animate-[wiggle_2s_ease-in-out_infinite]">🎓</div>
-    <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-4 tracking-tight">
+    <div class="mb-4 text-5xl">🎓</div>
+    <h1 class="text-3xl font-bold text-foreground mb-4 tracking-tight">
       Korepetytor <span class="text-primary">AI</span>
     </h1>
-    <p class="text-base md:text-lg lg:text-xl text-muted-foreground font-medium">
-      Pomoc dla uczniów liceów i techników
-    </p>
+    <p class="text-base text-muted-foreground font-medium">Pomoc dla uczniów liceów i techników</p>
   </div>
 
   <NameInput client:idle />
@@ -30,12 +26,11 @@ import { PwaInstallButton } from "./PwaInstallButton";
   <!-- Content that should be inert when modal is open -->
   <div id="home-content" class="hidden flex-col items-center justify-center">
     <!-- Welcome text centered -->
-    <div class="text-center my-4 md:my-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-      <div class="mb-2 md:mb-4 text-3xl md:text-4xl">👋</div>
-      <h2 class="text-2xl md:text-3xl lg:text-4xl font-black text-foreground mb-4 md:mb-6">
+    <div class="text-center my-12 md:my-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+      <h2 class="text-2xl font-semibold text-foreground mb-4 md:mb-6">
         Witaj <span id="name-display" aria-live="polite" class="text-primary"></span>!
       </h2>
-      <p class="text-base md:text-lg lg:text-xl text-muted-foreground font-medium mb-4 md:mb-8">Gotowy na naukę?</p>
+      <p class="text-base text-muted-foreground font-medium mb-4 md:mb-8">Gotowy na naukę?</p>
     </div>
 
     <!-- Blocked message (hidden by default) -->
@@ -43,7 +38,6 @@ import { PwaInstallButton } from "./PwaInstallButton";
       id="blocked-message"
       class="hidden w-full max-w-md mx-auto mb-6 p-4 rounded-2xl bg-destructive/10 border-2 border-destructive/30 text-center animate-in fade-in duration-500"
     >
-      <div class="text-3xl mb-2">🔒</div>
       <h3 class="text-lg font-bold text-destructive mb-2">Aplikacja tymczasowo niedostępna</h3>
       <p id="blocked-message-text" class="text-sm text-muted-foreground"></p>
     </div>
@@ -52,17 +46,15 @@ import { PwaInstallButton } from "./PwaInstallButton";
       <a
         id="start-button"
         href="/tutors"
-        class="w-46 inline-flex items-center cursor-pointer justify-center gap-3 whitespace-nowrap rounded-2xl text-lg font-bold transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 p-3 bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-1 shadow-lg hover:shadow-xl active:scale-95"
+        class="w-38 inline-flex items-center cursor-pointer justify-center gap-3 whitespace-nowrap rounded-2xl text-lg font-bold transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 p-3 bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-1 shadow-lg hover:shadow-xl active:scale-95"
       >
-        <span class="text-2xl">🚀</span>
         Zaczynamy
       </a>
 
       <a
         href="/history-list"
-        class="w-46 inline-flex items-center cursor-pointer justify-center gap-3 whitespace-nowrap rounded-2xl text-base font-semibold transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 px-6 py-3 bg-background text-primary hover:bg-muted border-2 border-primary shadow-sm hover:shadow-md active:scale-95"
+        class="w-38 inline-flex items-center cursor-pointer justify-center gap-3 whitespace-nowrap rounded-2xl text-base font-semibold transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 px-6 py-3 bg-background text-primary hover:bg-muted border-2 border-primary shadow-sm hover:shadow-md active:scale-95"
       >
-        <span class="text-xl">📚</span>
         Twoje rozmowy
       </a>
     </div>

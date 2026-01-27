@@ -3,6 +3,24 @@ aiD9kZNHp11JSM1VaAR3EofNn2MNITFH
 
 ---
 
+## <span style="color: green;">**Krótkie podsumowanie dnia (26 stycznia 2026)**</span>
+### PWA – instalacja:
+
+- Dodano przycisk instalacji PWA na stronie głównej (zamiast bannera).
+- Przywrócono i dopracowano komponent PwaInstallButton (PR #33–#35, feat/install-option).
+
+### Mobile / RWD:
+
+- Poprawki pionowego przewijania na mobile.
+- Uporządkowanie stylów w widoku mobilnym (layout, scroll).
+- History i HistoryChat – poprawki styli pod mobile.
+- Tutors – poprawki RWD na mobile + zmiana etykiety przycisku w Home.
+- Drobne poprawki pozycji i stylu dla spójności na małych ekranach.
+- Podsumowanie: Dzień skupiony na UX na mobile i na ujednoliceniu instalacji PWA (przycisk zamiast bannera).
+
+---
+
+
 # CODZIENNIE NA POCZĄTKU PRACY
 
 1. Nowa gałąź + nazwa funkcji
