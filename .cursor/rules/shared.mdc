@@ -1,21 +1,16 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: true
 ---
 # AI Rules for Tutor with AI
 
-Aplikacja pozwala nastolatkom zrozumieć trudne zagadnienia w krótkim czasie bez frustracji. 
+Aplikacja pozwala nastolatkom zrozumieć trudne zagadnienia w krótkim czasie bez frustracji.
 - Użytkownicy to uczące się nastolatki w wieku około 13-19 lat.
 - Korepetytor AI tłumaczy skomplikowane zagadnienia szkolne w sposób zrozumiały dla użytkwnika m.in. w oparciu o jego zainteresowania.
-- Agent AI, czyli korepetytor skupiony jest wyłącznie na swojej dziedzinie nauki tj. przedmiocie nauczania. Nie udziela żadnych informacji na tematy inne niż materiał edukacyjny danego przedmiotu szkolnego. 
-- Odpowiedzi korepetytora są krótkie, zrozumiałe, tłumaczone na przykładach zgodnych z zainteresowaniami ucznia lub innych stosownych do wieku ucznia. 
+- Agent AI, czyli korepetytor skupiony jest wyłącznie na swojej dziedzinie nauki tj. przedmiocie nauczania. Nie udziela żadnych informacji na tematy inne niż materiał edukacyjny danego przedmiotu szkolnego.
+- Odpowiedzi korepetytora są krótkie, zrozumiałe, tłumaczone na przykładach zgodnych z zainteresowaniami ucznia lub innych stosownych do wieku ucznia.
 - Interakcja ma być bezpieczna, edukacyjna i przewidywalna.
-
-AI Agents (korepetytorzy)
-- każdy agent ma osobny folder + config
-- agent nie generuje kontrowersyjnych treści
-- agent działa tylko w zakresie edukacyjnym
 
 ## Tech Stack
 
@@ -38,7 +33,7 @@ When introducing changes to the project, always follow the directory structure b
 - `./src/types.ts` - Shared types for backend and frontend (Entities, DTOs)
 - `./src/components` - Client-side components written in Astro (static) and React (dynamic)
 - `./src/components/ui` - Client-side components from Shadcn/ui
-- `./src/lib` - Services and helpers 
+- `./src/lib` - Services and helpers
 - `./src/assets` - static internal assets
 - `./public` - public assets
 

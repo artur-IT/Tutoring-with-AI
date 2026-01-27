@@ -72,7 +72,7 @@ export default function ChatMessages({ messages, isLoading, studentAvatar, messa
     >
       {messages.length === 0 && (
         <div className="text-center text-muted-foreground mt-12 animate-in fade-in duration-500">
-          <div className="text-5xl mb-4 animate-[wiggle_2s_ease-in-out_infinite]" role="img" aria-label="Korepetytor">
+          <div className="text-5xl mb-4" role="img" aria-label="Korepetytor">
             👨‍🏫
           </div>
           <p className="text-lg font-semibold text-foreground mb-2">Hej! Jestem gotowy.</p>
