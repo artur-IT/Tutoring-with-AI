@@ -5,7 +5,6 @@ import type { Message } from "../../agents/mathTutor/types";
 import { cleanMathNotation } from "./chatUtils";
 import { sanitizeForDisplay } from "../../lib/contentFilter";
 
-// Playful loading messages for teenagers - cycle through based on number of messages
 const LOADING_MESSAGES = [
   "Myślę nad odpowiedzią...",
   "Szukam najlepszego wyjaśnienia...",
@@ -25,7 +24,6 @@ type ChatMessagesProps = {
 };
 
 const MessageBubble = ({ message, studentAvatar }: { message: Message; studentAvatar?: string }) => {
-  // Sanitize all message content before displaying
   const sanitizedContent = sanitizeForDisplay(message.content);
 
   if (message.role === "assistant") {
@@ -58,7 +56,6 @@ const MessageBubble = ({ message, studentAvatar }: { message: Message; studentAv
 };
 
 export default function ChatMessages({ messages, isLoading, studentAvatar, messagesEndRef }: ChatMessagesProps) {
-  // Cycle through loading messages based on message count for variety
   const loadingMessage = LOADING_MESSAGES[messages.length % LOADING_MESSAGES.length];
 
   return (

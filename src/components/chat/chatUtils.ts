@@ -1,9 +1,5 @@
 /**
- * Cleans LaTeX notation from text while preserving normal mathematical expressions
- * This function removes LaTeX delimiters but keeps normal fractions (like 1/2) and math symbols
- * Note: AI should not use LaTeX according to prompts, but this is a safety measure
- * We don't remove /expression/ pattern to preserve normal fractions like 1/2
- * If AI uses LaTeX with /, it should be fixed in the prompts, not here
+ * Removes LaTeX delimiters while preserving normal math expressions and fractions
  */
 export const cleanMathNotation = (text: string): string =>
   text
