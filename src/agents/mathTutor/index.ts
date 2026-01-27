@@ -180,32 +180,3 @@ export const sendMessage = async (
     return { success: false, error: errorMsg };
   }
 };
-
-// LocalStorage helpers
-const safeJsonParse = <T>(key: string, fallback: T): T => {
-  try {
-    const data = localStorage.getItem(key);
-    return data ? (JSON.parse(data) as T) : fallback;
-  } catch (error) {
-    console.error(`Error loading ${key}:`, error);
-    return fallback;
-  }
-};
-
-const safeLocalStorageOp = (operation: () => void, errorContext: string): void => {
-  try {
-    operation();
-  } catch (error) {
-    console.error(`Error ${errorContext}:`, error);
-  }
-};
-
-export const getChatHistory = (): Message[] => safeJsonParse<Message[]>("chatHistory", []);
-
-export const saveChatHistory = (messages: Message[]): void =>
-  safeLocalStorageOp(() => localStorage.setItem("chatHistory", JSON.stringify(messages)), "saving chat history");
-
-export const clearChatHistory = (): void =>
-  safeLocalStorageOp(() => localStorage.removeItem("chatHistory"), "clearing chat history");
-
-export const getStudentData = (): StudentData | null => safeJsonParse<StudentData | null>("studentData", null);
