@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
 import type { Message } from "../../agents/mathTutor/types";
 import { cleanMathNotation } from "./chatUtils";
-import { sanitizeForDisplay } from "../../lib/contentFilter";
 
 const LOADING_MESSAGES = [
   "Myślę nad odpowiedzią...",
@@ -24,8 +23,6 @@ type ChatMessagesProps = {
 };
 
 const MessageBubble = ({ message, studentAvatar }: { message: Message; studentAvatar?: string }) => {
-  const sanitizedContent = sanitizeForDisplay(message.content);
-
   if (message.role === "assistant") {
     return (
       <div className="flex items-start gap-3 min-w-0">
@@ -35,7 +32,7 @@ const MessageBubble = ({ message, studentAvatar }: { message: Message; studentAv
         <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 max-w-[80%] min-w-0 wrap-break-word overflow-hidden">
           <p className="text-sm font-semibold text-gray-950 mb-1">Korepetytor</p>
           <p className="text-sm text-gray-950 whitespace-pre-wrap wrap-break-word">
-            {cleanMathNotation(sanitizedContent)}
+            {cleanMathNotation(message.content)}
           </p>
         </div>
       </div>
@@ -46,7 +43,7 @@ const MessageBubble = ({ message, studentAvatar }: { message: Message; studentAv
     <div className="flex items-start gap-3 justify-end min-w-0">
       <div className="bg-blue-600 rounded-2xl px-4 py-3 max-w-[80%] min-w-0 wrap-break-word overflow-hidden">
         <p className="text-sm font-semibold text-white mb-1">Ty</p>
-        <p className="text-sm text-white whitespace-pre-wrap wrap-break-word">{sanitizedContent}</p>
+        <p className="text-sm text-white whitespace-pre-wrap wrap-break-word">{message.content}</p>
       </div>
       <Avatar className="w-10 h-10 shrink-0 bg-blue-100">
         <AvatarFallback className="text-2xl bg-blue-100">{studentAvatar || "🦊"}</AvatarFallback>

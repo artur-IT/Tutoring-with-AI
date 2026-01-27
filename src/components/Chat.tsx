@@ -10,6 +10,7 @@ import { useDebounce } from "./hooks/useDebounce";
 import { useOnline } from "./hooks/useOnline";
 import { withOnlineProvider } from "./hooks/withOnlineProvider";
 import { validateAndSanitizeInput } from "../lib/contentFilter";
+import { getHistory, saveHistory } from "../lib/chatHistory";
 
 function Chat() {
   const isOnline = useOnline();
@@ -40,10 +41,6 @@ function Chat() {
     const time = now.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" });
     return `${date} ${time}`;
   };
-
-  const getHistory = (): ChatHistory =>
-    JSON.parse(localStorage.getItem("chatHistory") || '{"sessions":[],"currentSessionId":null}');
-  const saveHistory = (history: ChatHistory) => localStorage.setItem("chatHistory", JSON.stringify(history));
 
   const shouldSaveSessionWithMessages = (messagesLength: number) => messagesLength > 1;
 

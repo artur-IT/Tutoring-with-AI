@@ -187,19 +187,6 @@ export const validateAndSanitizeInput = (
 };
 
 /**
- * Quick sanitize for display purposes
- * Use this when displaying user content in the UI
- * Note: React automatically escapes content, so we don't need to escape HTML entities
- * This prevents double-escaping which would show codes like &amp; instead of &
- */
-export const sanitizeForDisplay = (input: string): string => {
-  if (!input) return "";
-  // React automatically escapes HTML, so we just return the text as-is
-  // This ensures mathematical symbols and special characters display correctly
-  return input;
-};
-
-/**
  * Validates form input with appropriate length limits
  */
 export const validateFormInput = (input: string, fieldName: string, maxLength: number): ValidationResult => {
