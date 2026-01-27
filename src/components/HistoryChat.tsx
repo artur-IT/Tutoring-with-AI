@@ -19,7 +19,6 @@ const findSession = (history: ChatHistory): ChatSession | null => {
 };
 
 const renderMessage = (message: Message, avatar: string | undefined, index: number) => {
-  // Sanitize all message content before displaying
   const sanitizedContent = sanitizeForDisplay(message.content);
 
   if (message.role === "assistant") {

@@ -19,7 +19,6 @@ import ChevronRightIcon from "../assets/icons/chevron-right.svg?url";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
 import type { ChatHistory, ChatSession } from "../agents/mathTutor/types";
 
-// Load sessions helper function
 const loadSessionsFromStorage = (): ChatSession[] => {
   if (typeof window === "undefined") return [];
   const historyJson = localStorage.getItem("chatHistory");
@@ -33,14 +32,12 @@ const loadSessionsFromStorage = (): ChatSession[] => {
   }
 };
 
-// Helper to get history from localStorage
 const getHistory = (): ChatHistory => {
   if (typeof window === "undefined") return { sessions: [], currentSessionId: null };
   const historyJson = localStorage.getItem("chatHistory");
   return historyJson ? JSON.parse(historyJson) : { sessions: [], currentSessionId: null };
 };
 
-// Helper to save history to localStorage
 const saveHistory = (history: ChatHistory) => {
   if (typeof window === "undefined") return;
   localStorage.setItem("chatHistory", JSON.stringify(history));
@@ -51,11 +48,7 @@ export default function History() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Load sessions after component mounts (client-side only)
-  // This prevents hydration mismatch by loading data after initial render
-  // Note: This is intentional use of useEffect to load from localStorage (same pattern as Chat.tsx)
   useEffect(() => {
-    // Use setTimeout to avoid linter warning (same pattern as useOnline.ts)
     const timeoutId = setTimeout(() => {
       setIsMounted(true);
       const loaded = loadSessionsFromStorage();

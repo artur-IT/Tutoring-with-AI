@@ -21,24 +21,13 @@ export function useDebounce<T extends (...args: never[]) => unknown>(
 
   const debouncedFunction = useCallback(
     (...args: Parameters<T>) => {
-      // If already executing, don't queue another call
-      if (isExecutingRef.current) {
-        console.log("⏳ [useDebounce] Function is executing, ignoring call");
-        return;
-      }
+      if (isExecutingRef.current) return;
 
-      // Clear any existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        console.log("⏳ [useDebounce] Cleared previous timeout");
-      }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-      // Set new timeout
       timeoutRef.current = setTimeout(() => {
-        console.log("✅ [useDebounce] Executing debounced function");
         isExecutingRef.current = true;
         callback(...args);
-        // Reset execution flag after a short delay to prevent immediate re-execution
         setTimeout(() => {
           isExecutingRef.current = false;
         }, 100);

@@ -20,10 +20,8 @@ export default function NameInput() {
   const inputId = useId();
   const formId = useId();
 
-  // Dispatch event when modal state changes
   useEffect(() => {
     window.dispatchEvent(new CustomEvent(MODAL_STATE_EVENT, { detail: { isOpen } }));
-    // No need to return a value; effect is for dispatch only.
   }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
