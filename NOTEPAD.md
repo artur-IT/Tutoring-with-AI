@@ -20,6 +20,39 @@ aiD9kZNHp11JSM1VaAR3EofNn2MNITFH
 
 ---
 
+## <span style="color: green;">**Krótkie podsumowanie dnia (27 stycznia 2026)**</span>
+### Refactor całego projektu:
+
+- Duży refactor i uproszczenie kodu w całym projekcie (3 commity).
+- Uproszczenie komponentów: Chat, History, HistoryChat, AppProviders, PwaInstallButton.
+- Uproszczenie hooków: OnlineProvider, useDebounce, useUserName.
+- Utworzono nowy moduł `chatHistory.ts` dla lepszej organizacji kodu.
+- Usunięto zbędny kod z `contentFilter.ts` i `mathTutor/prompts.ts`.
+
+### Reguły i konfiguracja:
+
+- Zmiana nazwy reguły: `ai_agents.mdc` → `ai_tutors.mdc`.
+- Aktualizacja reguł w `shared.mdc`.
+- Aktualizacja `.gitignore`.
+
+### Naprawa hydratacji React:
+
+- Poprawiono hook `useUserName` – synchronizacja stanu z localStorage po hydratacji.
+- Naprawiono wyświetlanie przycisku "Podaj imię" / "Zmień imię" na stronie głównej (problem z SSR/hydratacją).
+
+### UX – animacje:
+
+- Dodano płynną animację fade-out przy usuwaniu rozmowy z historii (400ms, opacity + scale + translate).
+- Rozmowa znika stopniowo przed faktycznym usunięciem z listy.
+
+### Poprawki stylów:
+
+- Drobne poprawki stylów w History, Home, Tutors, ChatMessages, card.
+
+- Podsumowanie: Duży refactor projektu, poprawki hydratacji React i ulepszenia UX z animacjami usuwania.
+
+---
+
 
 # CODZIENNIE NA POCZĄTKU PRACY
 
