@@ -27,6 +27,8 @@ Projekt: Chat-with-Hero (Tutor with AI)
   - [EPIK 2: Obsługa offline i PWA](#epik-2-obsługa-offline-i-pwa)
   - [EPIK 3: Testowanie ](#epik-3-testowanie)
 - [Status projektu](#status-projektu)
+- [Najważniejsze zasady](#najważniejsze-zasady)
+- [Przydatne linki](#przydatne-linki)
 - [Następne kroki](#następne-kroki)
 - [Osiągnięcia](#osiągnięcia)
 
@@ -272,40 +274,7 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 - ✅ FEATURE 1.1: Rate limiting (50 zapytań/sesja)
 - ✅ FEATURE 1.2: Timer sesji (30 min, 50 wiadomości)
 - ✅ FEATURE 1.3: Debouncing (ochrona przed wielokrotnym wysłaniem)
-- ✅ FEATURE 1.4: Filtrowanie treści - **UKOŃCZONE** (20 stycznia 2026)
-
----
-
-#### ✅ FEATURE 1.4: Filtrowanie treści i bezpieczeństwo - **UKOŃCZONE**
-
-**Status:** ✅ Zakończone (20 stycznia 2026)
-
-**User Stories:**
-
-1. ✅ Jako rodzic chcę mieć pewność że aplikacja filtruje nieodpowiednie treści żeby chronić moje dziecko
-2. ✅ Jako uczeń chcę otrzymywać tylko bezpieczne odpowiedzi żeby czuć się komfortowo
-
-**Zaimplementowane zabezpieczenia:**
-
-- ✅ **Sanityzacja HTML (XSS Protection)** - HTML Character Escaping
-- ✅ **Filtr wulgaryzmów** - Blacklista 25+ słów + fuzzy matching
-- ✅ **Detekcja prompt injection** - 10 wzorców wykrywających manipulację
-- ✅ **Detekcja danych osobowych** - telefon, email, URL, kod pocztowy
-- ✅ **Limity długości** - wizualne liczniki w UI
-- ✅ **Wielowarstwowa walidacja** - frontend + backend
-- ✅ **Testy jednostkowe** - 33 testy (100% pass)
-
-**Pliki:**
-- `src/lib/contentFilter.ts` - główny moduł filtrowania
-- `src/lib/contentFilter.test.ts` - testy jednostkowe
-- `docs/CONTENT_SECURITY.md` - pełna dokumentacja techniczna
-- `docs/IMPLEMENTATION_SUMMARY.md` - podsumowanie implementacji
-
-**Kryteria akceptacji:**
-
-- ✅ Nieodpowiednie treści są wykrywane i blokowane
-- ✅ Użytkownik otrzymuje przyjazny komunikat
-- ✅ Filtrowanie działa na frontendzie i backendzie (defense in depth)
+- ✅ FEATURE 1.4: Filtrowanie treści (szczegóły: `docs/CONTENT_SECURITY.md`) - **UKOŃCZONE** (20 stycznia 2026)
 
 ---
 
@@ -412,23 +381,35 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 
 ---
 
+## Najważniejsze zasady
+
+- **Małe kroki** - każdy krok to osobna, mała zmiana
+- **Testowanie** - testuj po każdym kroku
+- **Jeden agent** - zacznij od matematyki, później powiel strukturę
+- **Bezpieczeństwo** - zawsze waliduj dane wejściowe
+- **Koszty** - monitoruj użycie API
+- **UX** - wszystkie stany muszą być obsłużone (loading, error, empty)
+
+---
+
+## Przydatne linki
+
+- [Astro API Endpoints](https://docs.astro.build/en/core-concepts/endpoints/)
+
+---
+
+## Następne kroki
+
+- **Więcej agentów** - powiel strukturę mathTutor (chemTutor, physicsTutor itd.)
+- **Historia w bazie** - zapisywanie sesji w Supabase (Postgres)
+- **Push notifications** - przypomnienia o nauce (opcjonalnie)
+- **Optymalizacja** - analiza tokenów, skrócenie promptu (FEATURE 3.3)
+
+---
+
 ## Podsumowanie tygodnia (19-23 stycznia 2026)
 
-### Osiągnięcia
-
-**Naprawy i poprawki (22 stycznia):**
-- ✅ Naprawiono wyświetlanie znaków matematycznych (`/`, `\`, `*`, `+`, `-`, `=`, `^`, `_`, `$`)
-- ✅ Naprawiono wyświetlanie ułamków (`1/2`, `3/4` itp.)
-- ✅ Naprawiono problem z pętlą pierwszego powitania (dodano `initialGreetingSentRef`)
-- ✅ Dodano filtrowanie historii (sesje z tylko 1 wiadomością nie są zapisywane)
-- ✅ Weryfikacja testów - wszystkie 48/48 przechodzą ✅
-
-**Status projektu:**
-- Projekt jest w ~95% ukończony
-- MVP+ gotowe i zabezpieczone
-- Wszystkie testy jednostkowe działają poprawnie (48/48 ✅)
-- Wszystkie testy manualne przeszły pomyślnie (6/6 ✅)
-- Aplikacja jest stabilna i gotowa do wdrożenia
+Naprawy (znaki matematyczne, ułamki, pętla powitania, filtrowanie historii) oraz weryfikacja testów 48/48. Projekt ~95% ukończony, MVP+ gotowe i zabezpieczone. Szczegóły w [Historia weryfikacji i aktualizacji](#historia-weryfikacji-i-aktualizacji).
 
 ---
 

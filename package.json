@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "astro dev --host",
     "build": "astro check && astro build",
-    "preview": "astro preview",
+    "preview": "node -e \"console.log('Preview is not supported with @astrojs/vercel. Use: npm run dev'); process.exit(0)\"",
     "astro": "astro",
     "check": "eslint . && prettier --check . && astro check",
     "test": "vitest",
