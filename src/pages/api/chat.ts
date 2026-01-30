@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { sendMessage } from "../../agents/mathTutor";
 import type { Message, StudentData } from "../../agents/mathTutor/types";
-import { sessionLimits } from "../../agents/mathTutor/config";
+import { sessionLimits, contentRestrictions } from "../../agents/mathTutor/config";
 import { validateAndSanitizeInput } from "../../lib/contentFilter";
 
 export const prerender = false;
@@ -58,7 +58,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const validation = validateAndSanitizeInput(message, {
-      maxLength: 400,
+      maxLength: contentRestrictions.maxMessageLength,
       checkProfanity: true,
       checkPromptInjection: true,
       checkPersonalInfo: true,
