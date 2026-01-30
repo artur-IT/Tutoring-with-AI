@@ -81,7 +81,6 @@ export function useSessionManagement(studentData: StudentData | null) {
     const history = getHistory();
     history.currentSessionId = null;
     saveHistory(history);
-    window.location.href = "/";
   }, []);
 
   return {

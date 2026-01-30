@@ -3,8 +3,30 @@ export const prerender = true;
 
 import Layout from "../layouts/Layout.astro";
 import TutorsPage from "../components/Tutors.astro";
+import { MATH_TOPICS } from "../lib/subjectTopics";
+
+const availableTopics = MATH_TOPICS.slice(0, 5).join(", ");
+const description = `Wybierz korepetytora AI i temat, którego chcesz się uczyć. Dostępne tematy: ${availableTopics} i więcej.`;
+const keywords = `${MATH_TOPICS.slice(0, 8).join(", ")}, korepetytor AI, matematyka online`;
 ---
 
-<Layout title="Korepetytorzy" description="Wybierz korepetytora AI i temat, którego chcesz się uczyć.">
+<Layout title="Wybierz Przedmiot - Tutor AI" description={description} keywords={keywords}>
+  <!-- Hidden topic list for SEO -->
+  <div class="sr-only">
+    <h1>Dostępne przedmioty i tematy</h1>
+    <section>
+      <h2>Matematyka ({MATH_TOPICS.length} tematów)</h2>
+      <ul>
+        {MATH_TOPICS.map((topic) => <li>{topic}</li>)}
+      </ul>
+    </section>
+    <section>
+      <h2>Matematyka ({MATH_TOPICS.length} tematów)</h2>
+      <ul>
+        {MATH_TOPICS.map((topic) => <li>{topic}</li>)}
+      </ul>
+    </section>
+  </div>
+
   <TutorsPage />
 </Layout>

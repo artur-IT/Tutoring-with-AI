@@ -3,8 +3,27 @@ export const prerender = true;
 
 import Layout from "../layouts/Layout.astro";
 import Home from "../components/Home.astro";
+import { MATH_TOPICS } from "../lib/subjectTopics";
+import { sessionLimits } from "../agents/mathTutor/config";
+
+const topicsPreview = MATH_TOPICS.slice(0, 3).join(", ");
+const description = `Interaktywny korepetytor AI, który pomaga nastolatkom zrozumieć szkolne tematy. Ucz się: ${topicsPreview} i więcej. Limit: ${sessionLimits.maxMessagesPerSession} pytań na sesję.`;
+const keywords = `korepetytor AI, nauka matematyki, ${MATH_TOPICS.slice(0, 5).join(", ")}, edukacja online, AI tutor`;
 ---
 
-<Layout title="Tutor AI" description="Interaktywny korepetytor AI, który pomaga nastolatkom zrozumieć szkolne tematy.">
+<Layout title="Tutor AI - Korepetytor AI dla Uczniów" description={description} keywords={keywords}>
+  <!-- Static SEO content -->
+  <div class="sr-only">
+    <h1>Tutor AI - Twój osobisty korepetytor</h1>
+    <p>Bezpłatna aplikacja do nauki z AI dla uczniów szkół średnich.</p>
+    <h2>Dlaczego Tutor AI?</h2>
+    <ul>
+      <li>Dostosowane tłumaczenia do Twoich zainteresowań</li>
+      <li>Dostępne 24/7</li>
+      <li>{sessionLimits.maxMessagesPerSession} pytań na sesję</li>
+      <li>Bezpieczne i edukacyjne</li>
+    </ul>
+  </div>
+
   <Home />
 </Layout>

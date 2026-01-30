@@ -7,15 +7,36 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  keywords?: string;
+  type?: "website" | "article";
 }
 
 const {
   title = "Tutor AI",
   description = "Interaktywny korepetytor AI dla nastolatków.",
   image = "/pwa-512x512.png",
+  keywords = "korepetytor AI, nauka matematyki, edukacja online, AI tutor",
+  type = "website",
 } = Astro.props;
 const isProduction = import.meta.env.PROD;
 const canonicalUrl = Astro.url;
+const siteUrl = new URL(Astro.url.pathname, Astro.site || "https://tutor-ai.vercel.app");
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Tutor AI",
+  description: description,
+  url: siteUrl.toString(),
+  applicationCategory: "EducationalApplication",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "PLN",
+  },
+  operatingSystem: "Any",
+  inLanguage: "pl-PL",
+};
 ---
 
 <!doctype html>
@@ -24,12 +45,18 @@ const canonicalUrl = Astro.url;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
     <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={image} />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:site_name" content="Tutor AI" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />

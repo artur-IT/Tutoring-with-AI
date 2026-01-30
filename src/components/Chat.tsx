@@ -34,6 +34,7 @@ function Chat() {
     sessionName,
     setShouldSaveSession,
     initialGreetingSentRef,
+    createNewSession,
     saveCurrentSession,
     removeCurrentSessionFromHistory,
     buildSession,
@@ -49,6 +50,7 @@ function Chat() {
     alert("Czas sesji minął (30 minut).\n\nSesja zostanie zakończona. Historia rozmowy została zapisana.");
     setTimeout(() => {
       endSession();
+      window.location.href = "/";
     }, 3000);
   };
 
@@ -82,6 +84,14 @@ function Chat() {
     startTimer();
   }, [startTimer]);
 
+  // Create a new session when we have studentData (from form) but no session yet.
+  // Without this, currentSessionId stays null and the initial greeting is never sent.
+  useEffect(() => {
+    if (studentData && !currentSessionId) {
+      createNewSession();
+    }
+  }, [studentData, currentSessionId, createNewSession]);
+
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   useEffect(() => {
@@ -100,7 +110,10 @@ function Chat() {
       alert(
         `Osiągnięto limit wiadomości (${sessionLimits.maxMessagesPerSession} pytań).\n\nSesja zostanie zakończona. Historia rozmowy została zapisana.`
       );
-      setTimeout(() => endSession(), 3000);
+      setTimeout(() => {
+        endSession();
+        window.location.href = "/";
+      }, 3000);
     }
   }, [messages, isSessionEnded, endSessionTimer, endSession]);
 
@@ -183,7 +196,10 @@ function Chat() {
         setRemainingRequests(0);
         endSessionTimer();
         alert("Osiągnięto limit zapytań dla tej sesji.\n\nSesja zostanie zakończona.");
-        setTimeout(() => endSession(), 3000);
+        setTimeout(() => {
+          endSession();
+          window.location.href = "/";
+        }, 3000);
         return;
       }
 
@@ -236,6 +252,7 @@ function Chat() {
       if (session) upsertSession(session);
     }
     endSession();
+    window.location.href = "/";
   };
 
   return (

@@ -5,8 +5,16 @@ export const prerender = false;
 
 import Layout from "../layouts/Layout.astro";
 import HistoryPage from "../components/History";
+
+const description = "Przegląd zapisanych rozmów z korepetytorem AI. Wróć do swoich poprzednich sesji nauki.";
+const keywords = "historia rozmów, zapisane sesje, przegląd nauki, postępy";
 ---
 
-<Layout title="Historia rozmów" description="Przegląd zapisanych rozmów z korepetytorem AI.">
+<Layout title="Historia Rozmów - Tutor AI" description={description} keywords={keywords}>
+  <div class="sr-only">
+    <h1>Historia twoich rozmów z korepetytorem AI</h1>
+    <p>Przeglądaj zapisane sesje nauki i wracaj do poprzednich rozmów.</p>
+  </div>
+
   <HistoryPage client:idle />
 </Layout>
