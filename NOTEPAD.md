@@ -3,7 +3,10 @@ aiD9kZNHp11JSM1VaAR3EofNn2MNITFH
 
 ---
 
+#### Zachować wszystkie rules do nast. projektu!
+
 ## <span style="color: green;">**Krótkie podsumowanie dnia (26 stycznia 2026)**</span>
+
 ### PWA – instalacja:
 
 - Dodano przycisk instalacji PWA na stronie głównej (zamiast bannera).
@@ -21,6 +24,7 @@ aiD9kZNHp11JSM1VaAR3EofNn2MNITFH
 ---
 
 ## <span style="color: green;">**Krótkie podsumowanie dnia (27 stycznia 2026)**</span>
+
 ### Refactor całego projektu:
 
 - Duży refactor i uproszczenie kodu w całym projekcie (3 commity).
@@ -52,7 +56,6 @@ aiD9kZNHp11JSM1VaAR3EofNn2MNITFH
 - Podsumowanie: Duży refactor projektu, poprawki hydratacji React i ulepszenia UX z animacjami usuwania.
 
 ---
-
 
 # CODZIENNIE NA POCZĄTKU PRACY
 

@@ -55,8 +55,7 @@ const canonicalUrl = Astro.url;
         if ("serviceWorker" in navigator) {
           window.addEventListener("load", async function () {
             try {
-              const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-              console.log("✅ SW registered:", registration.scope);
+              await navigator.serviceWorker.register("/sw.js", { scope: "/" });
             } catch (e) {
               console.error("❌ SW registration failed:", e);
             }
