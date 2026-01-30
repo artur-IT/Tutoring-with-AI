@@ -4,6 +4,6 @@ alwaysApply: false
 
 # Optimization: Dev Server Start
 
-<!-- - server dev bardzo długo sie uruchamia, dlaczego? spróbuj to zoptymalizować -->
+<!-- dev server takes very long to start - optimize startup time -->
 
 - dev server starts very slowly - optimize the start time

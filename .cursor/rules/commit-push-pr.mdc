@@ -4,15 +4,15 @@ alwaysApply: false
 
 ### Commit Push PR
 
-Przejrzyj wszystkie zmiany w repozytorium.
+Review all changes in the repository.
 
-1. Podziel zmiany na logiczne commity (max 3)
-2. Napisz commit messages w formacie Conventional Commits
-3. Stwórz branch z sensowną nazwą (feature/..., fix/..., chore/...)
-4. Push do remote
-5. Stwórz PR z opisem:
-   - Summary (2-3 zdania)
+1. Split changes into logical commits (max 3)
+2. Write commit messages in Conventional Commits format (as in shared)
+3. Create a branch with a sensible name (feature/..., fix/..., chore/...)
+4. Push to remote
+5. Create a PR with:
+   - Summary (2–3 sentences)
    - Changes (bullet points)
-   - Testing (jak przetestować)
+   - Testing (how to test)
 
-Użyj git i gh CLI.
+Use git and gh CLI.
