@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
@@ -17,85 +16,13 @@ import {
 import UserIcon from "../assets/icons/user.svg?url";
 import ChevronRightIcon from "../assets/icons/chevron-right.svg?url";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
-import type { ChatHistory, ChatSession } from "../agents/mathTutor/types";
-import { getHistory, saveHistory } from "../lib/chatHistory";
+import type { ChatSession } from "../agents/mathTutor/types";
+import { useHistorySessions } from "./hooks/useHistorySessions";
 
-const loadSessionsFromStorage = (): ChatSession[] => {
-  if (typeof window === "undefined") return [];
-  const historyJson = localStorage.getItem("chatHistory");
-  if (!historyJson) return [];
-  try {
-    const history: ChatHistory = JSON.parse(historyJson);
-    return [...history.sessions].sort((a, b) => b.lastMessageAt - a.lastMessageAt);
-  } catch (e) {
-    console.error("Error loading history:", e);
-    return [];
-  }
-};
-
-const FADE_OUT_DURATION = 400; // ms
+const getSessionDescription = (session: ChatSession) => session.topic || "Brak tematu";
 
 export default function History() {
-  // Initialize with empty array to prevent hydration mismatch
-  const [sessions, setSessions] = useState<ChatSession[]>([]);
-  const [isMounted, setIsMounted] = useState(false);
-  const [deletingSessionId, setDeletingSessionId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setIsMounted(true);
-      const loaded = loadSessionsFromStorage();
-      if (loaded.length > 0) {
-        console.log("📚 [History.tsx] Załadowano", loaded.length, "sesji");
-      }
-      setSessions(loaded);
-    }, 0);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, []);
-
-  const handleSessionClick = (sessionId: string) => {
-    // Don't navigate if session is being deleted
-    if (deletingSessionId === sessionId) return;
-
-    try {
-      const history = getHistory();
-      history.currentSessionId = sessionId;
-      saveHistory(history);
-      setTimeout(() => location.assign("/history-chat"), 0);
-    } catch (e) {
-      console.error("Error setting current session:", e);
-    }
-  };
-
-  const handleDeleteSession = (sessionId: string) => {
-    // Start fade-out animation
-    setDeletingSessionId(sessionId);
-
-    // Wait for animation to complete, then remove from state
-    setTimeout(() => {
-      try {
-        const history = getHistory();
-        history.sessions = history.sessions.filter((s) => s.id !== sessionId);
-        // If we're deleting the current session, clear it but stay on history page
-        if (history.currentSessionId === sessionId) {
-          history.currentSessionId = null;
-        }
-        saveHistory(history);
-        // Update local state to reflect the deletion
-        setSessions(history.sessions.sort((a, b) => b.lastMessageAt - a.lastMessageAt));
-        setDeletingSessionId(null);
-        console.log("🗑️ [History.tsx] Sesja usunięta, pozostajemy na stronie historii");
-      } catch (e) {
-        console.error("Error deleting session:", e);
-        setDeletingSessionId(null);
-      }
-    }, FADE_OUT_DURATION);
-  };
-
-  const getSessionDescription = (session: ChatSession): string => session.topic || "Brak tematu";
+  const { sessions, isMounted, deletingSessionId, handleSessionClick, handleDeleteSession } = useHistorySessions();
 
   return (
     <div

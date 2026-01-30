@@ -6,7 +6,6 @@ const EVENT_NAME = "nameUpdated";
 export function useUserName() {
   const [name, setName] = useState<string>("");
 
-  // Sync state from localStorage after hydration
   useEffect(() => {
     const storedName = localStorage.getItem(STORAGE_KEY);
     if (storedName) setTimeout(() => setName(storedName), 0);

@@ -1,4 +1,3 @@
-// Token Usage Tracking Service - tracks API token usage per month
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
@@ -25,17 +24,13 @@ interface UsageData {
   months: Record<string, MonthlyUsage>;
 }
 
-// Configuration
 const TOKEN_LIMIT_PER_MONTH = 950_000_000;
 const WARNING_THRESHOLD = 0.8;
 
 let usageCache: UsageData | null = null;
 const DATA_FILE = path.join(process.cwd(), "data", "token-usage.json");
 
-const getCurrentMonth = (): string => {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-};
+const getCurrentMonth = () => `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}`;
 
 const createEmptyUsageData = (): UsageData => ({ months: {} });
 
@@ -49,10 +44,8 @@ const createEmptyMonthlyUsage = (month: string): MonthlyUsage => ({
   lastUpdated: Date.now(),
 });
 
-const ensureDataDirectory = async (): Promise<void> => {
-  const dir = path.dirname(DATA_FILE);
-  await fs.access(dir).catch(() => fs.mkdir(dir, { recursive: true }));
-};
+const ensureDataDirectory = async () =>
+  fs.access(path.dirname(DATA_FILE)).catch(() => fs.mkdir(path.dirname(DATA_FILE), { recursive: true }));
 
 const loadUsageData = async (): Promise<UsageData> => {
   if (usageCache) return usageCache;
@@ -100,11 +93,6 @@ export const logTokenUsage = async (params: {
   monthData.lastUpdated = Date.now();
 
   await saveUsageData(data);
-
-  console.log(`📊 [TokenUsage] Logged: ${totalTokens} tokens (in: ${inputTokens}, out: ${outputTokens})`);
-  console.log(
-    `📊 [TokenUsage] Monthly: ${monthData.totalTokens.toLocaleString()} / ${TOKEN_LIMIT_PER_MONTH.toLocaleString()}`
-  );
 };
 
 export const getCurrentMonthUsage = async () => {
@@ -129,13 +117,12 @@ export const getCurrentMonthUsage = async () => {
   };
 };
 
-export const isMonthlyLimitReached = async (): Promise<boolean> => (await getCurrentMonthUsage()).isLimitReached;
+export const isMonthlyLimitReached = async () => (await getCurrentMonthUsage()).isLimitReached;
 
-export const getDaysUntilReset = (): number => {
-  const now = new Date();
-  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  return Math.ceil((nextMonth.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-};
+export const getDaysUntilReset = () =>
+  Math.ceil(
+    (new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  );
 
 export const formatUsageMessage = async (): Promise<string> => {
   const usage = await getCurrentMonthUsage();

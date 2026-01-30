@@ -10,10 +10,6 @@ interface OnlineProviderProps {
   children: ReactNode;
 }
 
-/**
- * Global provider for online/offline status
- * Single source of truth for network connectivity across the app
- */
 export function OnlineProvider({ children }: OnlineProviderProps) {
   const [isOnline, setIsOnline] = useState<boolean>(() => (typeof window === "undefined" ? true : navigator.onLine));
 
@@ -45,14 +41,12 @@ export function OnlineProvider({ children }: OnlineProviderProps) {
 
     const handleOnline = () => checkOnlineStatus();
     const handleOffline = () => setIsOnline(false);
+    const handlePageSwap = () => checkOnlineStatus();
 
     checkOnlineStatus();
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
-
-    const handlePageSwap = () => checkOnlineStatus();
-
     document.addEventListener("astro:page-load", handlePageSwap);
 
     const intervalId = setInterval(checkOnlineStatus, 10000);

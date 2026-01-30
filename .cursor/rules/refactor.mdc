@@ -6,7 +6,10 @@ alwaysApply: false
 - funkcje, które maja tylko 1 linię kodu, należy zastąpić strzałkami i zapisać w 1 linii.
 - zawsze stosuj zasady SOLID, DRY, KISS, YAGNI, KISS.
 - javascript zgodny m.in. z ES8, ES9, ES11, ES12, ES2022, ES2023
-- css wykorzystujący rozwiązania z roku 2025 i 5 lat wstecz
-- zastosuj tagi html 5 z roku 2025 i 5 lat wstecz
+- css i tailwind wykorzystujący rozwiązania z roku 2025 i 5 lat wstecz
+- zastosuj tagi, rozwiazania i funkcjonalności html 5 z roku 2025 i 5 lat wstecz
 - zastosuj funkcjonalności z React 19.2
 - usuń zbyt oczywiste komentarze, zostaw tylko te, które są potrzebne do zrozumienia kodu i z nazwami sekcji kodu.
+- jeśli kod jest dłuższy >200 linii, rozważ podział na mniejsze funkcje i zaproponuj rozwiązanie w postaci hooków, komponentów, modułów, klas, etc. Zapytaj o zgodę.
+- usuń nieużywane importy, funkcje i zmienne
+- usuń wszystkie console.log a zostaw tylko te, które są potrzebne do debugowania.

@@ -95,7 +95,6 @@ function TutorsForm() {
   );
 
   const handleMathClick = useCallback(() => handleSubjectSelect("matematyka"), [handleSubjectSelect]);
-  const handleEnglishClick = useCallback(() => handleSubjectSelect("angielski"), [handleSubjectSelect]);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center gap-6">
@@ -119,21 +118,6 @@ function TutorsForm() {
         >
           <span className="mr-2 text-2xl">📐</span>
           Matematyka
-        </button>
-        <button
-          type="button"
-          onClick={handleEnglishClick}
-          // disabled={!isOnline}
-          disabled={true}
-          aria-pressed={selectedSubject === "angielski"}
-          className={`relative overflow-hidden py-4 px-8 text-lg font-bold rounded-2xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-            selectedSubject === "angielski"
-              ? "bg-primary text-primary-foreground shadow-lg scale-105 hover:shadow-xl"
-              : "bg-muted hover:bg-accent/30 text-foreground hover:shadow-md hover:-translate-y-1"
-          }`}
-        >
-          <span className="mr-2 text-2xl">🇬🇧</span>
-          Język angielski
         </button>
       </fieldset>
 

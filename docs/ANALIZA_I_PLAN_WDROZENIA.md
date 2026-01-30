@@ -25,7 +25,7 @@ Projekt: Chat-with-Hero (Tutor with AI)
 - [Plan wdrożenia](#plan-wdrożenia)
   - [EPIK 1: Bezpieczeństwo i stabilność](#epik-1-bezpieczeństwo-i-stabilność)
   - [EPIK 2: Obsługa offline i PWA](#epik-2-obsługa-offline-i-pwa)
-  - [EPIK 3: Testowanie i optymalizacja](#epik-3-testowanie-i-optymalizacja)
+  - [EPIK 3: Testowanie ](#epik-3-testowanie)
 - [Status projektu](#status-projektu)
 - [Następne kroki](#następne-kroki)
 - [Osiągnięcia](#osiągnięcia)
@@ -260,19 +260,6 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 - **7 stycznia 2026** - Dokończono FEATURE 1.3 (Debouncing) - dodano hook `useDebounce`
 - **7 stycznia 2026** - Pełna weryfikacja kodu - status potwierdzony jako aktualny
 - **9 grudnia 2025** - Utworzenie dokumentu i implementacja FEATURE 1.1, 1.2
-
-### Częściowo zaimplementowane
-
-- ⚠️ **Brak** - wszystkie funkcjonalności są w pełni zaimplementowane lub nie rozpoczęte
-
-### W trakcie realizacji
-
-- ⚠️ **Brak** - wszystkie rozpoczęte funkcjonalności są ukończone
-
-### Do zrobienia (pozostałe zadania)
-
-- ❌ Optymalizacja kosztów API (FEATURE 3.3) - **priorytet NISKI**
-
 ---
 
 ## Plan wdrożenia
@@ -329,13 +316,12 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 
 ---
 
-### EPIK 3: Testowanie i optymalizacja
+### EPIK 3: Testowanie
 
 **Status:** ⚠️ 83% ukończone
 
 - ✅ FEATURE 3.1: Testowanie podstawowego flow - **UKOŃCZONE** (22 stycznia 2026) - wszystkie 6 scenariuszy przeszły pomyślnie ✅
 - ✅ FEATURE 3.2: Testowanie edge cases (46 testów jednostkowych: 13 edge cases + 33 content security)
-- ❌ FEATURE 3.3: Optymalizacja kosztów API - **DO ZROBIENIA** (priorytet NISKI)
 
 ---
 
@@ -443,26 +429,6 @@ Jeśli uczeń interesuje się piłką nożną, AI może wyjaśnić procenty uży
 - Wszystkie testy manualne przeszły pomyślnie (6/6 ✅)
 - Aplikacja jest stabilna i gotowa do wdrożenia
 
-**Następne kroki:**
-- Optymalizacja kosztów API (FEATURE 3.3) - priorytet NISKI (opcjonalne)
-
----
-
-## Następne kroki
-
-### 🟢 Priorytet NISKI: FEATURE 3.3 - Optymalizacja kosztów API (opcjonalne)
-
-**Status:** Monitoring działa, optymalizacja do zrobienia (nie jest krytyczne)
-
-**Co można zrobić (opcjonalnie):**
-1. Analiza użycia tokenów w typowej sesji
-2. Optymalizacja długości historii (sprawdzenie czy limit 10-15 wiadomości jest optymalny)
-3. Optymalizacja promptu systemowego (skrócenie bez utraty jakości)
-
-**Czas:** ~2-4 godziny (opcjonalne)
-
-> **📝 Uwaga:** To zadanie ma niski priorytet - aplikacja jest gotowa do wdrożenia bez tych optymalizacji
-
 ---
 
 ## Osiągnięcia
@@ -486,5 +452,3 @@ Podczas realizacji wykonano **więcej** niż było w pierwotnym planie:
    - ARIA labels i regions
    - Semantyczny HTML
    - aria-live dla dynamicznych aktualizacji
-
-4. ✅ **Lighthouse score:** Performance 78 / SEO 100 / Accessibility 98
