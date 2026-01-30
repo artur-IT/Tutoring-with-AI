@@ -6,30 +6,23 @@ import { validateAndSanitizeInput } from "../../lib/contentFilter";
 
 export const prerender = false;
 
-// In-memory store for rate limiting (sessionId -> request count)
 const sessionRequestCounts = new Map<string, { count: number; createdAt: number }>();
-
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 const cleanupOldSessions = () => {
   const oneHourAgo = Date.now() - ONE_HOUR_MS;
-  for (const [sessionId, data] of sessionRequestCounts) {
+  sessionRequestCounts.forEach((data, sessionId) => {
     if (data.createdAt < oneHourAgo) sessionRequestCounts.delete(sessionId);
-  }
+  });
 };
 
 const jsonResponse = (data: object, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json" } });
 
 const errorResponse = (error: string, status = 400) => jsonResponse({ success: false, error }, status);
-
-// POST /api/chat - handles chat requests
 export const POST: APIRoute = async ({ request }) => {
-  console.log("\n🟢 [API] === Nowe żądanie do /api/chat ===");
-
   try {
     const text = await request.text();
-    console.log("📥 [API] Raw body:", text);
 
     if (!text) {
       console.warn("⚠️ [API] Empty request body");
@@ -37,14 +30,6 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const { message, history, studentData, subject, sessionId } = JSON.parse(text);
-
-    console.log("📥 [API] Otrzymano:", {
-      message,
-      historyLength: history?.length ?? 0,
-      studentData,
-      subject,
-      sessionId,
-    });
 
     // Rate limiting
     if (sessionId) {
@@ -65,9 +50,6 @@ export const POST: APIRoute = async ({ request }) => {
       }
 
       sessionRequestCounts.set(sessionId, { count: requestCount, createdAt: sessionData?.createdAt ?? Date.now() });
-      console.log(
-        `📊 [API] Liczba zapytań dla sesji ${sessionId}: ${requestCount}/${sessionLimits.maxMessagesPerSession}`
-      );
     }
 
     if (!message || typeof message !== "string") {
@@ -94,22 +76,12 @@ export const POST: APIRoute = async ({ request }) => {
       return errorResponse("Obecnie obsługujemy tylko matematykę");
     }
 
-    console.log("✅ [API] Walidacja przeszła, wywołuję mathTutor...");
-
     const response = await sendMessage(
       sanitizedMessage,
       history as Message[] | undefined,
       studentData as StudentData | undefined,
       sessionId as string | undefined
     );
-
-    console.log("📤 [API] Odpowiedź z mathTutor:", {
-      success: response.success,
-      hasResponse: !!response.response,
-      error: response.error,
-      shouldRedirect: response.shouldRedirect,
-      metadata: response.metadata,
-    });
 
     const sessionData = sessionId ? sessionRequestCounts.get(sessionId) : null;
     const remainingRequests = Math.max(0, sessionLimits.maxMessagesPerSession - (sessionData?.count ?? 0));

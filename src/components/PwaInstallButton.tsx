@@ -70,8 +70,6 @@ export function PwaInstallButton() {
       const mockEvent = {
         preventDefault: () => {},
         prompt: async () => {
-          console.log("?? DEV MODE: Install prompt would be shown here");
-          // Simulate user accepting after a delay
           await new Promise((resolve) => setTimeout(resolve, 100));
         },
         userChoice: Promise.resolve({ outcome: "accepted" as const, platform: "web" }),
@@ -80,7 +78,6 @@ export function PwaInstallButton() {
       const timer = setTimeout(() => {
         setDeferredPrompt(mockEvent);
         setIsVisible(true);
-        console.log("?? DEV MODE: PWA Install button is visible for testing");
       }, 1000);
 
       return () => {
@@ -107,9 +104,6 @@ export function PwaInstallButton() {
         setIsVisible(false);
         setIsDismissed(true);
         localStorage.setItem("pwa-install-dismissed", "true");
-        if (isDevMode) {
-          console.log("?? DEV MODE: Installation accepted (simulated)");
-        }
       }
     } catch (error) {
       console.error("Error showing install prompt:", error);
