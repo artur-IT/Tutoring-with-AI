@@ -7,12 +7,12 @@ Interactive AI tutor for teenagers (13-19 years old). The app explains difficult
 - 🤖 Chat with AI tutor (Mistral AI)
 - 📐 Math support (more subjects planned)
 - 💬 Conversation history (localStorage)
-- 🎯 Personalization based on student interests
+- 🎯 Personalization based on student interests and problem description
 - ⏱️ Session limits (30 min, 50 messages, rate limiting)
+- 🔒 Content safety (input filtering, XSS protection, profanity filter)
 - 📱 PWA - works offline, installable as app
 - 🌐 Offline mode - read history without internet
 - ♿ Accessibility optimized (ARIA, semantic HTML)
-- 🚀 Lighthouse: Perf 78 / A11y 98 / SEO 100
 
 ## 🛠️ Tech Stack
 
@@ -20,6 +20,7 @@ Interactive AI tutor for teenagers (13-19 years old). The app explains difficult
 - **TypeScript 5**
 - **Tailwind CSS 4** + **shadcn/ui**
 - **Mistral AI**
+- **Vercel** (serverless deploy)
 
 ## 📋 Prerequisites
 
@@ -42,14 +43,38 @@ npm install
 npm run dev
 ```
 
+**Note:** `npm run preview` is not supported with the Vercel adapter. Use `npm run dev` for local development.
+
+## 📜 Scripts
+
+| Command           | Description                      |
+| ----------------- | -------------------------------- |
+| `npm run dev`     | Start dev server (with `--host`) |
+| `npm run build`   | Lint check + Astro build         |
+| `npm run check`   | ESLint + Prettier + Astro check  |
+| `npm run test`    | Unit tests (Vitest)              |
+| `npm run test:ui` | Vitest UI                        |
+
 ## 📁 Structure
 
 ```
 src/
-├── agents/        # AI agents (tutors)
-├── components/    # UI components
-├── pages/         # App pages
-└── pages/api/     # API endpoints
+├── agents/         # AI agents (e.g. mathTutor)
+├── assets/         # Icons and static assets
+├── components/     # React + Astro components
+│   ├── chat/       # Chat UI (header, messages, input, stats)
+│   ├── hooks/      # React hooks (session, online, debounce, etc.)
+│   └── ui/         # shadcn/ui components
+├── layouts/        # Astro layouts
+├── lib/            # Utilities (contentFilter, chatHistory, tokenUsage, etc.)
+├── pages/          # Astro pages
+│   ├── api/        # API routes (chat, token-status)
+│   ├── index.astro # Home
+│   ├── tutors.astro
+│   ├── chat.astro
+│   ├── history-list.astro
+│   └── history-chat.astro
+└── styles/         # Global CSS
 ```
 
 ## 🧪 Testing
@@ -60,5 +85,13 @@ npm run test        # Unit tests (Vitest + React Testing Library)
 
 **Test coverage:**
 
-- ✅ 13 unit tests (Chat, NameInput, useDebounce)
-- ✅ Manual testing for edge cases
+- ✅ 48 unit tests
+  - Chat (7), NameInput (3), useDebounce (3)
+  - contentFilter (35) – content safety
+- ✅ Manual testing for edge cases (see `docs/TESTS_PLAN.md`)
+
+## 📚 Documentation
+
+- `docs/ANALIZA_I_PLAN_WDROZENIA.md` – project plan and status
+- `docs/CONTENT_SECURITY.md` – content filtering and security
+- `docs/TESTS_PLAN.md` – manual test scenarios
