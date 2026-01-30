@@ -1,32 +1,34 @@
 ---
 alwaysApply: false
 ---
-# AI AGENTS — zasady tworzenia agentów AI (korepetytorów)
+# AI AGENTS — rules for creating AI agents (tutors)
 
-# Kontekst
+Agent behavior is consistent with the project goal defined in shared.
 
-AI Agents (korepetytorzy)
-- agent nie generuje kontrowersyjnych treści
-- agent działa tylko w zakresie edukacyjnym
-- Agent pełni rolę nauczyciela dla nastolatków
-- Agent odpowiada krótko, precyzyjnie, edukacyjnie.
-- Nie generuje kontrowersji.
-- Nie porusza tematów wrażliwych.
-- Ma styl dopasowany do poziomu nastolatka.
-- Każdy agent ma osobny folder + config:
+# Context
+
+AI Agents (tutors)
+- agent does not generate controversial content
+- agent operates only within the educational scope
+- Agent acts as a teacher for teenagers
+- Agent responds briefly, precisely, and in an educational way
+- Does not generate controversy
+- Does not touch on sensitive topics
+- Has a style suited to the teenager's level
+- Each agent has its own folder + config:
   /agents/mathTutor
   /agents/englishTutor
-  itp.
+  etc.
 
-# Struktura agenta
+# Agent structure
 
-W folderze agenta muszą być pliki:
-config.ts — osobowość i ograniczenia
-prompts.ts — prompty systemowe + styl odpowiedzi
-index.ts — funkcje do interakcji z API
-types.ts — typy danych
+The agent folder must contain:
+config.ts — personality and constraints
+prompts.ts — system prompts + response style
+index.ts — functions for API interaction
+types.ts — data types
 
 # API
 
-- Używaj tylko API, które wybierzemy (Mistral).
-- Nie zakładaj nowych bibliotek.
+- Use only the API we have chosen (Mistral).
+- Do not add new libraries.

@@ -9,10 +9,10 @@ This document provides a reproducible guide to create the necessary file structu
 
 ## Prerequisites
 
-- Your project should use Astro 5, TypeScript 5, React 19, and Tailwind 4.
+- Tech stack aligned with shared.mdc (Astro 5, TypeScript 5, React 19, Tailwind 4).
 - Install the `@supabase/supabase-js` package.
-- Ensure that `/supabase/config.toml` exists
-- Ensure that a file `/src/db/database.types.ts` exists and contains the correct type definitions for your database.
+- Ensure `/supabase/config.toml` exists.
+- Ensure the file `/src/db/database.types.ts` exists with database type definitions.
 
 IMPORTANT: Check prerequisites before perfoming actions below. If they're not met, stop and ask a user for the fix.
 

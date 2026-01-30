@@ -1,164 +1,164 @@
 ---
-description: new components, pages
+description: new pages, layout, design system
 alwaysApply: false
 ---
-# UI DESIGN RULES — zasady projektowania interfejsu
+# UI DESIGN RULES — interface design guidelines
 
 ##########################################################
-# 1. FILOZOFIA UI
+# 1. UI PHILOSOPHY
 ##########################################################
-- Interfejs ma być prosty, intuicyjny i przewidywalny.
-- Preferuj klasyczne wzorce UX, zamiast eksperymentalnych.
-- Stylowanie oparte na Tailwind — spójne spacingi, kolory, typografia.
-- Projekt ma być czytelny dla nastolatków: duże nagłówki, jasne CTA.
-- Każdy ekran ma mieć jeden główny cel (one primary action rule).
+- The interface must be simple, intuitive, and predictable.
+- Prefer classic UX patterns over experimental ones.
+- Styling based on Tailwind — consistent spacing, colors, typography.
+- The project must be readable for teenagers: large headings, clear CTAs.
+- Each screen should have one primary goal (one primary action rule).
 
 ##########################################################
-# 2. TYPOGRAFIA
+# 2. TYPOGRAPHY
 ##########################################################
-- Używaj systemowych fontów lub jednego bezszeryfowego (np. Inter).
-- Hierarchia:
+- Use system fonts or one sans-serif (e.g. Inter).
+- Hierarchy:
   H1 → text-3xl font-bold
   H2 → text-2xl font-semibold
   H3 → text-xl font-semibold
   Body → text-base
   Small → text-sm text-gray-500
-- Nigdy nie używaj więcej niż 2 rozmiarów tekstu w jednej sekcji.
-- Tekst zawsze czytelny, bez długich bloków — max 60–70 znaków w linii.
+- Never use more than 2 text sizes in one section.
+- Text must always be readable, without long blocks — max 60–70 characters per line.
 
 ##########################################################
-# 3. KOLORY
+# 3. COLORS
 ##########################################################
-- Paleta główna:
-  - Primary: niebieski (#2563eb / tailwind: blue-600)
-  - Secondary: fiolet (#7c3aed / purple-600)
-  - Neutral: szarości tailwind (gray-100 → gray-900)
-- CTA = zawsze primary
-- Kolorów ostrzeżeń:
+- Main palette:
+  - Primary: blue (#2563eb / tailwind: blue-600)
+  - Secondary: purple (#7c3aed / purple-600)
+  - Neutral: Tailwind grays (gray-100 → gray-900)
+- CTA = always primary
+- Semantic colors:
   - Success → green-600
   - Warning → yellow-600
   - Error → red-600
-- Unikaj jaskrawych, dziecinnych kolorów — projekt jest dla nastolatków, nie małych dzieci.
+- Avoid bright, childish colors — the project is for teenagers, not young children.
 
 ##########################################################
 # 4. SPACING & GRID
 ##########################################################
-- Używaj spacingów 4, 6, 8, 12, 16 (Tailwind: p-4 p-6 etc.)
-- Marginesy wewnętrzne kart:
+- Use spacing 4, 6, 8, 12, 16 (Tailwind: p-4 p-6 etc.)
+- Card padding:
   p-4 mobile
   p-6 tablet+
 - Layout:
-  - max-w-screen-md lub max-w-screen-lg
-  - używaj grid i flex zamiast absolutnego pozycjonowania
-- Stały baseline rhythm: przestrzeń między sekcjami = mt-8 lub mb-8
+  - max-w-screen-md or max-w-screen-lg
+  - use grid and flex instead of absolute positioning
+- Consistent baseline rhythm: space between sections = mt-8 or mb-8
 
 ##########################################################
-# 5. ELEMENTY UI
+# 5. UI ELEMENTS
 ##########################################################
-### Przyciski
-- Kolor: bg-blue-600 text-white
-- Zaokrąglenie: rounded-xl lub rounded-lg
-- Rozmiary:
+### Buttons
+- Color: bg-blue-600 text-white
+- Border radius: rounded-xl or rounded-lg
+- Sizes:
   - Primary → py-3 px-6 text-base
   - Secondary → py-2 px-5 text-sm
-- Ikony zawsze przed tekstem, niewiększe niż 20px.
+- Icons always before text, no larger than 20px.
 
-### Formularze
-- Pola input:
+### Forms
+- Input fields:
   - border border-gray-300
   - rounded-lg
   - focus:ring-2 focus:ring-blue-500
   - py-2 px-3
-- Label zawsze nad polem, nie w placeholderze.
-- Błędy wyświetlaj pod polem w text-red-600 text-sm.
+- Label always above the field, not in placeholder.
+- Show errors below the field in text-red-600 text-sm.
 
-### Karty (cards)
-- tło: white
-- cień: shadow-md
+### Cards
+- Background: white
+- Shadow: shadow-md
 - rounded-xl
-- padding: p-4 mobile, p-6 desktop
-- sekcje w środku rozdzielone spacingiem 4–6
+- Padding: p-4 mobile, p-6 desktop
+- Inner sections separated by spacing 4–6
 
 ##########################################################
-# 6. NAWIGACJA + UX FLOW
+# 6. NAVIGATION + UX FLOW
 ##########################################################
-- Top bar zawsze widoczny.
-- Kolor: bg-white shadow-md
-- Minimalizm: jedna akcja główna po prawej (np. profil).
-- Wersja mobilna:
-  - menu hamburger lub bottom nav z 3–4 ikonami.
-- Flow użytkownika:
-  1. Home → wybór korepetytora
-  2. Ekran lekcji → czat
-  3. Profil → postępy, statystyki
+- Top bar always visible.
+- Color: bg-white shadow-md
+- Minimalism: one primary action on the right (e.g. profile).
+- Mobile:
+  - hamburger menu or bottom nav with 3–4 icons.
+- User flow:
+  1. Home → choose tutor
+  2. Lesson screen → chat
+  3. Profile → progress, stats
 
 ##########################################################
-# 7. KOMPONENTY WIELORAZOWE
+# 7. REUSABLE COMPONENTS
 ##########################################################
-- Zawsze generuj wersję:
+- Always provide:
   - PrimaryButton.tsx
   - InputField.tsx
   - PageHeader.tsx
   - Card.tsx
   - Loader.tsx
-- Każdy komponent UI musi:
-  - mieć propsy: className, children
-  - być modyfikowalny przez Tailwind classes
-  - być responsywny (mobile-first)
+- Every UI component must:
+  - have props: className, children
+  - be customizable via Tailwind classes
+  - be responsive (mobile-first)
 
 ##########################################################
-# 8. RESPONSYWNOŚĆ
+# 8. RESPONSIVENESS
 ##########################################################
-- Mobile-first: domyślna szerokość = mobile.
-- Najważniejsze breakpoints:
+- Mobile-first: default width = mobile.
+- Main breakpoints:
   sm: 640px
   md: 768px
   lg: 1024px
-- Na mobile unikaj dwóch kolumn.
-- Na desktop możesz stosować grid 2col i 3col.
+- On mobile avoid two columns.
+- On desktop you can use 2col and 3col grid.
 
 ##########################################################
-# 9. ANIMACJE
+# 9. ANIMATIONS
 ##########################################################
-- Subtelne, nie przesadzone.
-- Stosuj:
+- Subtle, not overdone.
+- Use:
   - fade
   - slide up/down
   - scale-in
-- Nie stosuj:
+- Do not use:
   - bounce
   - overshoot
-  - flamastry, neon effect
-- Use: framer-motion (jeśli potrzebne) lub transition z Tailwind.
+  - neon / flashy effects
+- Use framer-motion (if needed) or Tailwind transition.
 
 ##########################################################
 # 10. BRANDING & TONE
 ##########################################################
-- Brand jest edukacyjny, nowoczesny, ale nie dziecinny.
-- Styl: czysto, przejrzyście, stabilnie.
-- Ikony: heroicons (outline).
-- Emoji stosuj rzadko — maksymalnie 1 na sekcję.
-- Agent AI ma mieć proste ilustracje lub avatary (flat design).
+- Brand is educational, modern, but not childish.
+- Style: clean, clear, stable.
+- Icons: heroicons (outline).
+- Use emoji sparingly — at most 1 per section.
+- AI agent should have simple illustrations or avatars (flat design).
 
 ##########################################################
-# 11. ZAKAZY
+# 11. DON'TS
 ##########################################################
-- Zero chaosu w UI — nie mieszaj fontów, styli, cieni.
-- Nie używaj gradientów jako tła.
-- Nie stosuj pełnych stron z obrazkiem w tle.
-- Nie rób „kart UI” z nierównomiernymi marginesami.
-- Zero customowych CSS poza wyjątkami.
-- Nie generuj UI, które nie pasuje do reszty aplikacji.
+- No UI chaos — do not mix fonts, styles, shadows.
+- Do not use gradients as background.
+- Do not use full-page background images.
+- Do not create UI cards with uneven margins.
+- No custom CSS except when necessary.
+- Do not generate UI that does not match the rest of the app.
 
 ##########################################################
-# 12. PROCEDURA DLA CURSORA
+# 12. CURSOR PROCEDURE
 ##########################################################
-Kiedy proszę o wygenerowanie widoku:
+When asked to generate a view:
 
-1. Najpierw stosujesz ui_design.rules.  
-2. Potem coding_style.rules.  
-3. Na końcu architecture.rules.
+1. Apply ui_design.rules first.
+2. Then coding_style.rules.
+3. Finally architecture.rules.
 
-Przed wygenerowaniem kodu:
-- zaproponuj lepszy układ, jeśli jest sens
-- sprawdź, czy UI nie łamie spójności projektu
+Before generating code:
+- suggest a better layout if it makes sense
+- check that the UI does not break project consistency
