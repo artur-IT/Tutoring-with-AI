@@ -1,4 +1,4 @@
-export type Subject = "matematyka" | "angielski";
+export type Subject = "matematyka";
 
 export type SubjectTopics = Record<string, string[]>;
 
@@ -23,20 +23,8 @@ export const MATH_TOPICS = [
   "Inne",
 ];
 
-export const ENGLISH_TOPICS = [
-  "Gramatyka",
-  "Słownictwo",
-  "Czytanie ze zrozumieniem",
-  "Pisanie",
-  "Słuchanie",
-  "Mówienie",
-  "Czasy gramatyczne",
-  "Inne",
-];
-
 export const SUBJECT_TOPICS: SubjectTopics = {
   matematyka: MATH_TOPICS,
-  angielski: ENGLISH_TOPICS,
 };
 
 export const getTopicsForSubject = (subject: Subject | null) => (subject ? SUBJECT_TOPICS[subject] || [] : []);

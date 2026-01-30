@@ -3,8 +3,30 @@ export const prerender = true;
 
 import Layout from "../layouts/Layout.astro";
 import ChatPage from "../components/Chat";
+import { sessionLimits, contentRestrictions } from "../agents/mathTutor/config";
+
+const description = `Rozmowa z korepetytorem AI. Limit: ${sessionLimits.maxMessagesPerSession} pytań, ${sessionLimits.maxSessionDuration} minut.`;
+const keywords = "rozmowa z AI, korepetytor matematyki, nauka online, czat edukacyjny";
 ---
 
-<Layout title="Rozmowa" description="Rozmowa z korepetytorem AI.">
+<Layout title="Rozmowa z Korepetytorem AI" description={description} keywords={keywords} type="article">
+  <!-- Static info banner - renders instantly on server -->
+  <noscript>
+    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 m-4">
+      <p class="text-sm text-amber-800">
+        Ta aplikacja wymaga JavaScript aby działać. Proszę włącz JavaScript w przeglądarce.
+      </p>
+    </div>
+  </noscript>
+
+  <!-- Hidden session info for SEO and accessibility -->
+  <div class="sr-only">
+    <h1>Rozmowa z korepetytorem AI</h1>
+    <p>Limit sesji: {sessionLimits.maxMessagesPerSession} pytań</p>
+    <p>Czas trwania: {sessionLimits.maxSessionDuration} minut</p>
+    <p>Maksymalna długość wiadomości: {contentRestrictions.maxMessageLength} znaków</p>
+  </div>
+
+  <!-- Interactive chat component -->
   <ChatPage client:only="react" />
 </Layout>
