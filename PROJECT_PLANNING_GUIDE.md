@@ -285,7 +285,7 @@ FEATURE: Interaktywny chat
        └── ⏳ Task: Testy personalizacji
 
 🎯 EPIK 3: Integracja z bazą danych
-   ├── 🗄️ FEATURE: Setup Supabase
+   ├── 🗄️ FEATURE: Setup bazy danych
    │   └── ⏳ Task: Konfiguracja klienta
    │
    └── 💾 FEATURE: Zapisywanie historii

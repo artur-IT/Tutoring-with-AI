@@ -88,10 +88,8 @@ npm run test        # Unit tests (Vitest + React Testing Library)
 - ✅ 48 unit tests
   - Chat (7), NameInput (3), useDebounce (3)
   - contentFilter (35) – content safety
-- ✅ Manual testing for edge cases (see `docs/TESTS_PLAN.md`)
 
 ## 📚 Documentation
 
 - `docs/ANALIZA_I_PLAN_WDROZENIA.md` – project plan and status
 - `docs/CONTENT_SECURITY.md` – content filtering and security
-- `docs/TESTS_PLAN.md` – manual test scenarios
