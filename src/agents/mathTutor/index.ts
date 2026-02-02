@@ -2,6 +2,7 @@ import { Mistral } from "@mistralai/mistralai";
 import { mathTutorConfig, contentRestrictions } from "./config";
 import { getSystemPrompt } from "./prompts";
 import type { Message, AIResponse, StudentData } from "./types";
+import { validateAndSanitizeInput } from "../../lib/contentFilter";
 import { logTokenUsage, isMonthlyLimitReached, getCurrentMonthUsage, getDaysUntilReset } from "../../lib/tokenUsage";
 
 const getMistralClient = () => {
@@ -10,12 +11,12 @@ const getMistralClient = () => {
   return new Mistral({ apiKey });
 };
 
-const validateMessage = (message: string): { valid: boolean; error?: string } => {
-  if (!message?.trim()) return { valid: false, error: "Wiadomość nie może być pusta" };
-  if (message.length > contentRestrictions.maxMessageLength)
-    return { valid: false, error: `Wiadomość jest za długa (max ${contentRestrictions.maxMessageLength} znaków)` };
-  return { valid: true };
-};
+const chatMessageValidationOptions = {
+  maxLength: contentRestrictions.maxMessageLength,
+  checkProfanity: true,
+  checkPromptInjection: true,
+  checkPersonalInfo: true,
+} as const;
 const TOPIC_MISMATCH_PHRASES = [
   "rozmowa zostaje zakończona",
   "rozmowa jest zakończona",
@@ -60,18 +61,19 @@ export const sendMessage = async (
       };
     }
 
-    const validation = validateMessage(userMessage);
-    if (!validation.valid) {
+    const validation = validateAndSanitizeInput(userMessage, chatMessageValidationOptions);
+    if (!validation.isValid) {
       console.warn("⚠️ [MathTutor] Walidacja nie powiodła się:", validation.error);
       return {
         success: false,
-        error: validation.error,
+        error: validation.error ?? "Nieprawidłowa treść wiadomości",
       };
     }
 
+    const safeContent = validation.sanitized ?? userMessage;
     const userMsg: Message = {
       role: "user",
-      content: userMessage,
+      content: safeContent,
       timestamp: Date.now(),
     };
 

@@ -11,7 +11,6 @@ interface WindowEventMap {
 }
 
 interface ImportMetaEnv {
-  readonly OPENROUTER_API_KEY: string;
   readonly PROD: boolean;
   readonly DEV: boolean;
   // more env variables...

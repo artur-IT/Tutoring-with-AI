@@ -14,8 +14,9 @@ Aplikacja **Korepetytor AI** implementuje wielowarstwowe zabezpieczenia treści 
 
 **Metoda:** HTML Escaping (działa na frontend i backend)
 **Gdzie używane:**
-- Frontend: `ChatMessages.tsx` - wszystkie wiadomości przed wyświetleniem
-- Backend: `chat.ts` API endpoint - przed przetwarzaniem
+- Frontend: `Chat.tsx` – przed wysłaniem wiadomości (w `validateAndSanitizeInput()`)
+- Backend: `chat.ts` API endpoint – przed przetwarzaniem (ta sama funkcja)
+- Agent: `mathTutor/index.ts` – wspólna walidacja przed wywołaniem API Mistral
 
 ### 2. Filtr wulgaryzmów
 
@@ -71,23 +72,39 @@ Aplikacja **Korepetytor AI** implementuje wielowarstwowe zabezpieczenia treści 
 
 1. Otrzymanie requestu w `chat.ts`
 2. Walidacja podstawowa (pusty string, typ)
-3. Walidacja treści: `validateAndSanitizeInput()`
+3. Walidacja treści: `validateAndSanitizeInput()` z `@/lib/contentFilter` (wspólna funkcja dla całej aplikacji)
    - Te same sprawdzenia jak frontend
 4. Jeśli niepoprawne → zwróć 400 Bad Request
 5. Jeśli poprawne → przekaż do `mathTutor`
 6. Zwróć odpowiedź do frontendu
 
+### Agent (mathTutor):
+
+- Agent używa tej samej funkcji `validateAndSanitizeInput()` z opcjami z `contentRestrictions` (defense in depth).
+- Wiadomość przekazana do Mistral API to `validation.sanitized ?? message`.
+
 ### Wyświetlanie wiadomości:
 
-1. Otrzymanie wiadomości z API/historii
-2. `ChatMessages.tsx::MessageBubble`
-3. Sanityzacja przed wyświetleniem: `sanitizeForDisplay()`
-4. Renderowanie bezpiecznej treści
+1. Otrzymanie wiadomości z API lub z historii (localStorage)
+2. `ChatMessages.tsx::MessageBubble` / `HistoryChat.tsx::renderMessage`
+3. Treść jest renderowana przez React (`{message.content}`) – React domyślnie escapuje znaki specjalne, co chroni przed XSS
+4. Dla wiadomości asystenta używana jest `cleanMathNotation()` (formatowanie notacji matematycznej, np. LaTeX)
+5. Brak osobnej funkcji `sanitizeForDisplay()` – bezpieczeństwo zapewnia escapowanie po stronie React oraz sanityzacja przy wysyłaniu (frontend + backend)
+
+## Nagłówki bezpieczeństwa (produkcja)
+
+W pliku `vercel.json` ustawione są nagłówki HTTP (stosowane na Vercel):
+
+- **Content-Security-Policy** – ogranicza źródła skryptów, stylów, fontów, połączeń (XSS, data injection)
+- **X-Frame-Options: DENY** – zabezpieczenie przed osadzaniem strony w iframe (clickjacking)
+- **X-Content-Type-Options: nosniff** – wyłączenie MIME sniffing
+- **Referrer-Policy: strict-origin-when-cross-origin** – ograniczenie danych w nagłówku Referer
 
 ## Ważne uwagi
 
-1. **Sanityzacja HTML** jest zawsze wykonywana, niezależnie od opcji
-2. **Frontend i backend** wykonują te same sprawdzenia (defense in depth)
-3. **Blacklista wulgaryzmów** może wymagać rozszerzenia w zależności od potrzeb
-4. **Dane osobowe** nie są sprawdzane w polach formularza (zainteresowania, problem)
-5. **HTML Escaping** działa identycznie w przeglądarce i Node.js - brak zależności od DOM API
+1. **Wspólna walidacja** – jedna funkcja `validateAndSanitizeInput()` z `@/lib/contentFilter` używana w `Chat.tsx`, `chat.ts` API oraz `mathTutor/index.ts`.
+2. **Sanityzacja HTML** jest zawsze wykonywana w tej funkcji, niezależnie od opcji.
+3. **Frontend, backend i agent** wykonują te same sprawdzenia (defense in depth).
+4. **Blacklista wulgaryzmów** może wymagać rozszerzenia w zależności od potrzeb.
+5. **Dane osobowe** nie są sprawdzane w polach formularza (zainteresowania, problem).
+6. **HTML Escaping** działa identycznie w przeglądarce i Node.js – brak zależności od DOM API.
