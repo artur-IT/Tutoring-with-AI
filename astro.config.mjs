@@ -25,8 +25,8 @@ export default defineConfig({
       injectRegister: false, // We handle registration manually in Layout.astro
       selfDestroying: false,
       manifest: {
-        name: "Tutor with AI",
-        short_name: "Tutor AI",
+        name: "Korepetytor AI",
+        short_name: "Korepetytor AI",
         description: "Interactive AI tutor for teenagers",
         theme_color: "#ffffff",
         background_color: "#ffffff",
