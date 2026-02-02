@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "**": { "runtime": "nodejs22.x" }
+  },
   "headers": [
     {
       "source": "/(.*)",
