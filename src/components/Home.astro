@@ -33,6 +33,14 @@ import { PwaInstallButton } from "./PwaInstallButton";
       <p class="text-base text-muted-foreground font-medium mb-4 md:mb-8">Gotowy na naukę?</p>
     </div>
 
+    <!-- Warning message (hidden by default, shown when usage >= 80%) -->
+    <div
+      id="warning-message"
+      class="hidden w-full max-w-md mx-auto mb-4 p-4 rounded-2xl bg-amber-500/10 border-2 border-amber-500/30 text-center animate-in fade-in duration-500"
+    >
+      <p id="warning-message-text" class="text-sm text-foreground"></p>
+    </div>
+
     <!-- Blocked message (hidden by default) -->
     <div
       id="blocked-message"
@@ -77,9 +85,20 @@ import { PwaInstallButton } from "./PwaInstallButton";
     try {
       const response = await fetch("/api/token-status");
       const data = await response.json();
-      if (data.success && data.isBlocked) showBlockedMessage(data.message);
+      if (!data.success) return;
+      if (data.isBlocked) showBlockedMessage(data.message);
+      else if (data.isWarning && data.warningMessage) showWarningMessage(data.warningMessage);
     } catch (error) {
       console.error("Error checking token status:", error);
+    }
+  };
+
+  const showWarningMessage = (message: string) => {
+    const warningEl = $("warning-message");
+    const warningText = $("warning-message-text");
+    if (warningEl && warningText) {
+      warningText.textContent = message;
+      warningEl.classList.remove("hidden");
     }
   };
 

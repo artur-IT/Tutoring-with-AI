@@ -25,7 +25,7 @@ interface UsageData {
 }
 
 const TOKEN_LIMIT_PER_MONTH = 950_000_000;
-const WARNING_THRESHOLD = 0.8;
+const WARNING_THRESHOLD = 0.95;
 
 let usageCache: UsageData | null = null;
 const DATA_FILE = path.join(process.cwd(), "data", "token-usage.json");
@@ -123,18 +123,17 @@ export const getDaysUntilReset = () =>
   Math.ceil(
     (new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
   );
-
 export const formatUsageMessage = async (): Promise<string> => {
   const usage = await getCurrentMonthUsage();
   const daysLeft = getDaysUntilReset();
 
   if (usage.isLimitReached) {
-    return `Miesięczny limit tokenów został osiągnięty. Aplikacja wznowi działanie za ${daysLeft} dni (1. dnia nowego miesiąca).`;
+    return `Miesięczny limit został osiągnięty. Korepetytor będzie znów dostępny za ${daysLeft} ${daysLeft === 1 ? "dzień" : "dni"} (od 1. dnia nowego miesiąca).`;
   }
   if (usage.isWarning) {
-    return `Uwaga: Wykorzystano ${usage.percentUsed.toFixed(1)}% miesięcznego limitu tokenów. Pozostało ${usage.remaining.toLocaleString()} tokenów.`;
+    return `Uwaga: Wykorzystano już ${usage.percentUsed.toFixed(0)}% miesięcznego limitu. Limit odnowi się na początku przyszłego miesiąca.`;
   }
-  return `Wykorzystano ${usage.percentUsed.toFixed(1)}% miesięcznego limitu (${usage.totalTokens.toLocaleString()} / ${usage.limit.toLocaleString()} tokenów).`;
+  return `Wykorzystano ${usage.percentUsed.toFixed(0)}% miesięcznego limitu.`;
 };
 
 export const TOKEN_CONFIG = { LIMIT_PER_MONTH: TOKEN_LIMIT_PER_MONTH, WARNING_THRESHOLD } as const;

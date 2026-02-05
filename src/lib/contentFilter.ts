@@ -47,7 +47,7 @@ const PERSONAL_INFO_PATTERNS = [
   /\b\d{2}-\d{3}\b/,
 ] as const;
 
-export type ValidationResult = {
+type ValidationResult = {
   isValid: boolean;
   error?: string;
   sanitized?: string;

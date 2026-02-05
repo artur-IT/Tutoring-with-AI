@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getCurrentMonthUsage, getDaysUntilReset } from "../../lib/tokenUsage";
+import { getCurrentMonthUsage, getDaysUntilReset, formatUsageMessage } from "../../lib/tokenUsage";
 
 export const prerender = false;
 
@@ -13,7 +13,7 @@ const getNextMonthName = () => {
 };
 
 const getBlockedMessage = (daysUntilReset: number, nextMonthName: string) =>
-  `Limit tokenów na ten miesiąc został wyczerpany. Wróć ${daysUntilReset === 1 ? "jutro" : `za ${daysUntilReset} dni`} (1. ${nextMonthName}).`;
+  `Miesięczny limit został wyczerpany. Korepetytor będzie znów dostępny ${daysUntilReset === 1 ? "jutro" : `za ${daysUntilReset} dni`} (1. ${nextMonthName}).`;
 
 // GET /api/token-status - returns current token usage status
 export const GET: APIRoute = async () => {
@@ -21,6 +21,8 @@ export const GET: APIRoute = async () => {
     const usage = await getCurrentMonthUsage();
     const daysUntilReset = getDaysUntilReset();
     const nextMonthName = getNextMonthName();
+
+    const warningMessage = usage.isWarning && !usage.isLimitReached ? await formatUsageMessage() : null;
 
     return jsonResponse({
       success: true,
@@ -34,6 +36,7 @@ export const GET: APIRoute = async () => {
       },
       resetInfo: { daysUntilReset, nextMonth: nextMonthName },
       message: usage.isLimitReached ? getBlockedMessage(daysUntilReset, nextMonthName) : null,
+      warningMessage,
     });
   } catch (error) {
     console.error("❌ [API] Error checking token status:", error);

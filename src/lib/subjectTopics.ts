@@ -1,6 +1,6 @@
 export type Subject = "matematyka";
 
-export type SubjectTopics = Record<string, string[]>;
+type SubjectTopics = Record<string, string[]>;
 
 export const MATH_TOPICS = [
   "Liczby rzeczywiste i wyrażenia algebraiczne",
@@ -23,7 +23,7 @@ export const MATH_TOPICS = [
   "Inne",
 ];
 
-export const SUBJECT_TOPICS: SubjectTopics = {
+const SUBJECT_TOPICS: SubjectTopics = {
   matematyka: MATH_TOPICS,
 };
 

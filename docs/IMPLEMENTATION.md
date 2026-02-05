@@ -2,7 +2,7 @@
 
 ## Project goal
 
-Combine an educational app with Mistral AI to build an interactive tutor that helps teenagers learn through personalized conversations tailored to their interests and knowledge level.
+Educational app with Mistral AI to interactive tutor that helps teenagers learn through personalized conversations tailored to their interests and knowledge level.
 
 ## Tech stack
 

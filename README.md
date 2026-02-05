@@ -1,4 +1,4 @@
-# 🎓 Tutor with AI (PL Application)
+# 🎓 Tutor with AI (PL App)
 
 <div align="center">
 
