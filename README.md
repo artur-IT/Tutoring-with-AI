@@ -1,20 +1,13 @@
-# 🎓 Tutor with AI
+# 🎓 Tutor with AI (PL Application)
 
-<p align="center"> Home page </p>
+<div align="center">
 
 ![Front page](./public/screenshots/home.png)
-
-<p align="center"> Math page </p>
-
 ![](./public/screenshots/math.png)
-
-<p align="center"> Chat with AI </p>
-
 ![](./public/screenshots/chat-ai.png)
-
-<p align="center"> Chat history </p>
-
 ![](./public/screenshots/chat-history.png)
+
+</div>
 
 Interactive AI tutor for teenagers (13-19 years old). The app explains difficult Math topics in a simple and understandable way.
 
@@ -109,3 +102,4 @@ npm run test        # Unit tests (Vitest + React Testing Library)
 ## 📚 Documentation
 
 - `docs/CONTENT_SECURITY.md` – content filtering and security
+- `docs/IMPLEMENTATION.md` – short implementation details

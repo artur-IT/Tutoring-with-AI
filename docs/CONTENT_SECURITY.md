@@ -1,110 +1,69 @@
-# Content Security - Dokumentacja zabezpieczeń
+# Content security – documentation
 
+The **Tutor with AI** app protects user-supplied content against:
 
-
-Aplikacja **Korepetytor AI** implementuje wielowarstwowe zabezpieczenia treści podawanych przez użytkownika, chroniąc przed:
-- Atakami XSS (Cross-Site Scripting)
-- Wulgaryzmami i treściami nieodpowiednimi
+- XSS (Cross-Site Scripting)
+- Profanity and inappropriate content
 - Prompt injection
-- Wyciekiem danych osobowych
+- Leakage of personal data
 
-## Zaimplementowane zabezpieczenia
-
-### 1. Sanityzacja HTML (XSS)
-
-**Metoda:** HTML Escaping (działa na frontend i backend)
-**Gdzie używane:**
-- Frontend: `Chat.tsx` – przed wysłaniem wiadomości (w `validateAndSanitizeInput()`)
-- Backend: `chat.ts` API endpoint – przed przetwarzaniem (ta sama funkcja)
-- Agent: `mathTutor/index.ts` – wspólna walidacja przed wywołaniem API Mistral
-
-### 2. Filtr wulgaryzmów
-
-**Lista wykrywanych słów:**
-- Podstawowe wulgaryzmy polskie
-- Warianty z zastąpionymi literami (np. k*rwa, j*bać)
-- Fuzzy matching dla wariantów z liczbami/symbolami (a→@4, e→3, i→1!, o→0)
+Validation is centralized in `validateAndSanitizeInput()` from `@/lib/contentFilter`, used in `Chat.tsx`, `chat.ts` API, and `mathTutor/index.ts` (defense in depth).
 
 
-**Gdzie używane:**
-- Frontend: `Chat.tsx` - przed wysłaniem wiadomości
-- Frontend: `TutorsForm.tsx` - walidacja formularza
-- Backend: `chat.ts` API endpoint - dodatkowa weryfikacja
 
-### 3. Detekcja Prompt Injection
+## Implemented safeguards
 
-(tylko wiadomości czatu)
+### 1. HTML sanitization (XSS)
 
-### 4. Detekcja danych osobowych
+- **Method:** HTML escaping. Same behavior in browser and Node.js (no DOM dependency).
 
-**Wykrywane wzorce:**
-- Numery telefonów (format PL: 123-456-789, 123456789)
-- Adresy email
-- URLe (http://, https://)
-- Kody pocztowe (XX-XXX)
+- Always applied inside `validateAndSanitizeInput()` regardless of options.
+
+### 2. Profanity filter
+
+- **Detected:** Common Polish profanity, variants with character substitutions (e.g. k*rwa), fuzzy matching for numbers/symbols (a→@4, e→3, i→1!, o→0).
+
+- **Used in:** Chat messages and `TutorsForm.tsx`. Backend re-checks in `chat.ts`. Blocklist may need extension over time.
+
+### 3. Prompt injection detection
+
+- Applied to chat messages only.
+
+### 4. Personal data detection
+
+- **Detected:** Phone numbers (PL format), emails, URLs, postal codes (XX-XXX).
+
+- **Note:** Not applied to form fields (interests, problem description).
 
 
-## Limity długości
 
-| Pole | Limit | Lokalizacja |
-|------|-------|-------------|
-| Wiadomość czatu | 400 znaków | `Chat.tsx`, `chat.ts` |
-| Opis problemu | 200 znaków | `TutorsForm.tsx` |
-| Zainteresowania | 100 znaków | `TutorsForm.tsx` |
-| Imię użytkownika | 20 znaków | `NameInput.tsx` |
+## Length limits
 
-## Przepływ walidacji
+| Field              | Limit | Location              |
+|--------------------|-------|-----------------------|
+| Chat message       | 400   | `Chat.tsx`, `chat.ts` |
+| Problem description| 200   | `TutorsForm.tsx`      |
+| Interests          | 100   | `TutorsForm.tsx`      |
+| User name          | 20    | `NameInput.tsx`       |
 
-### Frontend (wiadomość czatu):
 
-1. Użytkownik wpisuje wiadomość
-2. Kliknięcie "Wyślij" → `Chat.tsx::handleSendInternal()`
-3. Walidacja: `validateAndSanitizeInput()`
-   - Sprawdzenie długości
-   - Sanityzacja HTML
-   - Sprawdzenie wulgaryzmów
-   - Sprawdzenie prompt injection
-   - Sprawdzenie danych osobowych
-4. Jeśli niepoprawne → wyświetl błąd
-5. Jeśli poprawne → wyślij do API
 
-### Backend (API endpoint):
+## Validation flow
 
-1. Otrzymanie requestu w `chat.ts`
-2. Walidacja podstawowa (pusty string, typ)
-3. Walidacja treści: `validateAndSanitizeInput()` z `@/lib/contentFilter` (wspólna funkcja dla całej aplikacji)
-   - Te same sprawdzenia jak frontend
-4. Jeśli niepoprawne → zwróć 400 Bad Request
-5. Jeśli poprawne → przekaż do `mathTutor`
-6. Zwróć odpowiedź do frontendu
+ **Frontend (chat):** User sends message → `Chat.tsx::handleSendInternal()` → `validateAndSanitizeInput()` (length, HTML, profanity, prompt injection, personal data) → on error show message, on success call API.
 
-### Agent (mathTutor):
+ **Backend:** `chat.ts` receives request → basic check (empty, type) → same `validateAndSanitizeInput()` → invalid → 400; valid → `mathTutor` → response.
 
-- Agent używa tej samej funkcji `validateAndSanitizeInput()` z opcjami z `contentRestrictions` (defense in depth).
-- Wiadomość przekazana do Mistral API to `validation.sanitized ?? message`.
+ **Agent:** Uses `validateAndSanitizeInput()` with `contentRestrictions`; sends `validation.sanitized ?? message` to Mistral.
 
-### Wyświetlanie wiadomości:
+ **Display:** Messages rendered by React (`{message.content}`), which escapes by default (XSS protection). Assistant messages use `cleanMathNotation()` for math/LaTeX. No separate `sanitizeForDisplay()`.
 
-1. Otrzymanie wiadomości z API lub z historii (localStorage)
-2. `ChatMessages.tsx::MessageBubble` / `HistoryChat.tsx::renderMessage`
-3. Treść jest renderowana przez React (`{message.content}`) – React domyślnie escapuje znaki specjalne, co chroni przed XSS
-4. Dla wiadomości asystenta używana jest `cleanMathNotation()` (formatowanie notacji matematycznej, np. LaTeX)
-5. Brak osobnej funkcji `sanitizeForDisplay()` – bezpieczeństwo zapewnia escapowanie po stronie React oraz sanityzacja przy wysyłaniu (frontend + backend)
 
-## Nagłówki bezpieczeństwa (produkcja)
+## Security headers (production)
 
-W pliku `vercel.json` ustawione są nagłówki HTTP (stosowane na Vercel):
+Set in `vercel.json` on Vercel:
 
-- **Content-Security-Policy** – ogranicza źródła skryptów, stylów, fontów, połączeń (XSS, data injection)
-- **X-Frame-Options: DENY** – zabezpieczenie przed osadzaniem strony w iframe (clickjacking)
-- **X-Content-Type-Options: nosniff** – wyłączenie MIME sniffing
-- **Referrer-Policy: strict-origin-when-cross-origin** – ograniczenie danych w nagłówku Referer
-
-## Ważne uwagi
-
-1. **Wspólna walidacja** – jedna funkcja `validateAndSanitizeInput()` z `@/lib/contentFilter` używana w `Chat.tsx`, `chat.ts` API oraz `mathTutor/index.ts`.
-2. **Sanityzacja HTML** jest zawsze wykonywana w tej funkcji, niezależnie od opcji.
-3. **Frontend, backend i agent** wykonują te same sprawdzenia (defense in depth).
-4. **Blacklista wulgaryzmów** może wymagać rozszerzenia w zależności od potrzeb.
-5. **Dane osobowe** nie są sprawdzane w polach formularza (zainteresowania, problem).
-6. **HTML Escaping** działa identycznie w przeglądarce i Node.js – brak zależności od DOM API.
+- **Content-Security-Policy** – script, style, font, connection sources
+- **X-Frame-Options: DENY** – no iframe embedding (clickjacking)
+- **X-Content-Type-Options: nosniff** – no MIME sniffing
+- **Referrer-Policy: strict-origin-when-cross-origin**
