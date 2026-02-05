@@ -26,6 +26,9 @@ pnpm-debug.log*
 .env
 .env.production
 
+# personal / dev notes (do not commit)
+NOTEPAD.md
+
 # Token usage data (local tracking)
 data/
 

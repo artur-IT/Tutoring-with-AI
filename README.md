@@ -1,12 +1,29 @@
 # 🎓 Tutor with AI
 
-Interactive AI tutor for teenagers (13-19 years old). The app explains difficult school topics in a simple and understandable way.
+<p align="center"> Home page </p>
+
+![Front page](./public/screenshots/home.png)
+
+<p align="center"> Math page </p>
+
+![](./public/screenshots/math.png)
+
+<p align="center"> Chat with AI </p>
+
+![](./public/screenshots/chat-ai.png)
+
+<p align="center"> Chat history </p>
+
+![](./public/screenshots/chat-history.png)
+
+Interactive AI tutor for teenagers (13-19 years old). The app explains difficult Math topics in a simple and understandable way.
 
 ## ✨ Features
 
 - 🤖 Chat with AI tutor (Mistral AI)
 - 📐 Math support (more subjects planned)
 - 💬 Conversation history (localStorage)
+- 🖨️ Print History (PDF, printer)
 - 🎯 Personalization based on student interests and problem description
 - ⏱️ Session limits (30 min, 50 messages, rate limiting)
 - 🔒 Content safety (input filtering, XSS protection, profanity filter)
@@ -91,5 +108,4 @@ npm run test        # Unit tests (Vitest + React Testing Library)
 
 ## 📚 Documentation
 
-- `docs/ANALIZA_I_PLAN_WDROZENIA.md` – project plan and status
 - `docs/CONTENT_SECURITY.md` – content filtering and security
