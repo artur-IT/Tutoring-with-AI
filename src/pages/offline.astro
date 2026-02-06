@@ -1,0 +1,40 @@
+---
+export const prerender = true;
+
+import Layout from "../layouts/Layout.astro";
+
+const description = "Brak połączenia z internetem. Otwórz stronę ponownie, gdy będziesz online.";
+---
+
+<Layout title="Brak połączenia - Tutor AI" description={description}>
+  <div
+    class="min-h-dvh bg-background flex flex-col items-center justify-center p-6 text-center"
+    style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));"
+  >
+    <div class="text-6xl mb-6" aria-hidden="true">📡</div>
+    <h1 class="text-2xl font-bold text-foreground mb-2">Jesteś offline</h1>
+    <p class="text-muted-foreground mb-8 max-w-sm">
+      Ta strona wymaga internetu lub nie została wcześniej zapisana. Wróć na stronę główną lub odśwież, gdy połączenie
+      będzie działać.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a
+        href="/"
+        class="inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3 bg-primary text-primary-foreground hover:bg-primary/90 shadow-md transition-all outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      >
+        Strona główna
+      </a>
+      <button
+        type="button"
+        id="retry-offline"
+        class="inline-flex items-center justify-center gap-2 rounded-xl text-base font-semibold px-6 py-3 bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 shadow-sm transition-all outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      >
+        Odśwież
+      </button>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.getElementById("retry-offline")?.addEventListener("click", () => window.location.reload());
+</script>

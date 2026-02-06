@@ -1,10 +1,13 @@
 ---
-// Disable prerender to prevent hydration mismatch in offline mode
-// The component loads data from localStorage which is only available client-side
-export const prerender = false;
+// Prerender so the page is precached for offline (PWA). History list shows "Ładowanie..."
+// until client hydrates and reads localStorage, so server and client initial output match.
+export const prerender = true;
 
 import Layout from "../layouts/Layout.astro";
 import HistoryPage from "../components/History";
+import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "../components/ui/button";
 
 const description = "Przegląd zapisanych rozmów z korepetytorem AI. Wróć do swoich poprzednich sesji nauki.";
 const keywords = "historia rozmów, zapisane sesje, przegląd nauki, postępy";
@@ -15,6 +18,28 @@ const keywords = "historia rozmów, zapisane sesje, przegląd nauki, postępy";
     <h1>Historia twoich rozmów z korepetytorem AI</h1>
     <p>Przeglądaj zapisane sesje nauki i wracaj do poprzednich rozmów.</p>
   </div>
+  <div
+    class="min-h-dvh bg-background flex flex-col p-4 md:p-6 max-w-3xl mx-auto overflow-y-auto"
+    style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));"
+    suppress-hydration-warning
+  >
+    {/* Header */}
+    <div class="text-center mb-10 mt-4 animate-in fade-in slide-in-from-top-4 duration-700">
+      <div class="text-4xl mb-4">📖</div>
+      <h1 class="text-3xl font-bold text-foreground mb-2 tracking-tight">
+        Twoje <span class="text-primary">rozmowy</span>
+      </h1>
+      <p class="text-base text-muted-foreground">Przejrzyj swoje sesje nauki</p>
+    </div>
 
-  <HistoryPage client:idle />
+    <HistoryPage client:idle />
+
+    {/* Back button */}
+    <div class="flex justify-center pb-6 pb-safe shrink-0">
+      <a href="/" class={cn(buttonVariants({ variant: "back" }), "text-sm px-4 py-2 md:text-base md:px-6 md:py-3")}>
+        <img src={ArrowLeftSimpleIcon} alt="" width={20} height={20} class="w-5 h-5" aria-hidden="true" />
+        Strona główna
+      </a>
+    </div>
+  </div>
 </Layout>
