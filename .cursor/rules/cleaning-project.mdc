@@ -1,0 +1,4 @@
+---
+alwaysApply: false
+---
+- usuń nie używane funkcje, zmienne, komponenty, exporty

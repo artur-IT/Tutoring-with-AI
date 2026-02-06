@@ -12,10 +12,9 @@ interface Props {
 }
 
 const {
-  title = "Tutor AI",
+  title = "Korepetytor AI",
   description = "Interaktywny korepetytor AI dla nastolatków.",
   image = "/pwa-512x512.png",
-  keywords = "korepetytor AI, nauka matematyki, edukacja online, AI tutor",
   type = "website",
 } = Astro.props;
 const isProduction = import.meta.env.PROD;
@@ -25,7 +24,7 @@ const siteUrl = new URL(Astro.url.pathname, Astro.site || "https://tutor-ai.verc
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "Tutor AI",
+  name: "Korepetytor AI",
   description: description,
   url: siteUrl.toString(),
   applicationCategory: "EducationalApplication",
@@ -45,7 +44,6 @@ const structuredData = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
-    <meta name="keywords" content={keywords} />
     <link rel="canonical" href={canonicalUrl} />
 
     <!-- Structured Data -->
