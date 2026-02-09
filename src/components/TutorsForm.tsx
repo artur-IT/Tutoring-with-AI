@@ -1,5 +1,15 @@
 import { useState, useCallback, useMemo, useId } from "react";
 import { Button, buttonVariants } from "./ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import ArrowLeftSimpleIcon from "../assets/icons/arrow-left-simple.svg?url";
@@ -208,6 +218,32 @@ function TutorsForm() {
       )}
 
       <div className="flex flex-col gap-4 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              type="button"
+              variant="back"
+              className="mx-auto border-none shadow-none text-base rounded-full p-8 w-12 h-12 animate-scale-pulse"
+            >
+              <span className="text-4xl">💡</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md md:w-[250px] md:p-4">
+            <DialogHeader>
+              <DialogTitle className="text-3xl text-center">⚠️</DialogTitle>
+              <DialogDescription className="text-center my-4">
+                Jestem tylko agentem sztucznej inteligencji i mogę się mylić. Zweryfikuj swoje wyniki z prawdziwym
+                nauczycielem.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mx-auto">
+              <DialogClose asChild>
+                <Button variant="ok">Rozumiem</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         <Button type="submit" disabled={!isFormValid} variant="ok" className="text-lg py-3">
           Rozpocznij lekcję
         </Button>
