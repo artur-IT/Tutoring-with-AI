@@ -136,7 +136,7 @@ function TutorsForm() {
           {/* Topic Selection Dropdown */}
           <div className="flex flex-col gap-2 w-full max-w-[350px]">
             <label id={topicLabelId} htmlFor="topic-select" className="text-sm text-gray-900">
-              Wybierz temat:
+              Wybierz temat
             </label>
             <Select value={selectedTopic} onValueChange={handleTopicChange} required>
               <SelectTrigger
@@ -159,7 +159,7 @@ function TutorsForm() {
           {/* Problem Description Input */}
           <div className="flex flex-col gap-2 w-full max-w-[350px]">
             <label htmlFor="problem-description" className="text-sm text-gray-900">
-              Opisz szczegółowo swój problem:
+              Opisz swój problem
             </label>
             <Input
               id="problem-description"
@@ -169,6 +169,8 @@ function TutorsForm() {
               placeholder="np. Nie rozumiem logarytmów"
               className="w-full text-sm border-solid border-2 border-[#006fea] h-12"
               required
+              pattern="[a-zA-Z\?!\s]+"
+              title="Wprowadź tylko litery i spacje"
               maxLength={200}
             />
             <p className="text-xs text-gray-500 text-right">{problemDescription.length} / 200</p>
@@ -177,7 +179,7 @@ function TutorsForm() {
           {/* Interests Input */}
           <div className="flex flex-col gap-2 w-full max-w-[350px]">
             <label htmlFor="interests" className="text-sm text-gray-900">
-              Twoje zainteresowania:
+              Twoje zainteresowania
             </label>
             <Input
               id="interests"
@@ -187,6 +189,8 @@ function TutorsForm() {
               placeholder="np. piłka nożna, książki, filmy"
               className="w-full text-sm border-solid border-2 border-[#006fea] h-12"
               required
+              pattern="[a-zA-Z\s]+"
+              title="Wprowadź tylko litery i spacje"
               maxLength={100}
             />
             <p className="text-xs text-gray-500 text-right">{interests.length} / 100</p>
@@ -194,7 +198,7 @@ function TutorsForm() {
 
           {/* Avatar Selection */}
           <div className="flex flex-col items-center gap-4 w-full max-w-[350px]">
-            <p className="text-sm font-medium text-foreground self-start">Wybierz swój avatar:</p>
+            <p className="text-sm font-medium text-foreground self-start">Wybierz swój avatar</p>
             <div className="flex flex-wrap gap-3 justify-center" role="group" aria-label="Wybierz avatar">
               {AVATAR_EMOJIS.map((emoji) => (
                 <button

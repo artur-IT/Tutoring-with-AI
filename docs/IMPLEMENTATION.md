@@ -66,4 +66,3 @@ Educational app with Mistral AI to interactive tutor that helps teenagers learn 
 
 - **More agents** – reuse mathTutor structure (chemTutor, physicsTutor, etc.)
 - **History in database** – persist sessions (e.g. database; currently localStorage)
-- **Push notifications** – study reminders (optional)
