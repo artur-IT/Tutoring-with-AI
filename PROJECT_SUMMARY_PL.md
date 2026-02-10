@@ -1,8 +1,5 @@
 # Podsumowanie projektu – co wynieść jako junior frontend developer
 
-**Mistral API Key**:
-aiD9kZNHp11JSM1VaAR3EofNn2MNITFH
-
 ### Zachować wszystkie rules do następnego projektu!
 
 ### <span style="color: green;">CO SIĘ UDAŁO:</span>
