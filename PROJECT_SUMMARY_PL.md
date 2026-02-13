@@ -8,6 +8,8 @@
 - poznać PWA 👍
 - Vitest i React Testing Library
 - Testy jednostkowe, niezbędne
+- wykorzystać szablon od 10xDevs
+- stosować więcej dopasowanych rules, skills, commands
 
 ### <span style="color: red;">CO SIĘ NIE UDAŁO:</span>
 
