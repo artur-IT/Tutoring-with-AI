@@ -4,7 +4,7 @@ import type { AgentConfig } from "./types";
 export const mathTutorConfig: AgentConfig = {
   name: "Matematyczny Korepetytor",
   subject: "matematyka",
-  model: "mistral-small-latest",
+  model: "ministral-3b-2512",
   temperature: 0.7,
   maxTokens: 800,
   description: "Przyjazny korepetytor matematyki dla nastolatków, wyjaśniający trudne zagadnienia w prosty sposób.",
